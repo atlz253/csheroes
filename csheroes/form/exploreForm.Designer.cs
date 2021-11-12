@@ -40,7 +40,8 @@ namespace csheroes.form
             this.MinimumSize = new System.Drawing.Size(818, 847);
             this.Name = "ExploreForm";
             this.Text = "Heroes";
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
             this.ResumeLayout(false);
 
         }

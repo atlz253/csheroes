@@ -19,6 +19,7 @@ namespace csheroes.form
         IGameObj[,] action = null;
 
         Hero hero = null;
+        Point heroCords;
 
         public ExploreForm()
         {
@@ -30,7 +31,7 @@ namespace csheroes.form
             surface = CreateGraphics();
         }
 
-        private void Form1_Paint(object sender, PaintEventArgs e)
+        private void OnPaint(object sender, PaintEventArgs e)
         {
             surface.Clear(Color.White);
 
@@ -69,6 +70,7 @@ namespace csheroes.form
             action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
             hero = new Hero();
+            heroCords = new Point(0, 0);
 
             action[0, 0] = hero;
         }
@@ -79,6 +81,16 @@ namespace csheroes.form
                 for (int j = 0; j < Height / Global.CellSize; j++)
                     if (action[i, j] != null)
                         surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
+        }
+
+        private void OnMouseClick(object sender, MouseEventArgs e)
+        {
+            int cellX = e.X / Global.CellSize,
+                cellY = e.Y / Global.CellSize;
+
+            action[cellY, cellX] = new Hero();
+
+            DrawAction();
         }
     }
 }
