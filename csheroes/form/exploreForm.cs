@@ -48,8 +48,8 @@ namespace csheroes.form
         {
 
             for (int i = 0; i < Width / cellSize; i++)
-                for (int j = 0; j < Height / cellSize; j++)
-                    surface.DrawImage(texture, new Rectangle(cellSize * j, cellSize * i, cellSize, cellSize), new Rectangle(cellSize * rand.Next(0, 1), cellSize * rand.Next(0, 1), cellSize, cellSize), GraphicsUnit.Pixel);
+                for (int j = 0; j < Height / cellSize; j++) // TODO: массив tile
+                    surface.DrawImage(texture, new Rectangle(cellSize * j, cellSize * i, cellSize, cellSize), new Rectangle(cellSize * rand.Next(0, 2), cellSize * rand.Next(0, 2), cellSize, cellSize), GraphicsUnit.Pixel);
 
         }
     }
