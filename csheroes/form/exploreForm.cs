@@ -1,4 +1,5 @@
-﻿using System;
+﻿using csheroes.src;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,12 +13,6 @@ namespace csheroes.form
 {
     public partial class ExploreForm : Form
     {
-        const int cellSize = 32;
-        
-        static Random rand = new Random();
-        static Pen gridPen = new Pen(Color.Black, 1);
-        static Image texture = Image.FromFile("../../../res/textures.png");
-
         Graphics surface;
 
         Rectangle[,] background = null;
@@ -41,27 +36,27 @@ namespace csheroes.form
 
         void DrawGrid()
         {
-            for (int i = 0; i < Width / cellSize; i++)
-                surface.DrawLine(gridPen, cellSize * i, 0, cellSize * i, Height);
+            for (int i = 0; i < Width / Global.CellSize; i++)
+                surface.DrawLine(Global.GridPen, Global.CellSize * i, 0, Global.CellSize * i, Height);
 
-            for (int i = 0; i < Height / cellSize; i++)
-                surface.DrawLine(gridPen, 0, cellSize * i, Width, cellSize * i);
+            for (int i = 0; i < Height / Global.CellSize; i++)
+                surface.DrawLine(Global.GridPen, 0, Global.CellSize * i, Width, Global.CellSize * i);
         }
 
         void InitBackground()
         {
-            background = new Rectangle[Width / cellSize, Height / cellSize];
+            background = new Rectangle[Width / Global.CellSize, Height / Global.CellSize];
 
-            for (int i = 0; i < Width / cellSize; i++)
-                for (int j = 0; j < Height / cellSize; j++)
-                    background[i, j] = new Rectangle(cellSize * rand.Next(0, 2), cellSize * rand.Next(0, 2), cellSize, cellSize);
+            for (int i = 0; i < Width / Global.CellSize; i++)
+                for (int j = 0; j < Height / Global.CellSize; j++)
+                    background[i, j] = new Rectangle(Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize, Global.CellSize);
         }
 
         void DrawBackground()
         {
-            for (int i = 0; i < Width / cellSize; i++)
-                for (int j = 0; j < Height / cellSize; j++)
-                    surface.DrawImage(texture, new Rectangle(cellSize * j, cellSize * i, cellSize, cellSize), background[i,j], GraphicsUnit.Pixel);
+            for (int i = 0; i < Width / Global.CellSize; i++)
+                for (int j = 0; j < Height / Global.CellSize; j++)
+                    surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i,j], GraphicsUnit.Pixel);
         }
     }
 }
