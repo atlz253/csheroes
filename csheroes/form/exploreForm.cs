@@ -16,12 +16,16 @@ namespace csheroes.form
         Graphics surface;
 
         Rectangle[,] background = null;
+        IGameObj[,] action = null;
+
+        Hero hero = null;
 
         public ExploreForm()
         {
             InitializeComponent();
 
             InitBackground();
+            InitAction();
 
             surface = CreateGraphics();
         }
@@ -31,6 +35,7 @@ namespace csheroes.form
             surface.Clear(Color.White);
 
             DrawBackground();
+            DrawAction();
             DrawGrid();
         }
 
@@ -57,6 +62,23 @@ namespace csheroes.form
             for (int i = 0; i < Width / Global.CellSize; i++)
                 for (int j = 0; j < Height / Global.CellSize; j++)
                     surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i,j], GraphicsUnit.Pixel);
+        }
+
+        void InitAction()
+        {
+            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
+
+            hero = new Hero();
+
+            action[0, 0] = hero;
+        }
+
+        void DrawAction()
+        {
+            for (int i = 0; i < Width / Global.CellSize; i++)
+                for (int j = 0; j < Height / Global.CellSize; j++)
+                    if (action[i, j] != null)
+                        surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
         }
     }
 }

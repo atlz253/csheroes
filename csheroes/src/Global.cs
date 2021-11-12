@@ -9,12 +9,12 @@ namespace csheroes.src
 {
     static class Global
     {
-        static int cellSize = 32;
+        static readonly int cellSize = 32;
 
-        static Pen gridPen = new Pen(Color.Black, 1);
+        static readonly Pen gridPen = new Pen(Color.Black, 1);
 
-        static Random rand = new Random();
-        static Image texture = Image.FromFile("../../../res/textures.png");
+        static readonly Random rand = new();
+        static readonly Image texture = Image.FromFile("../../../res/textures.png");
 
         public static int CellSize
         {
