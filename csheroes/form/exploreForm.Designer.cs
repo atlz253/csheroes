@@ -33,11 +33,11 @@ namespace csheroes.form
             // 
             // ExploreForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 761);
-            this.MaximumSize = new System.Drawing.Size(800, 800);
-            this.MinimumSize = new System.Drawing.Size(800, 800);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(800, 800);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximumSize = new System.Drawing.Size(818, 847);
+            this.MinimumSize = new System.Drawing.Size(818, 847);
             this.Name = "ExploreForm";
             this.Text = "Heroes";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
