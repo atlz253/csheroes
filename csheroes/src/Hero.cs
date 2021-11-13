@@ -9,7 +9,7 @@ namespace csheroes.src
 {
     class Hero : IGameObj
     {
-        private static readonly Rectangle heroTile = new(928, 0, Global.CellSize, Global.CellSize);
+        private static readonly Rectangle tile = new(928, 0, Global.CellSize, Global.CellSize);
 
         public Hero()
         {
@@ -18,7 +18,7 @@ namespace csheroes.src
 
         public Rectangle GetTile()
         {
-            return heroTile;
+            return tile;
         }
     }
 }
