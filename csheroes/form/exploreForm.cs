@@ -31,13 +31,18 @@ namespace csheroes.form
             surface = CreateGraphics();
         }
 
-        private void OnPaint(object sender, PaintEventArgs e)
+        void Draw()
         {
             surface.Clear(Color.White);
 
             DrawBackground();
             DrawAction();
             DrawGrid();
+        }
+
+        private void OnPaint(object sender, PaintEventArgs e)
+        {
+            Draw();
         }
 
         void DrawGrid()
@@ -85,12 +90,24 @@ namespace csheroes.form
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
-            int cellX = e.X / Global.CellSize,
-                cellY = e.Y / Global.CellSize;
+            int cellY= e.X / Global.CellSize,
+                cellX = e.Y / Global.CellSize;
 
-            action[cellY, cellX] = new Hero();
+            MoveHero(cellX, cellY);
+        }
 
-            DrawAction();
+        void MoveHero(int x, int y)
+        {
+            action[heroCords.X, heroCords.Y] = null;
+            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * heroCords.Y, Global.CellSize * heroCords.X, Global.CellSize, Global.CellSize), background[heroCords.X, heroCords.Y], GraphicsUnit.Pixel);
+
+            heroCords.X = x;
+            heroCords.Y = y;
+
+            action[heroCords.X, heroCords.Y] = hero;
+            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * heroCords.Y, Global.CellSize * heroCords.X, Global.CellSize, Global.CellSize), action[heroCords.X, heroCords.Y].GetTile(), GraphicsUnit.Pixel);
+
+            DrawGrid();
         }
     }
 }
