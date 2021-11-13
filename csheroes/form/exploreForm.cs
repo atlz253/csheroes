@@ -76,8 +76,13 @@ namespace csheroes.form
 
             hero = new Hero();
             heroCords = new Point(0, 0);
-
             action[0, 0] = hero;
+
+            action[0, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[1, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[2, 0] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[2, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[2, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
         }
 
         void DrawAction()
@@ -92,20 +97,29 @@ namespace csheroes.form
         {
             int cellY= e.X / Global.CellSize,
                 cellX = e.Y / Global.CellSize;
+            bool heroMove = true;
 
-            MoveHero(cellX, cellY);
+            //if (heroCords.Y == cellY)
+            //    for (int x = heroCords.X; x < Width / Global.CellSize; x++)
+            //        if (action[heroCords.Y, x] != null && action[heroCords.Y, x].ToString() == "csheroes.src.Obstacle")
+            //            heroMove = false;
+            //        else
+            //            surface.FillRectangle(new SolidBrush(Color.FromArgb(100, 0, 0, 255)), new Rectangle(x, heroCords.Y, Global.CellSize, Global.CellSize));
+                        
+            if (heroMove)
+                MoveHero(cellX, cellY);
         }
 
         void MoveHero(int x, int y)
         {
-            action[heroCords.X, heroCords.Y] = null;
-            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * heroCords.Y, Global.CellSize * heroCords.X, Global.CellSize, Global.CellSize), background[heroCords.X, heroCords.Y], GraphicsUnit.Pixel);
+            action[heroCords.Y, heroCords.X] = null;
+            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * heroCords.Y, Global.CellSize * heroCords.X, Global.CellSize, Global.CellSize), background[heroCords.Y, heroCords.X], GraphicsUnit.Pixel);
 
             heroCords.X = x;
             heroCords.Y = y;
 
-            action[heroCords.X, heroCords.Y] = hero;
-            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * heroCords.Y, Global.CellSize * heroCords.X, Global.CellSize, Global.CellSize), action[heroCords.X, heroCords.Y].GetTile(), GraphicsUnit.Pixel);
+            action[heroCords.Y, heroCords.X] = hero;
+            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * heroCords.Y, Global.CellSize * heroCords.X, Global.CellSize, Global.CellSize), action[heroCords.Y, heroCords.X].GetTile(), GraphicsUnit.Pixel);
 
             DrawGrid();
         }
