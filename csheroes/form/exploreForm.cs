@@ -75,14 +75,18 @@ namespace csheroes.form
             action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
             hero = new Hero();
-            heroCords = new Point(0, 0);
-            action[0, 0] = hero;
+            heroCords = new Point(2, 0);
+            action[heroCords.Y, heroCords.X] = hero;
 
-            action[0, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[1, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[2, 0] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[2, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[2, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[0, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[1, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[2, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 4] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 3] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 0] = new Obstacle(ObstacleType.MOUNTAIN_1);
         }
 
         void DrawAction()
@@ -109,6 +113,7 @@ namespace csheroes.form
                 if (tmpX == destX && tmpY == destY)
                 {
                     MoveHero(destX, destY);
+                    heroMove = false;
                 }
                 else if (tmpY != destY)
                 {
@@ -127,10 +132,15 @@ namespace csheroes.form
                         surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * tmpX, Global.CellSize * tmpY, Global.CellSize, Global.CellSize), new Rectangle(0, 96, Global.CellSize, Global.CellSize), GraphicsUnit.Pixel);
                         tmpY--;
                     }
-                    else if (tmpX != Width / Global.CellSize && action[tmpY, tmpX + 1] == null)
+                    else if (tmpX != Width / Global.CellSize && action[tmpY, tmpX + 1] == null && moves[tmpY, tmpX + 1] == false)
                     {
                         surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * tmpX, Global.CellSize * tmpY, Global.CellSize, Global.CellSize), new Rectangle(32, 96, Global.CellSize, Global.CellSize), GraphicsUnit.Pixel);
                         tmpX++;
+                    }
+                    else if ((action[tmpY, tmpX + 1] == null || action[tmpY, tmpX + 1].ToString() == "csheroes.src.Hero") && moves[tmpY, tmpX + 2] == false && action[tmpY, tmpX + 2] == null)
+                    {
+                        surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * tmpX, Global.CellSize * tmpY, Global.CellSize, Global.CellSize), new Rectangle(32, 96, Global.CellSize, Global.CellSize), GraphicsUnit.Pixel);
+                        tmpX += 2;
                     }
                     else
                     {
@@ -139,13 +149,20 @@ namespace csheroes.form
                 }
                 else
                 {
-                    heroMove = false; // TODO: remove
+                    if (tmpX < destX)
+                    {
+                        while (action[tmpY, tmpX + 1] == null && tmpX != destX)
+                        {
+                            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * tmpX, Global.CellSize * tmpY, Global.CellSize, Global.CellSize), new Rectangle(32, 96, Global.CellSize, Global.CellSize), GraphicsUnit.Pixel);
+                            tmpX++;
+                        }
+                    }
+                    else
+                    {
+                        heroMove = false; // TODO: remove
+                    }
                 }
             }
-            
-                        
-            //if (heroMove)
-            //    MoveHero(cellX, cellY);
         }
 
         void MoveHero(int x, int y)
