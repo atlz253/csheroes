@@ -95,19 +95,57 @@ namespace csheroes.form
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
-            int cellY= e.X / Global.CellSize,
-                cellX = e.Y / Global.CellSize;
+            int destX= e.X / Global.CellSize,
+                destY = e.Y / Global.CellSize,
+                tmpX = heroCords.X,
+                tmpY = heroCords.Y;
             bool heroMove = true;
+            bool[,] moves = new bool[Width / Global.CellSize, Height / Global.CellSize];
 
-            //if (heroCords.Y == cellY)
-            //    for (int x = heroCords.X; x < Width / Global.CellSize; x++)
-            //        if (action[heroCords.Y, x] != null && action[heroCords.Y, x].ToString() == "csheroes.src.Obstacle")
-            //            heroMove = false;
-            //        else
-            //            surface.FillRectangle(new SolidBrush(Color.FromArgb(100, 0, 0, 255)), new Rectangle(x, heroCords.Y, Global.CellSize, Global.CellSize));
+            while (heroMove)
+            {
+                moves[tmpY, tmpX] = true;
+
+                if (tmpX == destX && tmpY == destY)
+                {
+                    MoveHero(destX, destY);
+                }
+                else if (tmpY != destY)
+                {
+                    if (action[tmpY + 1, tmpX] == null && moves[tmpY + 1, tmpX] == false)
+                    {
+                        surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * tmpX, Global.CellSize * tmpY, Global.CellSize, Global.CellSize), new Rectangle(0, 128, Global.CellSize, Global.CellSize), GraphicsUnit.Pixel);
+                        tmpY++;
+                    }
+                    else if (tmpX != 0 && action[tmpY, tmpX - 1] == null && moves[tmpY, tmpX - 1] == false)
+                    {
+                        surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * tmpX, Global.CellSize * tmpY, Global.CellSize, Global.CellSize), new Rectangle(32, 128, Global.CellSize, Global.CellSize), GraphicsUnit.Pixel);
+                        tmpX--;
+                    }
+                    else if (tmpY != 0 && action[tmpY - 1, tmpX] == null && moves[tmpY - 1, tmpX] == false)
+                    {
+                        surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * tmpX, Global.CellSize * tmpY, Global.CellSize, Global.CellSize), new Rectangle(0, 96, Global.CellSize, Global.CellSize), GraphicsUnit.Pixel);
+                        tmpY--;
+                    }
+                    else if (tmpX != Width / Global.CellSize && action[tmpY, tmpX + 1] == null)
+                    {
+                        surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * tmpX, Global.CellSize * tmpY, Global.CellSize, Global.CellSize), new Rectangle(32, 96, Global.CellSize, Global.CellSize), GraphicsUnit.Pixel);
+                        tmpX++;
+                    }
+                    else
+                    {
+                        heroMove = false;
+                    }
+                }
+                else
+                {
+                    heroMove = false; // TODO: remove
+                }
+            }
+            
                         
-            if (heroMove)
-                MoveHero(cellX, cellY);
+            //if (heroMove)
+            //    MoveHero(cellX, cellY);
         }
 
         void MoveHero(int x, int y)
