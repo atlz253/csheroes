@@ -9,6 +9,6 @@ namespace csheroes.src
 {
     interface IGameObj
     {
-        Rectangle GetTile();
+        Rectangle GetTile(); // TODO: свойство
     }
 }

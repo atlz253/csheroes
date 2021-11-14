@@ -1,4 +1,5 @@
 ﻿using csheroes.src;
+using csheroes.src.unit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -97,7 +98,7 @@ namespace csheroes.form
             action[3, 3] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            //action[3, 0] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 0] = new Army(new Unit[1] { new Unit(UnitType.ABBITURENT) });
         }
 
         void DrawAction()
@@ -122,8 +123,16 @@ namespace csheroes.form
 
             while (heroMove)
             {
-                if (tmpX == destX && tmpY == destY)
+                if ((tmpX == destX && tmpY == destY) || (action[destY, destX] != null && (tmpX == destX && (tmpY + 1 == destY || tmpY - 1 == destY) || (tmpX + 1 == destX || tmpX - 1 == destX))))
                 {
+                    if (action[destY, destX] != null)
+                        switch (action[destY, destX].ToString())
+                        {
+                            case "csheroes.src.Army":
+                            StartBattle((Army) action[destY, destX]);
+                            break;
+                        }
+
                     MoveHero(destX, destY);
                     heroMove = false;
                 }
@@ -237,6 +246,19 @@ namespace csheroes.form
                 for (int i = 0; i < Width / Global.CellSize; i++)
                     for (int j = 0; j < Height / Global.CellSize; j++)
                         DrawArrow(arrow[i, j], j, i);
+        }
+
+        void StartBattle(Army enemy)
+        {
+            BattleForm battleForm = new();
+
+            battleForm.Location = new Point(Location.X, Location.Y);
+
+            Visible = false;
+
+            battleForm.ShowDialog();
+
+            Visible = true;
         }
     }
 }
