@@ -34,7 +34,7 @@ namespace csheroes.form
             // ExploreForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(800, 800);
+            this.ClientSize = new System.Drawing.Size(802, 808);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximumSize = new System.Drawing.Size(818, 847);
             this.MinimumSize = new System.Drawing.Size(818, 847);

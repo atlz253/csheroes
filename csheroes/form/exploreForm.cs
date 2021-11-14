@@ -11,12 +11,22 @@ using System.Windows.Forms;
 
 namespace csheroes.form
 {
+    enum Arrows
+    {
+        EMPTY,
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    }
+
     public partial class ExploreForm : Form
     {
         Graphics surface;
 
         Rectangle[,] background = null;
         IGameObj[,] action = null;
+        Arrows[,] arrow = null;
 
         Hero hero = null;
         Point heroCords;
@@ -36,6 +46,7 @@ namespace csheroes.form
             surface.Clear(Color.White);
 
             DrawBackground();
+            DrawArrows();
             DrawAction();
             DrawGrid();
         }
@@ -75,14 +86,18 @@ namespace csheroes.form
             action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
             hero = new Hero();
-            heroCords = new Point(0, 0);
-            action[0, 0] = hero;
+            heroCords = new Point(2, 0);
+            action[heroCords.Y, heroCords.X] = hero;
 
-            action[0, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[1, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[2, 0] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[2, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[2, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[0, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[1, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[2, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 4] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 3] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            action[3, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            //action[3, 0] = new Obstacle(ObstacleType.MOUNTAIN_1);
         }
 
         void DrawAction()
@@ -95,33 +110,133 @@ namespace csheroes.form
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
-            int cellY= e.X / Global.CellSize,
-                cellX = e.Y / Global.CellSize;
-            bool heroMove = true;
+            int destX = e.X / Global.CellSize,
+                destY = e.Y / Global.CellSize;
+            if (action[destY, destX] != null && action[destY, destX].ToString() == "csheroes.src.Obstacle")
+                return;
 
-            //if (heroCords.Y == cellY)
-            //    for (int x = heroCords.X; x < Width / Global.CellSize; x++)
-            //        if (action[heroCords.Y, x] != null && action[heroCords.Y, x].ToString() == "csheroes.src.Obstacle")
-            //            heroMove = false;
-            //        else
-            //            surface.FillRectangle(new SolidBrush(Color.FromArgb(100, 0, 0, 255)), new Rectangle(x, heroCords.Y, Global.CellSize, Global.CellSize));
-                        
-            if (heroMove)
-                MoveHero(cellX, cellY);
+            int tmpX = heroCords.X,
+                tmpY = heroCords.Y;
+            bool heroMove = true;
+            arrow = new Arrows[Width / Global.CellSize, Height / Global.CellSize];
+
+            while (heroMove)
+            {
+                if (tmpX == destX && tmpY == destY)
+                {
+                    MoveHero(destX, destY);
+                    heroMove = false;
+                }
+                else if (tmpY < destY && tmpY != Height / Global.CellSize - 2 && action[tmpY + 1, tmpX] == null && arrow[tmpY + 1, tmpX] == Arrows.EMPTY)
+                {
+                    while (tmpY != Height / Global.CellSize - 2 && tmpY != destY && action[tmpY + 1, tmpX] == null && arrow[tmpY + 1, tmpX] == Arrows.EMPTY)
+                    {
+#if DEBUG
+                        DrawArrow(Arrows.DOWN, tmpX, tmpY);
+#endif
+                        arrow[tmpY, tmpX] = Arrows.DOWN;
+                        tmpY++;
+                    }
+                }
+                else if (tmpY != destY && tmpY != 0 && action[tmpY - 1, tmpX] == null && arrow[tmpY - 1, tmpX] == Arrows.EMPTY)
+                {
+                    while (tmpY != 0 && tmpY != destY && action[tmpY - 1, tmpX] == null && arrow[tmpY - 1, tmpX] == Arrows.EMPTY)
+                    {
+#if DEBUG
+                        DrawArrow(Arrows.UP, tmpX, tmpY);
+#endif
+
+                        arrow[tmpY, tmpX] = Arrows.UP;
+                        tmpY--;
+                    }
+                }
+                else if (tmpX < destX && tmpX != Width / Global.CellSize - 1 && action[tmpY, tmpX + 1] == null && arrow[tmpY, tmpX + 1] == Arrows.EMPTY)
+                {
+                    while (tmpX != Width / Global.CellSize - 1 && action[tmpY, tmpX + 1] == null && tmpX != destX)
+                    {
+#if DEBUG
+                        DrawArrow(Arrows.RIGHT, tmpX, tmpY);
+#endif
+
+                        arrow[tmpY, tmpX] = Arrows.RIGHT;
+                        tmpX++;
+                    }
+                }
+                else if (tmpX != 0 && (action[tmpY, tmpX - 1] == null || (tmpX - 1 != 0 && action[tmpY, tmpX - 1] == null)))
+                {
+                    bool turn = false;
+
+                    while (tmpX != 0 && action[tmpY, tmpX - 1] == null && tmpX != destX)
+                    {
+#if DEBUG
+                        DrawArrow(Arrows.LEFT, tmpX, tmpY);
+#endif
+
+                        arrow[tmpY, tmpX] = Arrows.LEFT;
+                        tmpX--;
+                        turn = true;
+                    }
+
+                    if (!turn)
+                    {
+#if DEBUG
+                        DrawArrow(Arrows.LEFT, tmpX, tmpY);
+#endif
+                        arrow[tmpY, tmpX] = Arrows.LEFT;
+                        tmpX -= 2;
+                    }
+                }
+                else
+                {
+                    Draw();
+                    heroMove = false;
+                }
+        }
         }
 
         void MoveHero(int x, int y)
         {
             action[heroCords.Y, heroCords.X] = null;
-            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * heroCords.Y, Global.CellSize * heroCords.X, Global.CellSize, Global.CellSize), background[heroCords.Y, heroCords.X], GraphicsUnit.Pixel);
 
             heroCords.X = x;
             heroCords.Y = y;
 
             action[heroCords.Y, heroCords.X] = hero;
-            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * heroCords.Y, Global.CellSize * heroCords.X, Global.CellSize, Global.CellSize), action[heroCords.Y, heroCords.X].GetTile(), GraphicsUnit.Pixel);
 
-            DrawGrid();
+            Draw();
+        }
+
+        void DrawArrow(Arrows direction, int x, int y)
+        {
+            Rectangle tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
+
+            switch (direction)
+            {
+                case Arrows.EMPTY:
+                    return;
+                case Arrows.LEFT:
+                    tile = new Rectangle(32, 128, Global.CellSize, Global.CellSize);
+                    break;
+                case Arrows.DOWN:
+                    tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
+                    break;
+                case Arrows.RIGHT:
+                    tile = new Rectangle(32, 96, Global.CellSize, Global.CellSize);
+                    break;
+                case Arrows.UP:
+                    tile = new Rectangle(0, 96, Global.CellSize, Global.CellSize);
+                    break;
+            }
+
+            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * x, Global.CellSize * y, Global.CellSize, Global.CellSize), tile, GraphicsUnit.Pixel);
+        }
+
+        void DrawArrows()
+        {
+            if (arrow != null)
+                for (int i = 0; i < Width / Global.CellSize; i++)
+                    for (int j = 0; j < Height / Global.CellSize; j++)
+                        DrawArrow(arrow[i, j], j, i);
         }
     }
 }
