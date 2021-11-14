@@ -35,11 +35,13 @@ namespace csheroes.form
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(802, 808);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximumSize = new System.Drawing.Size(818, 847);
             this.MinimumSize = new System.Drawing.Size(818, 847);
             this.Name = "BattleForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "BattleForm";
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
             this.ResumeLayout(false);
 
         }
