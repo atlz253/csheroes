@@ -46,7 +46,7 @@ namespace csheroes.form
             surface.Clear(Color.White);
 
             DrawBackground();
-            DrawArrow();
+            DrawArrows();
             DrawAction();
             DrawGrid();
         }
@@ -97,7 +97,7 @@ namespace csheroes.form
             action[3, 3] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[3, 0] = new Obstacle(ObstacleType.MOUNTAIN_1);
+            //action[3, 0] = new Obstacle(ObstacleType.MOUNTAIN_1);
         }
 
         void DrawAction()
@@ -124,59 +124,71 @@ namespace csheroes.form
                     MoveHero(destX, destY);
                     heroMove = false;
                 }
-                else if (tmpY != destY)
+                else if (tmpY < destY && tmpY != Height / Global.CellSize - 2 && action[tmpY + 1, tmpX] == null && arrow[tmpY + 1, tmpX] == Arrows.EMPTY)
                 {
-                    if (action[tmpY + 1, tmpX] == null && arrow[tmpY + 1, tmpX] == Arrows.EMPTY)
+                    while (tmpY != Height / Global.CellSize - 2 && tmpY != destY && action[tmpY + 1, tmpX] == null && arrow[tmpY + 1, tmpX] == Arrows.EMPTY)
                     {
+#if DEBUG
+                        DrawArrow(Arrows.DOWN, tmpX, tmpY);
+#endif
                         arrow[tmpY, tmpX] = Arrows.DOWN;
                         tmpY++;
                     }
-                    else if (tmpX != 0 && action[tmpY, tmpX - 1] == null && arrow[tmpY, tmpX - 1] == Arrows.EMPTY)
+                }
+                else if (tmpY != destY && tmpY != 0 && action[tmpY - 1, tmpX] == null && arrow[tmpY - 1, tmpX] == Arrows.EMPTY)
+                {
+                    while (tmpY != 0 && tmpY != destY && action[tmpY - 1, tmpX] == null && arrow[tmpY - 1, tmpX] == Arrows.EMPTY)
                     {
-                        arrow[tmpY, tmpX] = Arrows.LEFT;
-                        tmpX--;
-                    }
-                    else if (tmpY != 0 && action[tmpY - 1, tmpX] == null && arrow[tmpY - 1, tmpX] == Arrows.EMPTY)
-                    {
+#if DEBUG
+                        DrawArrow(Arrows.UP, tmpX, tmpY);
+#endif
+
                         arrow[tmpY, tmpX] = Arrows.UP;
                         tmpY--;
                     }
-                    else if (tmpX != Width / Global.CellSize && action[tmpY, tmpX + 1] == null && arrow[tmpY, tmpX + 1] == Arrows.EMPTY)
+                }
+                else if (tmpX < destX && tmpX != Width / Global.CellSize - 1 && action[tmpY, tmpX + 1] == null && arrow[tmpY, tmpX + 1] == Arrows.EMPTY)
+                {
+                    while (tmpX != Width / Global.CellSize - 1 && action[tmpY, tmpX + 1] == null && tmpX != destX)
                     {
+#if DEBUG
+                        DrawArrow(Arrows.RIGHT, tmpX, tmpY);
+#endif
+
                         arrow[tmpY, tmpX] = Arrows.RIGHT;
                         tmpX++;
                     }
-                    else if ((action[tmpY, tmpX + 1] == null || action[tmpY, tmpX + 1].ToString() == "csheroes.src.Hero") && arrow[tmpY, tmpX + 2] == Arrows.EMPTY && action[tmpY, tmpX + 2] == null)
+                }
+                else if (tmpX != 0 && (action[tmpY, tmpX - 1] == null || (tmpX - 1 != 0 && action[tmpY, tmpX - 1] == null)))
+                {
+                    bool turn = false;
+
+                    while (tmpX != 0 && action[tmpY, tmpX - 1] == null && tmpX != destX)
                     {
-                        arrow[tmpY, tmpX] = Arrows.RIGHT;
-                        tmpX += 2;
+#if DEBUG
+                        DrawArrow(Arrows.LEFT, tmpX, tmpY);
+#endif
+
+                        arrow[tmpY, tmpX] = Arrows.LEFT;
+                        tmpX--;
+                        turn = true;
                     }
-                    else
+
+                    if (!turn)
                     {
-                        Draw();
-                        heroMove = false;
+#if DEBUG
+                        DrawArrow(Arrows.LEFT, tmpX, tmpY);
+#endif
+                        arrow[tmpY, tmpX] = Arrows.LEFT;
+                        tmpX -= 2;
                     }
                 }
                 else
                 {
-                    if (tmpX < destX)
-                    {
-                        while (tmpX != Width / Global.CellSize && action[tmpY, tmpX + 1] == null && tmpX != destX)
-                        {
-                            arrow[tmpY, tmpX] = Arrows.RIGHT;
-                            tmpX++;
-                        }
-                    }
-                    else
-                    {
-                        while (tmpX != 0 && action[tmpY, tmpX - 1] == null && tmpX != destX)
-                        {
-                            arrow[tmpY, tmpX] = Arrows.LEFT;
-                            tmpX--;
-                        }
-                    }
+                    Draw();
+                    heroMove = false;
                 }
-            }
+        }
         }
 
         void MoveHero(int x, int y)
@@ -191,34 +203,37 @@ namespace csheroes.form
             Draw();
         }
 
-        void DrawArrow()
+        void DrawArrow(Arrows direction, int x, int y)
+        {
+            Rectangle tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
+
+            switch (direction)
+            {
+                case Arrows.EMPTY:
+                    return;
+                case Arrows.LEFT:
+                    tile = new Rectangle(32, 128, Global.CellSize, Global.CellSize);
+                    break;
+                case Arrows.DOWN:
+                    tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
+                    break;
+                case Arrows.RIGHT:
+                    tile = new Rectangle(32, 96, Global.CellSize, Global.CellSize);
+                    break;
+                case Arrows.UP:
+                    tile = new Rectangle(0, 96, Global.CellSize, Global.CellSize);
+                    break;
+            }
+
+            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * x, Global.CellSize * y, Global.CellSize, Global.CellSize), tile, GraphicsUnit.Pixel);
+        }
+
+        void DrawArrows()
         {
             if (arrow != null)
                 for (int i = 0; i < Width / Global.CellSize; i++)
                     for (int j = 0; j < Height / Global.CellSize; j++)
-                    {
-                        Rectangle tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
-
-                        switch (arrow[i, j])
-                        {
-                            case Arrows.EMPTY:
-                                continue;
-                            case Arrows.LEFT:
-                                tile = new Rectangle(32, 128, Global.CellSize, Global.CellSize);
-                                break;
-                            case Arrows.DOWN:
-                                tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
-                                break;
-                            case Arrows.RIGHT:
-                                tile = new Rectangle(32, 96, Global.CellSize, Global.CellSize);
-                                break;
-                            case Arrows.UP:
-                                tile = new Rectangle(0, 96, Global.CellSize, Global.CellSize);
-                                break;
-                        }
-
-                        surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), tile, GraphicsUnit.Pixel);
-                    }
+                        DrawArrow(arrow[i, j], j, i);
         }
     }
 }
