@@ -110,9 +110,12 @@ namespace csheroes.form
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
-            int destX= e.X / Global.CellSize,
-                destY = e.Y / Global.CellSize,
-                tmpX = heroCords.X,
+            int destX = e.X / Global.CellSize,
+                destY = e.Y / Global.CellSize;
+            if (action[destY, destX] != null && action[destY, destX].ToString() == "csheroes.src.Obstacle")
+                return;
+
+            int tmpX = heroCords.X,
                 tmpY = heroCords.Y;
             bool heroMove = true;
             arrow = new Arrows[Width / Global.CellSize, Height / Global.CellSize];
