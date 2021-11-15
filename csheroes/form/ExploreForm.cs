@@ -241,15 +241,19 @@ namespace csheroes.form
 
         void StartBattle(Army enemy)
         {
-            BattleForm battleForm = new(hero, enemy);
+            BattleForm battleForm = new(this, hero, enemy);
 
             battleForm.Location = new Point(Location.X, Location.Y);
 
             Visible = false;
 
             battleForm.ShowDialog();
+            battleForm.Dispose();
 
             Visible = true;
+
+            if (hero.Army.Empty)
+                return; // TODO: поражение
         }
     }
 }

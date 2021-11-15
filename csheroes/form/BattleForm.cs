@@ -15,6 +15,7 @@ namespace csheroes.form
     public partial class BattleForm : Form
     {
         Graphics surface;
+        ExploreForm parent;
 
         Rectangle[,] background = null;
         IGameObj[,] action = null;
@@ -27,10 +28,13 @@ namespace csheroes.form
         int firstArmyTurn = 0,
             secondArmyTurn = 0;
         bool turn = true;
+        bool close = false;
 
-        public BattleForm(Hero hero, Army enemy)
+        public BattleForm(ExploreForm parent, Hero hero, Army enemy)
         {
             InitializeComponent();
+
+            this.parent = parent;
 
             InitBackground();
 
@@ -104,6 +108,9 @@ namespace csheroes.form
                     NextTurn(firstArmy.Units, ref firstArmyTurn);
                 else
                     NextTurn(secondArmy.Units, ref secondArmyTurn);
+
+                if (close) // не осталось юнитов
+                    return; // FIXME: нужен еще один клик, чтобы выйти из битвы
 
                 index = turn ? firstArmyTurn : secondArmyTurn;
                 unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
@@ -260,14 +267,22 @@ namespace csheroes.form
                     return;
                 }
 
-            for (int i = 0; i < index; i++) // начинаем смотреть сначала
+            for (int i = 0; i < index + 1; i++) // начинаем смотреть сначала
                 if (units[i] != null)
                 {
                     index = i;
                     return;
                 }
 
-            return; // TODO: победа
+            EndBattle();
+        }
+
+        void EndBattle()
+        {
+            parent.Location = new Point(Location.X, Location.Y);
+
+            Close();
+            close = true;
         }
 
         void DrawArrow(Arrows direction, int x, int y)
