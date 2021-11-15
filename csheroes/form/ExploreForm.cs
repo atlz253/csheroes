@@ -12,15 +12,6 @@ using System.Windows.Forms;
 
 namespace csheroes.form
 {
-    enum Arrows
-    {
-        EMPTY,
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN
-    }
-
     public partial class ExploreForm : Form
     {
         Graphics surface;
@@ -86,7 +77,7 @@ namespace csheroes.form
         {
             action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
-            hero = new Hero();
+            hero = new Hero(new Army(new Unit[2] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) }));
             heroCords = new Point(2, 0);
             action[heroCords.Y, heroCords.X] = hero;
 
@@ -98,7 +89,7 @@ namespace csheroes.form
             action[3, 3] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[3, 0] = new Army(new Unit[1] { new Unit(UnitType.ABBITURENT) });
+            action[3, 0] = new Army(new Unit[7] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
         }
 
         void DrawAction()
@@ -171,7 +162,7 @@ namespace csheroes.form
                         tmpX++;
                     }
                 }
-                else if (tmpX != 0 && (action[tmpY, tmpX - 1] == null || (tmpX - 1 != 0 && action[tmpY, tmpX - 1] == null)))
+                else if (tmpX != 0 && (action[tmpY, tmpX - 1] == null || (tmpX - 1 != 0 && action[tmpY, tmpX - 1] == null))) // TODO: переписать еще одним else if
                 {
                     bool turn = false;
 
@@ -250,7 +241,7 @@ namespace csheroes.form
 
         void StartBattle(Army enemy)
         {
-            BattleForm battleForm = new();
+            BattleForm battleForm = new(hero, enemy);
 
             battleForm.Location = new Point(Location.X, Location.Y);
 

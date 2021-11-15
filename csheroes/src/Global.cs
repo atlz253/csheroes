@@ -7,6 +7,15 @@ using System.Threading.Tasks;
 
 namespace csheroes.src
 {
+    public enum Arrows
+    {
+        EMPTY,
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    }
+
     static class Global
     {
         static readonly int cellSize = 32;
