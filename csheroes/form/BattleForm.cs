@@ -99,7 +99,8 @@ namespace csheroes.form
             Unit unit = turn ? firstArmy.Units[index] : secondArmy.Units[index];
             Point tmp = new(friendCords[index].X, friendCords[index].Y);
 
-            bool unitMove = (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range); // TODO: дальний бой
+            bool unitMove = (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range),
+                 unitAttack = false, unitTurn = false; // TODO: дальний бой
 
             while (unitMove)
             {
@@ -114,6 +115,7 @@ namespace csheroes.form
                     Draw();
 
                     unitMove = false;
+                    unitTurn = true;
                 }
                 else if (action[dest.Y, dest.X] != null && ((tmp.X == dest.X && Math.Abs(dest.Y - tmp.Y) <= unit.Range) || (tmp.Y == dest.Y && Math.Abs(dest.X - tmp.X) <= unit.Range))) // ближний бой
                 {
@@ -137,11 +139,7 @@ namespace csheroes.form
                     friendCords[index] = tmp;
                     action[tmp.Y, tmp.X] = unit;
 
-                    Unit enemy = (Unit)action[dest.Y, dest.X];
-                    enemy.Hp -= unit.Damage;
-
-                    if (enemy.Hp == 0)
-                        action[dest.Y, dest.X] = null;
+                    unitAttack = true;
 
                     Draw();
 
@@ -206,6 +204,44 @@ namespace csheroes.form
                     Draw();
                     unitMove = false;
                 }
+            }
+
+            if (unitAttack)
+            {
+                Unit enemy = (Unit)action[dest.Y, dest.X];
+                enemy.Hp -= unit.Damage;
+
+                if (enemy.Hp == 0)
+                {
+                    Army enemyArmy = turn ? secondArmy : firstArmy;
+
+                    for (int i = 0; i < enemyArmy.Units.Length; i++)
+                        if (action[dest.Y, dest.X] == enemyArmy.Units[i])
+                            enemyArmy.Units[i] = null;
+
+
+                    action[dest.Y, dest.X] = null;
+
+                    Draw();
+                }
+
+                unitTurn = true;
+            }
+
+            if (unitTurn)
+            {
+                if (turn)
+                    if (firstArmyTurn != firstArmy.Units.Length - 1 && firstArmy.Units[firstArmyTurn + 1] != null)
+                        firstArmyTurn++;
+                    else
+                        firstArmyTurn = 0;
+                else
+                if (secondArmyTurn != secondArmy.Units.Length - 1 && secondArmy.Units[secondArmyTurn + 1] != null)
+                    secondArmyTurn++;
+                else
+                    secondArmyTurn = 0;
+
+                turn = !turn;
             }
         }
 
