@@ -12,15 +12,6 @@ using System.Windows.Forms;
 
 namespace csheroes.form
 {
-    enum Arrows
-    {
-        EMPTY,
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN
-    }
-
     public partial class ExploreForm : Form
     {
         Graphics surface;
@@ -171,7 +162,7 @@ namespace csheroes.form
                         tmpX++;
                     }
                 }
-                else if (tmpX != 0 && (action[tmpY, tmpX - 1] == null || (tmpX - 1 != 0 && action[tmpY, tmpX - 1] == null)))
+                else if (tmpX != 0 && (action[tmpY, tmpX - 1] == null || (tmpX - 1 != 0 && action[tmpY, tmpX - 1] == null))) // TODO: переписать еще одним else if
                 {
                     bool turn = false;
 

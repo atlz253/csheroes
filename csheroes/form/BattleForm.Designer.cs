@@ -42,6 +42,7 @@ namespace csheroes.form
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "BattleForm";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
             this.ResumeLayout(false);
 
         }

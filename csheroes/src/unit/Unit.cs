@@ -17,6 +17,10 @@ namespace csheroes.src.unit
         readonly IAttack attack;
         readonly Rectangle tile;
 
+        int hp;
+        readonly int range;
+        readonly int damage;
+
         public Unit(UnitType type)
         {
             switch (type)
@@ -24,11 +28,16 @@ namespace csheroes.src.unit
                 case UnitType.ABBITURENT:
                     tile = new Rectangle(256, 0, Global.CellSize, Global.CellSize);
                     attack = new MeleeAttack();
+                    hp = 3;
+                    range = 3;
+                    damage = 1;
                     break;
             }
         }
 
         internal IAttack Attack { get => attack; }
+
+        public int Range => range;
 
         public Rectangle GetTile()
         {
