@@ -99,7 +99,7 @@ namespace csheroes.form
             Unit unit = turn ? firstArmy.Units[index] : secondArmy.Units[index];
             Point tmp = new(friendCords[index].X, friendCords[index].Y);
 
-            bool unitMove = (dest.X <= unit.Range || dest.Y <= unit.Range); // TODO: дальний бой
+            bool unitMove = (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range); // TODO: дальний бой
 
             while (unitMove)
             {
@@ -117,7 +117,7 @@ namespace csheroes.form
                 }
                 else if (tmp.Y < dest.Y && tmp.Y != Height / Global.CellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
                 {
-                    while (tmp.Y != Height / Global.CellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
+                    while (tmp.Y != dest.Y && tmp.Y != Height / Global.CellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
                     {
 #if DEBUG
                         DrawArrow(Arrows.DOWN, tmp.X, tmp.Y);
@@ -128,7 +128,7 @@ namespace csheroes.form
                 }
                 else if (tmp.Y != dest.Y && tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Arrows.EMPTY)
                 {
-                    while (tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Arrows.EMPTY)
+                    while (tmp.Y != dest.Y && tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Arrows.EMPTY)
                     {
 #if DEBUG
                         DrawArrow(Arrows.UP, tmp.X, tmp.Y);
@@ -139,7 +139,7 @@ namespace csheroes.form
                 }
                 else if (tmp.X < dest.X && tmp.X != Width / Global.CellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Arrows.EMPTY)
                 {
-                    while (tmp.X != Width / Global.CellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Arrows.EMPTY)
+                    while (tmp.X != dest.X && tmp.X != Width / Global.CellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Arrows.EMPTY)
                     {
 #if DEBUG
                         DrawArrow(Arrows.RIGHT, tmp.X, tmp.Y);
@@ -151,7 +151,7 @@ namespace csheroes.form
                 }
                 else if (tmp.X != 0 && action[tmp.Y, tmp.X - 1] == null)
                 {
-                    while (tmp.X != 0 && action[tmp.Y, tmp.X - 1] == null)
+                    while (tmp.X != dest.X && tmp.X != 0 && action[tmp.Y, tmp.X - 1] == null)
                     {
 #if DEBUG
                         DrawArrow(Arrows.LEFT, tmp.X, tmp.Y);
