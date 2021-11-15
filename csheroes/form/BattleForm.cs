@@ -103,13 +103,45 @@ namespace csheroes.form
 
             while (unitMove)
             {
-                if (tmp == dest)
+                if (tmp == dest) // перемещение на пустую клетку
                 {
                     action[friendCords[index].Y, friendCords[index].X] = null;
 
                     friendCords[index] = dest;
 
                     action[dest.Y, dest.X] = unit;
+
+                    Draw();
+
+                    unitMove = false;
+                }
+                else if (action[dest.Y, dest.X] != null && ((tmp.X == dest.X && Math.Abs(dest.Y - tmp.Y) <= unit.Range) || (tmp.Y == dest.Y && Math.Abs(dest.X - tmp.X) <= unit.Range))) // ближний бой
+                {
+                    action[friendCords[index].Y, friendCords[index].X] = null;
+
+                    if (tmp.X == dest.X)
+                        if (dest.Y - tmp.Y < 0)
+                            while (tmp.Y != dest.Y + 1)
+                                tmp.Y--;
+                        else
+                            while (tmp.Y != dest.Y - 1)
+                                tmp.Y++;
+                    else
+                        if (dest.X - tmp.X < 0)
+                            while (tmp.X != dest.X + 1)
+                                tmp.X--;
+                        else
+                            while (tmp.X != dest.X - 1)
+                                tmp.X++;
+
+                    friendCords[index] = tmp;
+                    action[tmp.Y, tmp.X] = unit;
+
+                    Unit enemy = (Unit)action[dest.Y, dest.X];
+                    enemy.Hp -= unit.Damage;
+
+                    if (enemy.Hp == 0)
+                        action[dest.Y, dest.X] = null;
 
                     Draw();
 
@@ -224,7 +256,7 @@ namespace csheroes.form
             for (int i = 0; i < Height && i < 7; i++)
             {
                 action[i*4, column] = army.Units[i];
-                cordsArr[i] = new Point(i * 4, column);
+                cordsArr[i] = new Point(column, i * 4);
             }
         }
     }
