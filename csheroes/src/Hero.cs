@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 
 namespace csheroes.src
 {
-    class Hero : IGameObj
+    public class Hero : IGameObj
     {
         private static readonly Rectangle tile = new(928, 0, Global.CellSize, Global.CellSize);
+        private readonly Army army;
 
-        public Hero()
+        public Hero(Army army)
         {
-
+            this.army = army;
         }
+
+        internal Army Army => army;
 
         public Rectangle GetTile()
         {

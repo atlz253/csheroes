@@ -16,12 +16,17 @@ namespace csheroes.form
         Graphics surface;
 
         Rectangle[,] background = null;
+        IGameObj[,] action = null;
 
-        public BattleForm()
+        public BattleForm(Hero hero, Army enemy)
         {
             InitializeComponent();
 
             InitBackground();
+
+            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
+            LinedArmy(hero.Army, 0);
+            LinedArmy(enemy, Width / Global.CellSize - 1);
 
             surface = CreateGraphics();
         }
@@ -29,6 +34,7 @@ namespace csheroes.form
         void Draw()
         {
             DrawBackground();
+            DrawAction();
             DrawGrid();
         }
 
@@ -46,6 +52,14 @@ namespace csheroes.form
                 surface.DrawLine(Global.GridPen, 0, Global.CellSize * i, Width, Global.CellSize * i);
         }
 
+        void DrawAction()
+        {
+            for (int i = 0; i < Width / Global.CellSize; i++)
+                for (int j = 0; j < Height / Global.CellSize; j++)
+                    if (action[i, j] != null)
+                        surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
+        }
+
         void InitBackground()
         {
             background = new Rectangle[Width / Global.CellSize, Height / Global.CellSize];
@@ -60,6 +74,12 @@ namespace csheroes.form
             for (int i = 0; i < Width / Global.CellSize; i++)
                 for (int j = 0; j < Height / Global.CellSize; j++)
                     surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i, j], GraphicsUnit.Pixel);
+        }
+
+        void LinedArmy(Army army, int column)
+        {
+            for (int i = 0; i < Height && i < 7; i++)
+                action[i*4, column] = army.Units[i];
         }
     }
 }

@@ -8,21 +8,23 @@ using System.Threading.Tasks;
 
 namespace csheroes.src
 {
-    class Army : IGameObj
+    public class Army : IGameObj
     {
         Unit[] units;
 
         public Army(params Unit[] units)
         {
-            this.units = new Unit[7];
+            this.Units = new Unit[7];
 
             for (int i = 0; i < units.Length && i < 7; i++)
-                this.units[i] = units[i];
+                this.Units[i] = units[i];
         }
+
+        public Unit[] Units { get => units; set => units = value; }
 
         public Rectangle GetTile()
         {
-            return units[0].GetTile();
+            return Units[0].GetTile();
         }
     }
 }

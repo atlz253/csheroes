@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace csheroes.src.unit
 {
-    enum UnitType
+    public enum UnitType
     {
         ABBITURENT
     }
 
-    class Unit : IGameObj
+    public class Unit : IGameObj
     {
         readonly IAttack attack;
         readonly Rectangle tile;
