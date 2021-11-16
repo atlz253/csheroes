@@ -43,7 +43,7 @@ namespace csheroes.form.camp
             this.button1.TabIndex = 0;
             this.button1.Text = "Нанять абитурента";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Hire);
             // 
             // button2
             // 
@@ -71,6 +71,7 @@ namespace csheroes.form.camp
             this.button4.TabIndex = 3;
             this.button4.Text = "Выход";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.Exit);
             // 
             // CampForm
             // 

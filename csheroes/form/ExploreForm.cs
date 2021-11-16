@@ -1,4 +1,5 @@
-﻿using csheroes.src;
+﻿using csheroes.form.camp;
+using csheroes.src;
 using csheroes.src.unit;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,7 @@ namespace csheroes.form
             hero = new Hero(new Army(new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) }));
             heroCords = new Point(2, 0);
             action[heroCords.Y, heroCords.X] = hero;
+            UpdateRespect();
 
             action[0, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[1, 5] = new Obstacle(ObstacleType.MOUNTAIN_1);
@@ -90,6 +92,11 @@ namespace csheroes.form
             action[3, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 0] = new Army(new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
+        }
+
+        void UpdateRespect()
+        {
+            respectLabel.Text = hero.Respect.ToString();
         }
 
         void DrawAction()
@@ -254,6 +261,20 @@ namespace csheroes.form
 
             if (hero.Army.Empty)
                 return; // TODO: поражение
+        }
+
+        private void CampMenu(object sender, EventArgs e)
+        {
+            CampForm campForm = new(this, hero);
+
+            campForm.Location = new Point(Location.X, Location.Y);
+
+            Visible = false;
+
+            campForm.ShowDialog();
+            campForm.Dispose();
+
+            Visible = true;
         }
     }
 }
