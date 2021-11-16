@@ -14,6 +14,8 @@ namespace csheroes.form.camp
 {
     public partial class CampForm : Form
     {
+        readonly Graphics surface;
+
         readonly ExploreForm parent;
         readonly Hero hero;
 
@@ -21,8 +23,29 @@ namespace csheroes.form.camp
         {
             InitializeComponent();
 
+            surface = CreateGraphics();
+
             this.hero = hero;
             this.parent = parent;
+        }
+
+        void Draw()
+        {
+            DrawCards();
+        }
+
+        void DrawCards()
+        {
+            for (int i = 0; i < 7; i++)
+            {
+
+                surface.DrawLines(Global.GridPen, new PointF[] { new PointF((float) 100 / 8 * (i + 1) + i * 100, 600), new PointF((float) 100 / 8 * (i + 1) + i * 100, 750), new PointF((float) 100 / 8 * (i + 1) + (i + 1) * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 600) });
+            }
+        }
+
+        private void OnPaint(object sender, PaintEventArgs e)
+        {
+            Draw();
         }
 
         private void Hire(object sender, EventArgs e)
@@ -49,5 +72,7 @@ namespace csheroes.form.camp
 
             Close();
         }
+
+        
     }
 }
