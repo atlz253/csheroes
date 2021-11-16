@@ -15,7 +15,7 @@ namespace csheroes.form
 {
     public partial class ExploreForm : Form
     {
-        Graphics surface;
+        readonly Graphics surface;
 
         Rectangle[,] background = null;
         IGameObj[,] action = null;
