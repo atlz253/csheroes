@@ -10,13 +10,15 @@ using System.Windows.Forms;
 
 namespace csheroes.form.camp
 {
-    public partial class HireDialog : Form
+    public partial class BoolDialog : Form
     {
         public bool choice = false;
 
-        public HireDialog()
+        public BoolDialog(string text)
         {
             InitializeComponent();
+
+            label1.Text = text;
         }
 
         private void button2_Click(object sender, EventArgs e)

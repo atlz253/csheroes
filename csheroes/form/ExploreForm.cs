@@ -274,6 +274,8 @@ namespace csheroes.form
             campForm.ShowDialog();
             campForm.Dispose();
 
+            UpdateRespect();
+
             Visible = true;
         }
     }

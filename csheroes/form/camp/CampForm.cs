@@ -19,14 +19,25 @@ namespace csheroes.form.camp
         readonly ExploreForm parent;
         readonly Hero hero;
 
+        Label[] labels;
+        Button[] healBtns;
+
         public CampForm(ExploreForm parent, Hero hero)
         {
             InitializeComponent();
+
+            InitCards();
 
             surface = CreateGraphics();
 
             this.hero = hero;
             this.parent = parent;
+        }
+
+        void InitCards()
+        {
+            labels = new Label[7];
+            healBtns = new Button[7];
         }
 
         void Draw()
@@ -38,9 +49,58 @@ namespace csheroes.form.camp
         {
             for (int i = 0; i < 7; i++)
             {
-
+                /* Рамка карточек */
                 surface.DrawLines(Global.GridPen, new PointF[] { new PointF((float) 100 / 8 * (i + 1) + i * 100, 600), new PointF((float) 100 / 8 * (i + 1) + i * 100, 750), new PointF((float) 100 / 8 * (i + 1) + (i + 1) * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 600) });
+
+                if (hero.Army.Units[i] != null)
+                {
+                    Unit unit = hero.Army.Units[i];
+
+                    if (labels[i] == null)
+                        labels[i] = new();
+
+                    labels[i].Text = unit.ToString();
+                    labels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 610);
+                    labels[i].BackColor = Color.Transparent;
+                    Controls.Add(labels[i]);
+
+                    if (unit.Hp < unit.MaxHp)
+                    {
+                        if (healBtns[i] == null)
+                            healBtns[i] = new();
+
+                        healBtns[i].Text = "HP";
+                        healBtns[i].Name = $"healBtn{i}";
+                        healBtns[i].Size = new Size(25, 25);
+                        healBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 700);
+                        healBtns[i].Click += new EventHandler(Heal);
+                        Controls.Add(healBtns[i]);
+
+                    }
+                }
             }
+        }
+
+        void Heal(object sender, EventArgs e)
+        {
+            for (int i = 0; i < 7; i++)
+                if (healBtns[i] != null && (sender as Button).Name == healBtns[i].Name)
+                {
+                    BoolDialog dialog = new("Вы слишком зачастили к нам (- 100 респекта)");
+
+                    dialog.ShowDialog();
+
+                    if (dialog.choice)
+                    {
+                        hero.Respect -= 100;
+                        hero.Army.Units[i].Hp = hero.Army.Units[i].MaxHp;
+
+                        Controls.Remove(healBtns[i]);
+                        healBtns[i] = null;
+                    }
+
+                    break;
+                }
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
@@ -50,7 +110,7 @@ namespace csheroes.form.camp
 
         private void Hire(object sender, EventArgs e)
         {
-            HireDialog dialog = new();
+            BoolDialog dialog = new("Завербовать нового абитурента (100 респекта)?");
 
             dialog.ShowDialog();
 

@@ -1,7 +1,7 @@
 ﻿
 namespace csheroes.form.camp
 {
-    partial class HireDialog
+    partial class BoolDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -39,9 +39,9 @@ namespace csheroes.form.camp
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(269, 15);
+            this.label1.Size = new System.Drawing.Size(185, 15);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Завербовать нового абитурента (100 респекта)?";
+            this.label1.Text = "здесь могла быть ваша реклама";
             // 
             // button1
             // 
@@ -63,7 +63,7 @@ namespace csheroes.form.camp
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // HireDialog
+            // BoolDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -74,7 +74,7 @@ namespace csheroes.form.camp
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "HireDialog";
+            this.Name = "BoolDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "HireDialog";
             this.ResumeLayout(false);
