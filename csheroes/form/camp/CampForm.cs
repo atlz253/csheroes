@@ -26,12 +26,13 @@ namespace csheroes.form.camp
         {
             InitializeComponent();
 
-            InitCards();
-
             surface = CreateGraphics();
 
             this.hero = hero;
             this.parent = parent;
+
+            InitCards();
+            InitHealBtns();
         }
 
         void InitCards()
@@ -48,10 +49,12 @@ namespace csheroes.form.camp
         void DrawCards()
         {
             for (int i = 0; i < 7; i++)
-            {
-                /* Рамка карточек */
                 surface.DrawLines(Global.GridPen, new PointF[] { new PointF((float) 100 / 8 * (i + 1) + i * 100, 600), new PointF((float) 100 / 8 * (i + 1) + i * 100, 750), new PointF((float) 100 / 8 * (i + 1) + (i + 1) * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 600) });
+        }
 
+        void InitHealBtns()
+        {
+            for (int i = 0; i < 7; i++)
                 if (hero.Army.Units[i] != null)
                 {
                     Unit unit = hero.Army.Units[i];
@@ -64,21 +67,17 @@ namespace csheroes.form.camp
                     labels[i].BackColor = Color.Transparent;
                     Controls.Add(labels[i]);
 
-                    if (unit.Hp < unit.MaxHp)
+                    if (unit.Hp != unit.MaxHp && healBtns[i] == null)
                     {
-                        if (healBtns[i] == null)
-                            healBtns[i] = new();
-
+                        healBtns[i] = new();
                         healBtns[i].Text = "HP";
                         healBtns[i].Name = $"healBtn{i}";
                         healBtns[i].Size = new Size(25, 25);
                         healBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 700);
                         healBtns[i].Click += new EventHandler(Heal);
                         Controls.Add(healBtns[i]);
-
                     }
                 }
-            }
         }
 
         void Heal(object sender, EventArgs e)
@@ -92,6 +91,9 @@ namespace csheroes.form.camp
 
                     if (dialog.choice)
                     {
+                        if (hero.Respect == 0 || hero.Respect < 100)
+                            return;
+
                         hero.Respect -= 100;
                         hero.Army.Units[i].Hp = hero.Army.Units[i].MaxHp;
 
@@ -99,7 +101,7 @@ namespace csheroes.form.camp
                         healBtns[i] = null;
                     }
 
-                    break;
+                    return;
                 }
         }
 
@@ -119,8 +121,11 @@ namespace csheroes.form.camp
                 {
                     if (hero.Army.Units[i] == null)
                     {
-                        hero.Army.Units[i] = new(UnitType.ABBITURENT);
+                        if (hero.Respect == 0 || hero.Respect < 100)
+                            break;
                         hero.Respect -= 100;
+
+                        hero.Army.Units[i] = new(UnitType.ABBITURENT);
                         break;
                     }
                 }
