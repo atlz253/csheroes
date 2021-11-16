@@ -15,6 +15,7 @@ namespace csheroes.form
     public partial class BattleForm : Form
     {
         Graphics surface;
+        ExploreForm parent;
 
         Rectangle[,] background = null;
         IGameObj[,] action = null;
@@ -27,10 +28,13 @@ namespace csheroes.form
         int firstArmyTurn = 0,
             secondArmyTurn = 0;
         bool turn = true;
+        bool close = false;
 
-        public BattleForm(Hero hero, Army enemy)
+        public BattleForm(ExploreForm parent, Hero hero, Army enemy)
         {
             InitializeComponent();
+
+            this.parent = parent;
 
             InitBackground();
 
@@ -40,7 +44,7 @@ namespace csheroes.form
             LinedArmy(firstArmy, out firstArmyCords, 0);
 
             secondArmy = enemy;
-            LinedArmy(secondArmy, out secondArmyCords, Width / Global.CellSize - 1);
+            LinedArmy(secondArmy, out secondArmyCords, 3); // Width / Global.CellSize - 1
 
             surface = CreateGraphics();
         }
@@ -96,7 +100,22 @@ namespace csheroes.form
                     return;
 
             int index = turn ? firstArmyTurn : secondArmyTurn;
-            Unit unit = turn ? firstArmy.Units[index] : secondArmy.Units[index];
+            Unit unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
+
+            while (unit == null) // если юнит, который должен был ходить, трагически погиб
+            {
+                if (turn)
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
+                else
+                    NextTurn(secondArmy.Units, ref secondArmyTurn);
+
+                if (close) // не осталось юнитов
+                    return; // FIXME: нужен еще один клик, чтобы выйти из битвы
+
+                index = turn ? firstArmyTurn : secondArmyTurn;
+                unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
+            }
+
             Point tmp = new(friendCords[index].X, friendCords[index].Y);
 
             bool unitMove = (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range),
@@ -231,18 +250,39 @@ namespace csheroes.form
             if (unitTurn)
             {
                 if (turn)
-                    if (firstArmyTurn != firstArmy.Units.Length - 1 && firstArmy.Units[firstArmyTurn + 1] != null)
-                        firstArmyTurn++;
-                    else
-                        firstArmyTurn = 0;
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
                 else
-                if (secondArmyTurn != secondArmy.Units.Length - 1 && secondArmy.Units[secondArmyTurn + 1] != null)
-                    secondArmyTurn++;
-                else
-                    secondArmyTurn = 0;
+                    NextTurn(secondArmy.Units, ref secondArmyTurn);
 
                 turn = !turn;
             }
+        }
+
+        void NextTurn(Unit[] units, ref int index)
+        {
+            for (int i = index + 1; i < 7; i++) // проверяем остаток массива
+                if (units[i] != null)
+                {
+                    index = i;
+                    return;
+                }
+
+            for (int i = 0; i < index + 1; i++) // начинаем смотреть сначала
+                if (units[i] != null)
+                {
+                    index = i;
+                    return;
+                }
+
+            EndBattle();
+        }
+
+        void EndBattle()
+        {
+            parent.Location = new Point(Location.X, Location.Y);
+
+            Close();
+            close = true;
         }
 
         void DrawArrow(Arrows direction, int x, int y)

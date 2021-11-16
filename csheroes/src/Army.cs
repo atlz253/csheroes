@@ -22,6 +22,17 @@ namespace csheroes.src
 
         public Unit[] Units { get => units; set => units = value; }
 
+        public bool Empty
+        {
+            get
+            {
+                foreach (Unit unit in units)
+                    if (unit != null)
+                        return false;
+                return true;
+            }
+        }
+
         public Rectangle GetTile()
         {
             return Units[0].GetTile();

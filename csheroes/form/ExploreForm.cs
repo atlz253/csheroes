@@ -77,7 +77,7 @@ namespace csheroes.form
         {
             action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
-            hero = new Hero(new Army(new Unit[2] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) }));
+            hero = new Hero(new Army(new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) }));
             heroCords = new Point(2, 0);
             action[heroCords.Y, heroCords.X] = hero;
 
@@ -89,7 +89,7 @@ namespace csheroes.form
             action[3, 3] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
-            action[3, 0] = new Army(new Unit[7] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
+            action[3, 0] = new Army(new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
         }
 
         void DrawAction()
@@ -241,15 +241,19 @@ namespace csheroes.form
 
         void StartBattle(Army enemy)
         {
-            BattleForm battleForm = new(hero, enemy);
+            BattleForm battleForm = new(this, hero, enemy);
 
             battleForm.Location = new Point(Location.X, Location.Y);
 
             Visible = false;
 
             battleForm.ShowDialog();
+            battleForm.Dispose();
 
             Visible = true;
+
+            if (hero.Army.Empty)
+                return; // TODO: поражение
         }
     }
 }
