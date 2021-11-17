@@ -21,6 +21,7 @@ namespace csheroes.form
         IGameObj[,] action = null;
         Arrows[,] arrow = null;
 
+        Hero hero;
         Army firstArmy,
              secondArmy;
         Point[] firstArmyCords,
@@ -34,6 +35,7 @@ namespace csheroes.form
         {
             InitializeComponent();
 
+            this.hero = hero;
             this.parent = parent;
 
             InitBackground();
@@ -238,8 +240,13 @@ namespace csheroes.form
                         if (action[dest.Y, dest.X] == enemyArmy.Units[i])
                             enemyArmy.Units[i] = null;
 
-
                     action[dest.Y, dest.X] = null;
+
+                    if (hero.Army != enemyArmy)
+                    {
+                        hero.Respect += 100;
+                        unit.Exp += 1;
+                    }
 
                     Draw();
                 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,9 +27,26 @@ namespace csheroes.src
             }
         }
 
+        public Obstacle(int tileX, int tileY)
+        {
+            tile = new Rectangle(tileX, tileY, Global.CellSize, Global.CellSize);
+        }
+
         public Rectangle GetTile()
         {
             return tile;
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write(ToString());
+            writer.Write(tile.X);
+            writer.Write(tile.Y);
+        }
+
+        public override string ToString()
+        {
+            return "Obstacle";
         }
     }
 }

@@ -18,7 +18,11 @@ namespace csheroes
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ExploreForm());
+#if FIRST_MAP
+            Application.Run(new ExploreForm("../../../Resources/Maps/FirstMap"));
+#else
+            Application.Run(new MainMenuForm());
+#endif
         }
     }
 }
