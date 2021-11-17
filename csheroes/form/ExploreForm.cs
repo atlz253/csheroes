@@ -92,6 +92,7 @@ namespace csheroes.form
             action[3, 2] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 1] = new Obstacle(ObstacleType.MOUNTAIN_1);
             action[3, 0] = new Army(new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
+            action[4, 0] = new Army(new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
         }
 
         void UpdateRespect()
@@ -258,6 +259,7 @@ namespace csheroes.form
             battleForm.Dispose();
 
             Visible = true;
+            UpdateRespect();
 
             if (hero.Army.Empty)
                 return; // TODO: поражение
