@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,6 +85,13 @@ namespace csheroes.src.unit
         public override string ToString()
         {
             return name;
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write(name);
+            writer.Write(hp);
+            writer.Write(exp);
         }
     }
 }

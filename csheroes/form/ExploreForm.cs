@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,12 +25,16 @@ namespace csheroes.form
         Hero hero = null;
         Point heroCords;
 
-        public ExploreForm()
+        public ExploreForm(string fileName)
         {
             InitializeComponent();
 
             InitBackground();
+#if TEST_MAP
             InitAction();
+#else
+            InitAction(fileName);
+#endif
 
             surface = CreateGraphics();
         }
@@ -74,12 +79,13 @@ namespace csheroes.form
                     surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i,j], GraphicsUnit.Pixel);
         }
 
+#if TEST_MAP
         void InitAction()
         {
             action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
             hero = new Hero(new Army(new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) }));
-            heroCords = new Point(2, 0);
+            heroCords = new Point(0, 0);
             action[heroCords.Y, heroCords.X] = hero;
             UpdateRespect();
 
@@ -94,6 +100,102 @@ namespace csheroes.form
             action[3, 0] = new Army(new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
             action[4, 0] = new Army(new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
         }
+#else
+
+        void InitAction(string fileName)
+        {
+            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
+
+            using (BinaryReader reader = new(File.Open(fileName, FileMode.Open)))
+            {
+                for (int i = 0; i < Width / Global.CellSize; i++)
+                    for (int j = 0; j < Height / Global.CellSize; j++)
+                    {
+                        string name = reader.ReadString();
+
+                        if (name == "NullObj")
+                        {
+                            continue;
+                        }
+                        else if (name == "Obstacle")
+                        {
+                            action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
+                        }
+                        else if (name == "Hero")
+                        {
+                            int respect = reader.ReadInt32();
+
+                            reader.ReadString(); // считываем строку "Army"
+                            Unit[] units = new Unit[7];
+                            for (int k = 0; k < 7; k++)
+                            {
+                                string unitName = reader.ReadString();
+                                UnitType type = UnitType.ABBITURENT;
+
+                                if (unitName == "NoUnit")
+                                    continue;
+
+                                switch (unitName)
+                                {
+                                    case "Абитурент":
+                                        type = UnitType.ABBITURENT;
+                                        break;
+                                    case "Технарь":
+                                        type = UnitType.TECHNAR;
+                                        break;
+                                    case "Гуманитарий":
+                                        type = UnitType.GUMANITARIY;
+                                        break;
+                                }
+
+                                Unit unit = new(type);
+                                unit.Hp = reader.ReadInt32();
+                                unit.Exp = reader.ReadInt32();
+
+                                units[k] = unit;
+                            }
+
+                            hero = new Hero(new Army(units), respect);
+                            action[i, j] = hero;
+                            heroCords = new Point(i, j);
+                        }
+                        else if (name == "Army")
+                        {
+                            Unit[] units = new Unit[7];
+                            for (int k = 0; k < 7; k++)
+                            {
+                                string unitName = reader.ReadString();
+                                UnitType type = UnitType.ABBITURENT;
+
+                                if (unitName == "NoUnit")
+                                    continue;
+
+                                switch (unitName)
+                                {
+                                    case "Абитурент":
+                                        type = UnitType.ABBITURENT;
+                                        break;
+                                    case "Технарь":
+                                        type = UnitType.TECHNAR;
+                                        break;
+                                    case "Гуманитарий":
+                                        type = UnitType.GUMANITARIY;
+                                        break;
+                                }
+
+                                Unit unit = new(type);
+                                unit.Hp = reader.ReadInt32();
+                                unit.Exp = reader.ReadInt32();
+
+                                units[k] = unit;
+                            }
+
+                            action[i, j] = new Army(units);
+                        }
+                    }
+            }
+        }
+#endif
 
         void UpdateRespect()
         {
@@ -112,7 +214,7 @@ namespace csheroes.form
         {
             int destX = e.X / Global.CellSize,
                 destY = e.Y / Global.CellSize;
-            if (action[destY, destX] != null && action[destY, destX].ToString() == "csheroes.src.Obstacle")
+            if (action[destY, destX] != null && action[destY, destX].ToString() == "Obstacle")
                 return;
 
             int tmpX = heroCords.X,
@@ -127,7 +229,7 @@ namespace csheroes.form
                     if (action[destY, destX] != null)
                         switch (action[destY, destX].ToString())
                         {
-                            case "csheroes.src.Army":
+                            case "Army":
                             StartBattle((Army) action[destY, destX]);
                             break;
                         }
@@ -279,6 +381,29 @@ namespace csheroes.form
             UpdateRespect();
 
             Visible = true;
+        }
+
+        private void Save(object sender, EventArgs e)
+        {
+            SaveDialog dialog = new();
+
+            dialog.ShowDialog();
+
+            if (dialog.save)
+            {
+                if (!Directory.Exists("saves"))
+                    Directory.CreateDirectory("saves");
+
+                using (BinaryWriter writer = new(File.Open($"saves/{dialog.fileName}", FileMode.OpenOrCreate)))
+                {
+                    for (int i = 0; i < Width / Global.CellSize; i++)
+                        for (int j = 0; j < Height / Global.CellSize; j++)
+                            if (action[i, j] == null)
+                                writer.Write("NullObj");
+                            else
+                                action[i, j].Save(writer);
+                }
+            }
         }
     }
 }

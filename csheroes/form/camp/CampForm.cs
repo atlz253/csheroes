@@ -124,7 +124,6 @@ namespace csheroes.form.camp
                         AbiturentUpgradeDialog upgradeDialog = new();
                         
                         upgradeDialog.ShowDialog();
-                        upgradeDialog.Dispose();
                         
                         if (hero.Respect == 0 || hero.Respect < 100)
                             return;
@@ -134,6 +133,8 @@ namespace csheroes.form.camp
 
                         Controls.Remove(expBtns[i]);
                         expBtns[i] = null;
+                        
+                        upgradeDialog.Dispose();
                     }
                 }
         }

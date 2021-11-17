@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,22 @@ namespace csheroes.src
         public Rectangle GetTile()
         {
             return Units[0].GetTile();
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write(ToString());
+
+            for (int i = 0; i < 7; i++)
+                if (units[i] != null)
+                    units[i].Save(writer);
+                else
+                    writer.Write("NoUnit");
+        }
+
+        public override string ToString()
+        {
+            return "Army";
         }
     }
 }
