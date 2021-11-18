@@ -20,7 +20,8 @@ namespace csheroes.src
     {
         static readonly int cellSize = 32;
 
-        static readonly Pen gridPen = new Pen(Color.Black, 1);
+        static readonly Pen gridPen = new(Color.Black, 1),
+                            highlightPen = new(Color.Red, 1);
 
         static readonly Random rand = new();
         static readonly Image texture = Image.FromFile("../../../res/textures.png");
@@ -33,13 +34,8 @@ namespace csheroes.src
             }
         }
 
-        public static Pen GridPen
-        {
-            get
-            {
-                return gridPen;
-            }
-        }
+        public static Pen GridPen => gridPen;
+        public static Pen HighlightPen => highlightPen;
 
         public static Image Texture
         {

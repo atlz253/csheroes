@@ -57,11 +57,36 @@ namespace csheroes.form
             DrawArrows();
             DrawAction();
             DrawGrid();
+            DrawHighlight();
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
             Draw();
+        }
+
+        void DrawHighlight()
+        {
+            Point[] friendCords = turn ? firstArmyCords : secondArmyCords;
+            int index = turn ? firstArmyTurn : secondArmyTurn;
+            Unit unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
+
+            while (unit == null) // если юнит, который должен был ходить, трагически погиб
+            {
+                if (turn)
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
+                else
+                    NextTurn(secondArmy.Units, ref secondArmyTurn);
+
+                if (close) // не осталось юнитов
+                    return; // FIXME: нужен еще один клик, чтобы выйти из битвы
+
+                index = turn ? firstArmyTurn : secondArmyTurn;
+                unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
+            }
+
+            Point tmp = new(friendCords[index].X, friendCords[index].Y);
+            surface.DrawRectangle(Global.HighlightPen, new Rectangle(tmp.X * Global.CellSize, tmp.Y * Global.CellSize, Global.CellSize, Global.CellSize));
         }
 
         void DrawGrid()
@@ -134,8 +159,6 @@ namespace csheroes.form
 
                     action[dest.Y, dest.X] = unit;
 
-                    Draw();
-
                     unitMove = false;
                     unitTurn = true;
                 }
@@ -162,8 +185,6 @@ namespace csheroes.form
                     action[tmp.Y, tmp.X] = unit;
 
                     unitAttack = true;
-
-                    Draw();
 
                     unitMove = false;
                 }
@@ -223,7 +244,6 @@ namespace csheroes.form
                 }
                 else
                 {
-                    Draw();
                     unitMove = false;
                 }
             }
@@ -249,7 +269,6 @@ namespace csheroes.form
                         unit.Exp += 1;
                     }
 
-                    Draw();
                 }
 
                 unitTurn = true;
@@ -264,6 +283,7 @@ namespace csheroes.form
 
                 turn = !turn;
             }
+            Draw();
         }
 
         void NextTurn(Unit[] units, ref int index)
