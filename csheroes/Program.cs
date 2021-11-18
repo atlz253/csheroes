@@ -20,6 +20,8 @@ namespace csheroes
             Application.SetCompatibleTextRenderingDefault(false);
 #if FIRST_MAP
             Application.Run(new ExploreForm("../../../Resources/Maps/FirstMap"));
+#elif TEST_MAP
+            Application.Run(new ExploreForm(""));
 #else
             Application.Run(new MainMenuForm());
 #endif

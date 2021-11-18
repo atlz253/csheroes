@@ -232,7 +232,7 @@ namespace csheroes.form
                 Unit enemy = (Unit)action[dest.Y, dest.X];
                 enemy.Hp -= unit.Damage;
 
-                if (enemy.Hp == 0)
+                if (enemy.Hp <= 0)
                 {
                     Army enemyArmy = turn ? secondArmy : firstArmy;
 

@@ -41,7 +41,7 @@ namespace csheroes.src.unit
                     name = "Абитурент";
                     break;
                 case UnitType.TECHNAR:
-                    tile = new Rectangle(928, 0, Global.CellSize, Global.CellSize);
+                    tile = new Rectangle(320, 0, Global.CellSize, Global.CellSize);
                     attack = new MeleeAttack(); // TODO: дальний бой
                     maxHp = 3;
                     Hp = 3;
@@ -51,7 +51,7 @@ namespace csheroes.src.unit
                     name = "Технарь";
                     break;
                 case UnitType.GUMANITARIY:
-                    tile = new Rectangle(928, 0, Global.CellSize, Global.CellSize);
+                    tile = new Rectangle(288, 0, Global.CellSize, Global.CellSize);
                     attack = new MeleeAttack();
                     maxHp = 5;
                     Hp = 5;

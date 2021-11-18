@@ -10,7 +10,8 @@ namespace csheroes.src
 {
     enum ObstacleType
     {
-        MOUNTAIN_1
+        MOUNTAIN_1,
+        NEW_KORPUS_WALL
     }
 
     class Obstacle : IGameObj
@@ -23,6 +24,9 @@ namespace csheroes.src
             {
                 case ObstacleType.MOUNTAIN_1:
                     tile = new(96, 0, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.NEW_KORPUS_WALL:
+                    tile = new(0, 192, Global.CellSize, Global.CellSize);
                     break;
             }
         }

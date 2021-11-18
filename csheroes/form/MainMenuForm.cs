@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,27 @@ namespace csheroes.form
 
         private void NewGame(object sender, EventArgs e)
         {
-            ExploreForm exploreForm = new("../../../Resources/Maps/FirstMap");
+            LoadGame("../../../Resources/Maps/FirstMap");
+        }
+
+        private void LoadGameDialog(object sender, EventArgs e)
+        {
+            LoadDialog dialog = new();
+
+            dialog.ShowDialog();
+
+            if (dialog.load)
+                LoadGame($"saves/{dialog.fileName}");
+
+            dialog.Dispose();
+        }
+
+        void LoadGame(string path)
+        {
+            if (!File.Exists(path))
+                return;
+
+            ExploreForm exploreForm = new(path); // TODO: parent
 
             exploreForm.Location = new Point(Location.X, Location.Y);
 
