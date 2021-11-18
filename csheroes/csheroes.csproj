@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <Configurations>Debug;Release;FirstMap;TestMap</Configurations>
+    <Configurations>Debug;Release;FirstMap;TestMap;TestBattle</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,6 +18,10 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TestMap|AnyCPU'">
     <DefineConstants>DEBUG;TRACE;TEST_MAP</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TestBattle|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE;TEST_BATTLE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

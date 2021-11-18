@@ -10,6 +10,7 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 		FirstMap|Any CPU = FirstMap|Any CPU
 		Release|Any CPU = Release|Any CPU
+		TestBattle|Any CPU = TestBattle|Any CPU
 		TestMap|Any CPU = TestMap|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -19,6 +20,8 @@ Global
 		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.FirstMap|Any CPU.Build.0 = FirstMap|Any CPU
 		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.TestBattle|Any CPU.ActiveCfg = TestBattle|Any CPU
+		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.TestBattle|Any CPU.Build.0 = TestBattle|Any CPU
 		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.TestMap|Any CPU.ActiveCfg = TestMap|Any CPU
 		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.TestMap|Any CPU.Build.0 = TestMap|Any CPU
 	EndGlobalSection

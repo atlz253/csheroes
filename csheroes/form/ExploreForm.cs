@@ -356,7 +356,7 @@ namespace csheroes.form
                                 units[k] = unit;
                             }
 
-                            hero = new Hero(new Army(units), respect);
+                            hero = new Hero(new Army(false, units), respect);
                             action[i, j] = hero;
                             heroCords = new Point(i, j);
                         }
@@ -391,7 +391,7 @@ namespace csheroes.form
                                 units[k] = unit;
                             }
 
-                            action[i, j] = new Army(units);
+                            action[i, j] = new Army(true, units);
                         }
                     }
             }

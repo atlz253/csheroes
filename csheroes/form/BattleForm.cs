@@ -79,7 +79,7 @@ namespace csheroes.form
                     NextTurn(secondArmy.Units, ref secondArmyTurn);
 
                 if (close) // не осталось юнитов
-                    return; // FIXME: нужен еще один клик, чтобы выйти из битвы
+                    return;
 
                 index = turn ? firstArmyTurn : secondArmyTurn;
                 unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
@@ -221,6 +221,29 @@ namespace csheroes.form
             return false;
         }
 
+        void AttackUnit(Unit enemy, Point pos, Unit damager)
+        {
+            enemy.Hp -= damager.Damage;
+
+            if (enemy.Hp <= 0)
+            {
+                Army enemyArmy = turn ? secondArmy : firstArmy;
+
+                for (int i = 0; i < enemyArmy.Units.Length; i++)
+                    if (action[pos.Y, pos.X] == enemyArmy.Units[i])
+                        enemyArmy.Units[i] = null;
+
+                action[pos.Y, pos.X] = null;
+
+                if (hero.Army != enemyArmy)
+                {
+                    hero.Respect += 100;
+                    damager.Exp += 1;
+                }
+
+            }
+        }
+
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
             arrow = new Arrows[Width / Global.CellSize, Height / Global.CellSize];
@@ -242,7 +265,7 @@ namespace csheroes.form
                     NextTurn(secondArmy.Units, ref secondArmyTurn);
 
                 if (close) // не осталось юнитов
-                    return; // FIXME: нужен еще один клик, чтобы выйти из битвы
+                    return;
 
                 index = turn ? firstArmyTurn : secondArmyTurn;
                 unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
@@ -250,7 +273,7 @@ namespace csheroes.form
 
             Point tmp = new(friendCords[index].X, friendCords[index].Y);
 
-            bool unitMove = ((unit.Attack == AttackType.MELEE) && (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range)), 
+            bool unitMove = ((action[dest.Y, dest.X] == null || unit.Attack == AttackType.MELEE) && Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range), 
                  unitTurn = false;
 
             if (unitMove)
@@ -260,26 +283,82 @@ namespace csheroes.form
 
             if (unitAttack)
             {
-                Unit enemy = (Unit)action[dest.Y, dest.X];
-                enemy.Hp -= unit.Damage;
+                AttackUnit((Unit)action[dest.Y, dest.X], dest, unit);
 
-                if (enemy.Hp <= 0)
-                {
-                    Army enemyArmy = turn ? secondArmy : firstArmy;
+                unitTurn = true;
+            }
 
-                    for (int i = 0; i < enemyArmy.Units.Length; i++)
-                        if (action[dest.Y, dest.X] == enemyArmy.Units[i])
-                            enemyArmy.Units[i] = null;
+            if (unitTurn)
+            {
+                if (turn)
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
+                else
+                    NextTurn(secondArmy.Units, ref secondArmyTurn);
 
-                    action[dest.Y, dest.X] = null;
+                turn = !turn;
 
-                    if (hero.Army != enemyArmy)
-                    {
-                        hero.Respect += 100;
-                        unit.Exp += 1;
-                    }
+                Army next = turn ? firstArmy : secondArmy;
 
-                }
+                if (next.Ai)
+                    AIMove();
+            }
+            Draw();
+        }
+
+        void AIMove()
+        {
+            arrow = new Arrows[Width / Global.CellSize, Height / Global.CellSize];
+            Point[] friendCords = turn ? firstArmyCords : secondArmyCords,
+                    enemyCords = turn ? secondArmyCords : firstArmyCords;
+            int index = turn ? firstArmyTurn : secondArmyTurn;
+            Unit unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
+            Unit[] enemyUnits = turn ? firstArmy.Units : secondArmy.Units;
+
+            while (unit == null) // если юнит, который должен был ходить, трагически погиб
+            {
+                if (turn)
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
+                else
+                    NextTurn(secondArmy.Units, ref secondArmyTurn);
+
+                if (close) // не осталось юнитов
+                    return;
+
+                index = turn ? firstArmyTurn : secondArmyTurn;
+                unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
+            }
+
+            Point dest = new(0, 0), tmp = new(friendCords[index].X, friendCords[index].Y);
+
+            for (int i = 0; i < 7; i++)
+                if (enemyUnits[i] != null)
+                    dest = enemyCords[i];
+            
+            foreach (Point cords in enemyCords)
+                if (Math.Sqrt((dest.X - tmp.X)*(dest.X - tmp.X)+(dest.Y - tmp.Y)*(dest.Y - tmp.Y)) > Math.Sqrt((dest.X - cords.X) * (dest.X - cords.X) + (dest.Y - cords.Y) * (dest.Y - cords.Y)))
+                    dest = cords;
+
+            if (Math.Abs(dest.X - tmp.X) > unit.Range && dest.X > tmp.X)
+                dest.X = tmp.X + unit.Range;
+            else if (Math.Abs(dest.X - tmp.X) > unit.Range && dest.X < tmp.X)
+                dest.X = tmp.X - unit.Range;
+
+            if (Math.Abs(dest.Y - tmp.Y) > unit.Range && dest.Y > tmp.Y)
+                dest.Y = tmp.Y + unit.Range;
+            else if (Math.Abs(dest.Y - tmp.Y) > unit.Range && dest.Y < tmp.Y)
+                dest.Y = tmp.Y - unit.Range;
+
+            bool unitMove = ((unit.Attack == AttackType.MELEE) && (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range)),
+                 unitTurn = false;
+
+            if (unitMove)
+                unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
+
+            bool unitAttack = ((unit.Attack == AttackType.RANGE) && (action[dest.Y, dest.X] != null)) || ((unit.Attack == AttackType.MELEE) && ((tmp.X == dest.X && Math.Abs(dest.Y - friendCords[index].Y) == 1) || (tmp.Y == dest.Y && Math.Abs(dest.X - friendCords[index].X) == 1)));
+
+            if (unitAttack)
+            {
+                AttackUnit((Unit)action[dest.Y, dest.X], dest, unit);
 
                 unitTurn = true;
             }
@@ -317,7 +396,9 @@ namespace csheroes.form
 
         void EndBattle()
         {
+#if !TEST_BATTLE
             parent.Location = new Point(Location.X, Location.Y);
+#endif
 
             Close();
             close = true;
