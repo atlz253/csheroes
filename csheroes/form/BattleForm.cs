@@ -46,7 +46,7 @@ namespace csheroes.form
             LinedArmy(firstArmy, out firstArmyCords, 0);
 
             secondArmy = enemy;
-            LinedArmy(secondArmy, out secondArmyCords, 3); // Width / Global.CellSize - 1
+            LinedArmy(secondArmy, out secondArmyCords, 6); // Width / Global.CellSize - 1
 
             surface = CreateGraphics();
         }
@@ -120,8 +120,9 @@ namespace csheroes.form
 
             Point tmp = new(friendCords[index].X, friendCords[index].Y);
 
-            bool unitMove = (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range),
-                 unitAttack = false, unitTurn = false; // TODO: дальний бой
+            bool unitMove = ((unit.Attack == AttackType.MELEE) && (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range)),
+                 unitAttack = ((unit.Attack == AttackType.RANGE) && (action[dest.Y, dest.X] != null)), 
+                 unitTurn = false;
 
             while (unitMove)
             {
