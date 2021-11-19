@@ -12,9 +12,11 @@ namespace csheroes.src
     public class Army : IGameObj
     {
         Unit[] units;
+        readonly bool ai;
 
-        public Army(params Unit[] units)
+        public Army(bool ai = true, params Unit[] units)
         {
+            this.ai = ai;
             this.Units = new Unit[7];
 
             for (int i = 0; i < units.Length && i < 7; i++)
@@ -33,6 +35,8 @@ namespace csheroes.src
                 return true;
             }
         }
+
+        public bool Ai => ai;
 
         public Rectangle GetTile()
         {

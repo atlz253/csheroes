@@ -15,9 +15,15 @@ namespace csheroes.src.unit
         GUMANITARIY
     }
 
+    public enum AttackType
+    {
+        MELEE,
+        RANGE
+    }
+
     public class Unit : IGameObj
     {
-        readonly IAttack attack;
+        readonly AttackType type;
         readonly Rectangle tile;
 
         private int hp, exp = 0;
@@ -32,7 +38,7 @@ namespace csheroes.src.unit
             {
                 case UnitType.ABBITURENT:
                     tile = new Rectangle(256, 0, Global.CellSize, Global.CellSize);
-                    attack = new MeleeAttack();
+                    this.type = AttackType.MELEE;
                     maxHp = 3;
                     Hp = 3;
                     range = 3;
@@ -41,8 +47,8 @@ namespace csheroes.src.unit
                     name = "Абитурент";
                     break;
                 case UnitType.TECHNAR:
-                    tile = new Rectangle(928, 0, Global.CellSize, Global.CellSize);
-                    attack = new MeleeAttack(); // TODO: дальний бой
+                    tile = new Rectangle(320, 0, Global.CellSize, Global.CellSize);
+                    this.type = AttackType.RANGE; // TODO: дальний бой
                     maxHp = 3;
                     Hp = 3;
                     range = 3;
@@ -51,8 +57,8 @@ namespace csheroes.src.unit
                     name = "Технарь";
                     break;
                 case UnitType.GUMANITARIY:
-                    tile = new Rectangle(928, 0, Global.CellSize, Global.CellSize);
-                    attack = new MeleeAttack();
+                    tile = new Rectangle(288, 0, Global.CellSize, Global.CellSize);
+                    this.type = AttackType.MELEE;
                     maxHp = 5;
                     Hp = 5;
                     range = 5;
@@ -63,7 +69,7 @@ namespace csheroes.src.unit
             }
         }
 
-        internal IAttack Attack { get => attack; }
+        internal AttackType Attack { get => type; }
 
         public int Range => range;
 

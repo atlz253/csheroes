@@ -10,7 +10,7 @@ namespace csheroes.src
 {
     public class Hero : IGameObj
     {
-        private static readonly Rectangle tile = new(928, 0, Global.CellSize, Global.CellSize);
+        private static readonly Rectangle tile = new(224, 0, Global.CellSize, Global.CellSize);
         private readonly Army army;
 
         int respect = 100;

@@ -105,6 +105,7 @@ namespace csheroes.form
             this.toolStripSplitButton3.Name = "toolStripSplitButton3";
             this.toolStripSplitButton3.Size = new System.Drawing.Size(21, 20);
             this.toolStripSplitButton3.Text = "toolStripSplitButton3";
+            this.toolStripSplitButton3.ButtonClick += new System.EventHandler(this.toolStripSplitButton3_ButtonClick);
             // 
             // ExploreForm
             // 
