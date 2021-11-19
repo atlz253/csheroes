@@ -19,7 +19,7 @@ namespace csheroes.form
 
         Rectangle[,] background = null;
         IGameObj[,] action = null;
-        Arrows[,] arrow = null;
+        Direction[,] arrow = null;
 
         Hero hero;
         Army firstArmy,
@@ -120,12 +120,58 @@ namespace csheroes.form
                     background[i, j] = new Rectangle(Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize, Global.CellSize);
         }
 
+        void MovePoint(Direction direction, ref Point src)
+        {
+#if DEBUG
+            DrawArrow(direction, src);
+#endif
+            switch (direction)
+            {
+                case Direction.DOWN:
+                    src.Y++;
+                    break;
+                case Direction.LEFT:
+                    src.X--;
+                    break;
+                case Direction.RIGHT:
+                    src.X++;
+                    break;
+                case Direction.UP:
+                    src.Y--;
+                    break;
+            }
+        }
+
+        void DrawArrow(Direction direction, Point dest)
+        {
+            Rectangle tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
+
+            switch (direction)
+            {
+                case Direction.NONE:
+                    return;
+                case Direction.LEFT:
+                    tile = new Rectangle(32, 128, Global.CellSize, Global.CellSize);
+                    break;
+                case Direction.DOWN:
+                    tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
+                    break;
+                case Direction.RIGHT:
+                    tile = new Rectangle(32, 96, Global.CellSize, Global.CellSize);
+                    break;
+                case Direction.UP:
+                    tile = new Rectangle(0, 96, Global.CellSize, Global.CellSize);
+                    break;
+            }
+
+            surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * dest.X, Global.BattleCellSize * dest.Y, Global.BattleCellSize, Global.BattleCellSize), tile, GraphicsUnit.Pixel);
+        }
+
         bool MoveUnit(Point dest, Unit unit, Point[] friendCords, int index)
         {
-            bool move = true;
             Point tmp = friendCords[index];
 
-            while (move)
+            while (true)
             {
                 if (tmp == dest) // перемещение на пустую клетку
                 {
@@ -135,7 +181,6 @@ namespace csheroes.form
 
                     action[dest.Y, dest.X] = unit;
 
-                    move = false;
                     return true;
                 }
                 else if (action[dest.Y, dest.X] != null && ((tmp.X == dest.X && Math.Abs(dest.Y - tmp.Y) <= unit.Range) || (tmp.Y == dest.Y && Math.Abs(dest.X - tmp.X) <= unit.Range))) // ближний бой
@@ -145,88 +190,53 @@ namespace csheroes.form
                     if (tmp.X == dest.X)
                         if (dest.Y - tmp.Y < 0 && action[dest.Y - 1, dest.X] == null)
                             while (tmp.Y != dest.Y + 1)
-                                tmp.Y--;
+                                MovePoint(Direction.UP, ref tmp);
                         else if (action[dest.Y + 1, dest.X] == null)
                             while (tmp.Y != dest.Y - 1)
-                                tmp.Y++;
-                    else if (dest.X - tmp.X < 0 && action[dest.Y, dest.X - 1] == null)
-                        while (tmp.X != dest.X + 1)
-                            tmp.X--;
-                    else if (action[dest.Y, dest.X + 1] == null)
-                        while (tmp.X != dest.X - 1)
-                            tmp.X++;
+                                MovePoint(Direction.DOWN, ref tmp);
+                        else if (dest.X - tmp.X < 0 && action[dest.Y, dest.X - 1] == null)
+                            while (tmp.X != dest.X + 1)
+                                MovePoint(Direction.LEFT, ref tmp);
+                        else if (action[dest.Y, dest.X + 1] == null)
+                            while (tmp.X != dest.X - 1)
+                                MovePoint(Direction.RIGHT, ref tmp);
 
                     friendCords[index] = tmp;
                     action[tmp.Y, tmp.X] = unit;
 
-                    move = false;
                     return true;
                 }
                 else if (tmp.Y < dest.Y && tmp.Y != Height / Global.BattleCellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
                 {
                     while (tmp.Y != dest.Y && tmp.Y != Height / Global.BattleCellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
-                    {
-#if DEBUG
-                        DrawArrow(Arrows.DOWN, tmp.X, tmp.Y);
-#endif
-                        arrow[tmp.Y, tmp.X] = Arrows.DOWN;
-                        tmp.Y++;
-                    }
+                        MovePoint(Direction.DOWN, ref tmp);
                 }
                 else if (tmp != dest && tmp.Y != Height / Global.BattleCellSize - 2 && tmp.X != 0 && action[tmp.Y, tmp.X - 1] != null) // Пытаемся обойти препятствие
                 {
-#if DEBUG
-                    DrawArrow(Arrows.DOWN, tmp.X, tmp.Y);
-#endif
-                    arrow[tmp.Y, tmp.X] = Arrows.DOWN;
-                    tmp.Y++;
+                    MovePoint(Direction.DOWN, ref tmp);
                 }
-                else if (tmp.Y != dest.Y && tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Arrows.EMPTY)
+                else if (tmp.Y != dest.Y && tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Direction.NONE)
                 {
-                    while (tmp.Y != dest.Y && tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Arrows.EMPTY)
-                    {
-#if DEBUG
-                        DrawArrow(Arrows.UP, tmp.X, tmp.Y);
-#endif
-                        arrow[tmp.Y, tmp.X] = Arrows.UP;
-                        tmp.Y--;
-                    }
+                    while (tmp.Y != dest.Y && tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Direction.NONE)
+                        MovePoint(Direction.UP, ref tmp);
                 }
-                else if (tmp.X < dest.X && tmp.X != Width / Global.BattleCellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Arrows.EMPTY)
+                else if (tmp.X < dest.X && tmp.X != Width / Global.BattleCellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Direction.NONE)
                 {
-                    while (tmp.X != dest.X && tmp.X != Width / Global.BattleCellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Arrows.EMPTY)
-                    {
-#if DEBUG
-                        DrawArrow(Arrows.RIGHT, tmp.X, tmp.Y);
-#endif
-
-                        arrow[tmp.Y, tmp.X] = Arrows.RIGHT;
-                        tmp.X++;
-                    }
+                    while (tmp.X != dest.X && tmp.X != Width / Global.BattleCellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Direction.NONE)
+                        MovePoint(Direction.RIGHT, ref tmp);
                 }
                 else if (tmp.X != 0 && action[tmp.Y, tmp.X - 1] == null)
                 {
                     while (tmp.X != dest.X && tmp.X != 0 && action[tmp.Y, tmp.X - 1] == null)
-                    {
-#if DEBUG
-                        DrawArrow(Arrows.LEFT, tmp.X, tmp.Y);
-#endif
-
-                        arrow[tmp.Y, tmp.X] = Arrows.LEFT;
-                        tmp.X--;
-                    }
+                        MovePoint(Direction.LEFT, ref tmp);
                 }
                 else if (tmp.X != 0 && tmp.X - 1 != 0 && action[tmp.Y, tmp.X - 1] == null) // обход второй половины доступных ходов 
                 {
-#if DEBUG
-                    DrawArrow(Arrows.LEFT, tmp.X, tmp.Y);
-#endif
-                    arrow[tmp.Y, tmp.X] = Arrows.LEFT;
-                    tmp.X -= 2;
+                    MovePoint(Direction.LEFT, ref tmp);
                 }
                 else
                 {
-                    move = false;
+                    return false;
                 }
             }
 
@@ -258,7 +268,7 @@ namespace csheroes.form
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
-            arrow = new Arrows[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
             Point dest = new Point(e.X / Global.BattleCellSize, e.Y / Global.BattleCellSize);
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords;
 
@@ -320,7 +330,7 @@ namespace csheroes.form
 
         void AIMove()
         {
-            arrow = new Arrows[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords,
                     enemyCords = turn ? secondArmyCords : firstArmyCords;
             int index = turn ? firstArmyTurn : secondArmyTurn;
@@ -463,37 +473,12 @@ namespace csheroes.form
             close = true;
         }
 
-        void DrawArrow(Arrows direction, int x, int y)
-        {
-            Rectangle tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
-
-            switch (direction)
-            {
-                case Arrows.EMPTY:
-                    return;
-                case Arrows.LEFT:
-                    tile = new Rectangle(32, 128, Global.CellSize, Global.CellSize);
-                    break;
-                case Arrows.DOWN:
-                    tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
-                    break;
-                case Arrows.RIGHT:
-                    tile = new Rectangle(32, 96, Global.CellSize, Global.CellSize);
-                    break;
-                case Arrows.UP:
-                    tile = new Rectangle(0, 96, Global.CellSize, Global.CellSize);
-                    break;
-            }
-
-            surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * x, Global.BattleCellSize * y, Global.BattleCellSize, Global.BattleCellSize), tile, GraphicsUnit.Pixel);
-        }
-
         void DrawArrows()
         {
             if (arrow != null)
                 for (int i = 0; i < Width / Global.BattleCellSize; i++)
                     for (int j = 0; j < Height / Global.BattleCellSize; j++)
-                        DrawArrow(arrow[i, j], j, i);
+                        DrawArrow(arrow[i, j], new Point(j, i));
         }
 
         private void TurnBackBtn(object sender, EventArgs e)
@@ -570,6 +555,15 @@ namespace csheroes.form
 
             Draw();
         }
+    }
+
+    enum Direction
+    {
+        NONE,
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
     }
 
     public class BattleFormSnapshot
