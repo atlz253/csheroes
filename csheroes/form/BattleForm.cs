@@ -167,80 +167,47 @@ namespace csheroes.form
             surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * dest.X, Global.BattleCellSize * dest.Y, Global.BattleCellSize, Global.BattleCellSize), tile, GraphicsUnit.Pixel);
         }
 
+        bool CellIsEmpty(int x, int y)
+        {
+            if (x < 0 || x > Width / Global.BattleCellSize - 1 || y < 0 || y > Height / Global.BattleCellSize - 2) // TODO: проверить, что за фигня с -1 и -2
+                return false;
+
+            return (action[y, x] == null);
+        }
+
         bool MoveUnit(Point dest, Unit unit, Point[] friendCords, int index)
         {
             Point tmp = friendCords[index];
 
-            while (true)
-            {
-                if (tmp == dest) // перемещение на пустую клетку
-                {
-                    action[friendCords[index].Y, friendCords[index].X] = null;
-
-                    friendCords[index] = dest;
-
-                    action[dest.Y, dest.X] = unit;
-
-                    return true;
-                }
-                else if (action[dest.Y, dest.X] != null && ((tmp.X == dest.X && Math.Abs(dest.Y - tmp.Y) <= unit.Range) || (tmp.Y == dest.Y && Math.Abs(dest.X - tmp.X) <= unit.Range))) // ближний бой
-                {
-                    action[friendCords[index].Y, friendCords[index].X] = null;
-
-                    if (tmp.X == dest.X)
-                        if (dest.Y - tmp.Y < 0 && action[dest.Y - 1, dest.X] == null)
-                            while (tmp.Y != dest.Y + 1)
-                                MovePoint(Direction.UP, ref tmp);
-                        else if (action[dest.Y + 1, dest.X] == null)
-                            while (tmp.Y != dest.Y - 1)
-                                MovePoint(Direction.DOWN, ref tmp);
-                        else if (dest.X - tmp.X < 0 && action[dest.Y, dest.X - 1] == null)
-                            while (tmp.X != dest.X + 1)
-                                MovePoint(Direction.LEFT, ref tmp);
-                        else if (action[dest.Y, dest.X + 1] == null)
-                            while (tmp.X != dest.X - 1)
-                                MovePoint(Direction.RIGHT, ref tmp);
-
-                    friendCords[index] = tmp;
-                    action[tmp.Y, tmp.X] = unit;
-
-                    return true;
-                }
-                else if (tmp.Y < dest.Y && tmp.Y != Height / Global.BattleCellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
-                {
-                    while (tmp.Y != dest.Y && tmp.Y != Height / Global.BattleCellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
-                        MovePoint(Direction.DOWN, ref tmp);
-                }
-                else if (tmp != dest && tmp.Y != Height / Global.BattleCellSize - 2 && tmp.X != 0 && action[tmp.Y, tmp.X - 1] != null) // Пытаемся обойти препятствие
-                {
-                    MovePoint(Direction.DOWN, ref tmp);
-                }
-                else if (tmp.Y != dest.Y && tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Direction.NONE)
-                {
-                    while (tmp.Y != dest.Y && tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Direction.NONE)
-                        MovePoint(Direction.UP, ref tmp);
-                }
-                else if (tmp.X < dest.X && tmp.X != Width / Global.BattleCellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Direction.NONE)
-                {
-                    while (tmp.X != dest.X && tmp.X != Width / Global.BattleCellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Direction.NONE)
-                        MovePoint(Direction.RIGHT, ref tmp);
-                }
-                else if (tmp.X != 0 && action[tmp.Y, tmp.X - 1] == null)
-                {
-                    while (tmp.X != dest.X && tmp.X != 0 && action[tmp.Y, tmp.X - 1] == null)
-                        MovePoint(Direction.LEFT, ref tmp);
-                }
-                else if (tmp.X != 0 && tmp.X - 1 != 0 && action[tmp.Y, tmp.X - 1] == null) // обход второй половины доступных ходов 
-                {
-                    MovePoint(Direction.LEFT, ref tmp);
-                }
+            if (!CellIsEmpty(dest.X, dest.Y)) // на клетке стоит юнит
+                if (CellIsEmpty(dest.X, dest.Y - 1))
+                    dest.Y--;
+                else if (CellIsEmpty(dest.X, dest.Y + 1))
+                    dest.Y++;
+                else if (CellIsEmpty(dest.X - 1, dest.Y))
+                    dest.X--;
+                else if (CellIsEmpty(dest.X + 1, dest.Y))
+                    dest.X++;
                 else
-                {
-                    return false;
-                }
-            }
+                    return false; // к юниту невозможно подойти
 
-            return false;
+            while (tmp != dest)
+                if (tmp.Y < dest.Y && CellIsEmpty(tmp.X, tmp.Y + 1))
+                    MovePoint(Direction.DOWN, ref tmp);
+                else if (tmp.Y != dest.Y && CellIsEmpty(tmp.X, tmp.Y - 1))
+                    MovePoint(Direction.UP, ref tmp);
+                else if (tmp.X < dest.X && CellIsEmpty(tmp.X + 1, tmp.Y))
+                    MovePoint(Direction.RIGHT, ref tmp);
+                else if (CellIsEmpty(tmp.X - 1, tmp.Y))
+                    MovePoint(Direction.LEFT, ref tmp);
+                else
+                    return false;
+
+            action[friendCords[index].Y, friendCords[index].X] = null; // перемещение на пустую клетку
+            friendCords[index] = dest;
+            action[dest.Y, dest.X] = unit;
+
+            return true;
         }
 
         void AttackUnit(Unit enemy, Point pos, Unit damager)
@@ -264,6 +231,27 @@ namespace csheroes.form
                 }
 
             }
+        }
+
+        bool UnitNearby(Point cords, Unit unit)
+        {
+            if  ((cords.X != 0 && action[cords.Y, cords.X - 1] == unit) ||
+                (cords.X != Width / Global.BattleCellSize - 1 && action[cords.Y, cords.X + 1] == unit) ||
+                (cords.Y != 0 && action[cords.Y - 1, cords.X] == unit) ||
+                (cords.Y != Height / Global.BattleCellSize - 2 && action[cords.Y + 1, cords.X] == unit))
+                return true;
+            else
+                return false;
+        }
+
+        bool IsNeedUnitMove(Unit unit, Point src, Point dest)
+        {
+            return ((action[dest.Y, dest.X] == null || (unit.Attack == AttackType.MELEE && !UnitNearby(dest, unit))) && Math.Abs(dest.X - src.X) <= unit.Range && Math.Abs(dest.Y - src.Y) <= unit.Range);
+        }
+
+        bool IsReadyAttack(Unit unit, Point dest)
+        {
+            return ((unit.Attack == AttackType.RANGE) && (action[dest.Y, dest.X] != null)) || ((unit.Attack == AttackType.MELEE) && UnitNearby(dest, unit));
         }
 
         private void OnMouseClick(object sender, MouseEventArgs e)
@@ -295,16 +283,13 @@ namespace csheroes.form
 
             Point tmp = new(friendCords[index].X, friendCords[index].Y);
 
-            bool unitMove = ((action[dest.Y, dest.X] == null || unit.Attack == AttackType.MELEE) && Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range), 
-                 unitTurn = false;
+            bool unitTurn = false;
 
             WriteSnapshot();
-            if (unitMove)
+            if (IsNeedUnitMove(unit, tmp, dest))
                 unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
-            bool unitAttack = ((unit.Attack == AttackType.RANGE) && (action[dest.Y, dest.X] != null)) || ((unit.Attack == AttackType.MELEE) && ((tmp.X == dest.X && Math.Abs(dest.Y - friendCords[index].Y) == 1) || (tmp.Y == dest.Y && Math.Abs(dest.X - friendCords[index].X) == 1)));
-
-            if (unitAttack)
+            if (IsReadyAttack(unit, dest))
             {
                 AttackUnit((Unit)action[dest.Y, dest.X], dest, unit);
 
@@ -328,6 +313,11 @@ namespace csheroes.form
             Draw();
         }
 
+        double VectorLenght(int x, int y)
+        {
+            return Math.Sqrt(x * x + y * y);
+        }
+
         void AIMove()
         {
             arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
@@ -335,7 +325,7 @@ namespace csheroes.form
                     enemyCords = turn ? secondArmyCords : firstArmyCords;
             int index = turn ? firstArmyTurn : secondArmyTurn;
             Unit unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
-            Unit[] enemyUnits = turn ? firstArmy.Units : secondArmy.Units;
+            Unit[] enemyUnits = turn ? secondArmy.Units :firstArmy.Units;
 
             WriteSnapshot();
             while (unit == null) // если юнит, который должен был ходить, трагически погиб
@@ -352,15 +342,11 @@ namespace csheroes.form
                 unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
             }
 
-            Point dest = new(0, 0), tmp = new(friendCords[index].X, friendCords[index].Y);
+            Point dest = new(-1, -1), tmp = new(friendCords[index].X, friendCords[index].Y);
 
             for (int i = 0; i < 7; i++)
-                if (enemyUnits[i] != null)
+                if (enemyUnits[i] != null && (dest.X == -1 || (VectorLenght(dest.X - tmp.X, dest.Y - tmp.Y) > VectorLenght(enemyCords[i].X - tmp.X, enemyCords[i].Y - tmp.Y))))
                     dest = enemyCords[i];
-            
-            foreach (Point cords in enemyCords)
-                if (Math.Sqrt((dest.X - tmp.X)*(dest.X - tmp.X)+(dest.Y - tmp.Y)*(dest.Y - tmp.Y)) > Math.Sqrt((dest.X - cords.X) * (dest.X - cords.X) + (dest.Y - cords.Y) * (dest.Y - cords.Y)))
-                    dest = cords;
 
             if (Math.Abs(dest.X - tmp.X) > unit.Range)
                 if (dest.X < tmp.X)
@@ -395,15 +381,12 @@ namespace csheroes.form
                         dest.Y = Height / Global.BattleCellSize - 1;
                 }
 
-            bool unitMove = ((unit.Attack == AttackType.MELEE) && (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range)),
-                 unitTurn = false;
+            bool unitTurn = false;
 
-            if (unitMove)
+            if (IsNeedUnitMove(unit, tmp, dest))
                 unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
-            bool unitAttack = ((unit.Attack == AttackType.RANGE) && (action[dest.Y, dest.X] != null)) || ((unit.Attack == AttackType.MELEE) && ((tmp.X == dest.X && Math.Abs(dest.Y - friendCords[index].Y) == 1) || (tmp.Y == dest.Y && Math.Abs(dest.X - friendCords[index].X) == 1)));
-
-            if (unitAttack)
+            if (IsReadyAttack(unit, dest))
             {
                 AttackUnit((Unit)action[dest.Y, dest.X], dest, unit);
 
