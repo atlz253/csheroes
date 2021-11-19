@@ -40,13 +40,13 @@ namespace csheroes.form
 
             InitBackground();
 
-            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
+            action = new IGameObj[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
 
             firstArmy = hero.Army;
             LinedArmy(firstArmy, out firstArmyCords, 0);
 
             secondArmy = enemy;
-            LinedArmy(secondArmy, out secondArmyCords, 6); // Width / Global.CellSize - 1
+            LinedArmy(secondArmy, out secondArmyCords, Width / Global.BattleCellSize - 1);
 
             surface = CreateGraphics();
         }
@@ -86,32 +86,32 @@ namespace csheroes.form
             }
 
             Point tmp = new(friendCords[index].X, friendCords[index].Y);
-            surface.DrawRectangle(Global.HighlightPen, new Rectangle(tmp.X * Global.CellSize, tmp.Y * Global.CellSize, Global.CellSize, Global.CellSize));
+            surface.DrawRectangle(Global.HighlightPen, new Rectangle(tmp.X * Global.BattleCellSize, tmp.Y * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
         }
 
         void DrawGrid()
         {
-            for (int i = 0; i < Width / Global.CellSize; i++)
-                surface.DrawLine(Global.GridPen, Global.CellSize * i, 0, Global.CellSize * i, Height);
+            for (int i = 0; i < Width / Global.BattleCellSize; i++)
+                surface.DrawLine(Global.GridPen, Global.BattleCellSize * i, 0, Global.BattleCellSize * i, Height);
 
-            for (int i = 0; i < Height / Global.CellSize; i++)
-                surface.DrawLine(Global.GridPen, 0, Global.CellSize * i, Width, Global.CellSize * i);
+            for (int i = 0; i < Height / Global.BattleCellSize; i++)
+                surface.DrawLine(Global.GridPen, 0, Global.BattleCellSize * i, Width, Global.BattleCellSize * i);
         }
 
         void DrawAction()
         {
-            for (int i = 0; i < Width / Global.CellSize; i++)
-                for (int j = 0; j < Height / Global.CellSize; j++)
+            for (int i = 0; i < Width / Global.BattleCellSize; i++)
+                for (int j = 0; j < Height / Global.BattleCellSize; j++)
                     if (action[i, j] != null)
-                        surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
+                        surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
         }
 
         void InitBackground()
         {
-            background = new Rectangle[Width / Global.CellSize, Height / Global.CellSize];
+            background = new Rectangle[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
 
-            for (int i = 0; i < Width / Global.CellSize; i++)
-                for (int j = 0; j < Height / Global.CellSize; j++)
+            for (int i = 0; i < Width / Global.BattleCellSize; i++)
+                for (int j = 0; j < Height / Global.BattleCellSize; j++)
                     background[i, j] = new Rectangle(Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize, Global.CellSize);
         }
 
@@ -158,9 +158,9 @@ namespace csheroes.form
                     move = false;
                     return true;
                 }
-                else if (tmp.Y < dest.Y && tmp.Y != Height / Global.CellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
+                else if (tmp.Y < dest.Y && tmp.Y != Height / Global.BattleCellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
                 {
-                    while (tmp.Y != dest.Y && tmp.Y != Height / Global.CellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
+                    while (tmp.Y != dest.Y && tmp.Y != Height / Global.BattleCellSize - 2 && action[tmp.Y + 1, tmp.X] == null)
                     {
 #if DEBUG
                         DrawArrow(Arrows.DOWN, tmp.X, tmp.Y);
@@ -180,9 +180,9 @@ namespace csheroes.form
                         tmp.Y--;
                     }
                 }
-                else if (tmp.X < dest.X && tmp.X != Width / Global.CellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Arrows.EMPTY)
+                else if (tmp.X < dest.X && tmp.X != Width / Global.BattleCellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Arrows.EMPTY)
                 {
-                    while (tmp.X != dest.X && tmp.X != Width / Global.CellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Arrows.EMPTY)
+                    while (tmp.X != dest.X && tmp.X != Width / Global.BattleCellSize - 1 && action[tmp.Y, tmp.X + 1] == null && arrow[tmp.Y, tmp.X + 1] == Arrows.EMPTY)
                     {
 #if DEBUG
                         DrawArrow(Arrows.RIGHT, tmp.X, tmp.Y);
@@ -246,8 +246,8 @@ namespace csheroes.form
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
-            arrow = new Arrows[Width / Global.CellSize, Height / Global.CellSize];
-            Point dest = new Point(e.X / Global.CellSize, e.Y / Global.CellSize);
+            arrow = new Arrows[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            Point dest = new Point(e.X / Global.BattleCellSize, e.Y / Global.BattleCellSize);
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords;
 
             foreach (Point cords in friendCords)
@@ -307,7 +307,7 @@ namespace csheroes.form
 
         void AIMove()
         {
-            arrow = new Arrows[Width / Global.CellSize, Height / Global.CellSize];
+            arrow = new Arrows[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords,
                     enemyCords = turn ? secondArmyCords : firstArmyCords;
             int index = turn ? firstArmyTurn : secondArmyTurn;
@@ -426,22 +426,22 @@ namespace csheroes.form
                     break;
             }
 
-            surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * x, Global.CellSize * y, Global.CellSize, Global.CellSize), tile, GraphicsUnit.Pixel);
+            surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * x, Global.BattleCellSize * y, Global.BattleCellSize, Global.BattleCellSize), tile, GraphicsUnit.Pixel);
         }
 
         void DrawArrows()
         {
             if (arrow != null)
-                for (int i = 0; i < Width / Global.CellSize; i++)
-                    for (int j = 0; j < Height / Global.CellSize; j++)
+                for (int i = 0; i < Width / Global.BattleCellSize; i++)
+                    for (int j = 0; j < Height / Global.BattleCellSize; j++)
                         DrawArrow(arrow[i, j], j, i);
         }
 
         void DrawBackground()
         {
-            for (int i = 0; i < Width / Global.CellSize; i++)
-                for (int j = 0; j < Height / Global.CellSize; j++)
-                    surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i, j], GraphicsUnit.Pixel);
+            for (int i = 0; i < Width / Global.BattleCellSize; i++)
+                for (int j = 0; j < Height / Global.BattleCellSize; j++)
+                    surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), background[i, j], GraphicsUnit.Pixel);
         }
 
         void LinedArmy(Army army, out Point[] cordsArr, int column)
@@ -450,8 +450,8 @@ namespace csheroes.form
 
             for (int i = 0; i < Height && i < 7; i++)
             {
-                action[i*4, column] = army.Units[i];
-                cordsArr[i] = new Point(column, i * 4);
+                action[i*2, column] = army.Units[i];
+                cordsArr[i] = new Point(column, i * 2);
             }
         }
     }

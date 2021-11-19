@@ -18,7 +18,8 @@ namespace csheroes.src
 
     static class Global
     {
-        static readonly int cellSize = 32;
+        static readonly int cellSize = 32,
+                            battleCellSize = 50;
 
         static readonly Pen gridPen = new(Color.Black, 1),
                             highlightPen = new(Color.Red, 1);
@@ -52,5 +53,7 @@ namespace csheroes.src
                 return rand;
             }
         }
+
+        public static int BattleCellSize => battleCellSize;
     }
 }
