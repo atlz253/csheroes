@@ -9,18 +9,40 @@ using System.Threading.Tasks;
 
 namespace csheroes.src
 {
+    public class ArmyShapshot
+    {
+        public bool ai;
+        public UnitSnapshot[] units;
+
+        public ArmyShapshot(bool ai, UnitSnapshot[] units)
+        {
+            this.ai = ai;
+            this.units = units;
+        }
+    }
+
     public class Army : IGameObj
     {
         Unit[] units;
         readonly bool ai;
 
-        public Army(bool ai = true, params Unit[] units)
+        public Army(bool ai = true, params Unit[] units) // TODO: передавать в params юнитов
         {
             this.ai = ai;
-            this.Units = new Unit[7];
+            this.units = new Unit[7];
 
             for (int i = 0; i < units.Length && i < 7; i++)
-                this.Units[i] = units[i];
+                this.units[i] = units[i];
+        }
+
+        public Army(ArmyShapshot snapshot)
+        {
+            ai = snapshot.ai;
+            units = new Unit[7];
+
+            for (int i = 0; i < 7; i++)
+                if (snapshot.units[i] != null)
+                    units[i] = new Unit(snapshot.units[i]);
         }
 
         public Unit[] Units { get => units; set => units = value; }
@@ -57,6 +79,16 @@ namespace csheroes.src
         public override string ToString()
         {
             return "Army";
+        }
+
+        public ArmyShapshot MakeSnapshot()
+        {
+            UnitSnapshot[] unitstate = new UnitSnapshot[7];
+            for (int i = 0; i < 7; i++)
+                if (units[i] != null)
+                    unitstate[i] = units[i].MakeSnaphot();
+
+            return new(ai, unitstate);
         }
     }
 }

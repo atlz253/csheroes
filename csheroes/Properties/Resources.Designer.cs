@@ -63,6 +63,16 @@ namespace csheroes.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap aiicon {
+            get {
+                object obj = ResourceManager.GetObject("aiicon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap campico {
             get {
                 object obj = ResourceManager.GetObject("campico", resourceCulture);
@@ -86,6 +96,26 @@ namespace csheroes.Properties {
         internal static System.Drawing.Bitmap saveico {
             get {
                 object obj = ResourceManager.GetObject("saveico", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap turnbackico {
+            get {
+                object obj = ResourceManager.GetObject("turnbackico", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap waitico {
+            get {
+                object obj = ResourceManager.GetObject("waitico", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

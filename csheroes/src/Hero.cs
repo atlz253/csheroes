@@ -8,6 +8,18 @@ using System.Threading.Tasks;
 
 namespace csheroes.src
 {
+    public class HeroSnapshot
+    {
+        public readonly ArmyShapshot army;
+        public readonly int respect;
+
+        public HeroSnapshot(ArmyShapshot army, int respect)
+        {
+            this.army = army;
+            this.respect = respect;
+        }
+    }
+
     public class Hero : IGameObj
     {
         private static readonly Rectangle tile = new(224, 0, Global.CellSize, Global.CellSize);
@@ -19,6 +31,12 @@ namespace csheroes.src
         {
             this.army = army;
             this.respect = respect;
+        }
+
+        public Hero(HeroSnapshot snapshot)
+        {
+            army = new Army(snapshot.army);
+            respect = snapshot.respect;
         }
 
         public int Respect { get => respect; set => respect = value; }
@@ -40,6 +58,11 @@ namespace csheroes.src
         public override string ToString()
         {
             return "Hero";
+        }
+
+        public HeroSnapshot MakeSnapshot()
+        {
+            return new(army.MakeSnapshot(), respect);
         }
     }
 }

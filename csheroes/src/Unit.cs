@@ -21,18 +21,63 @@ namespace csheroes.src.unit
         RANGE
     }
 
+    public class UnitSnapshot
+    {
+        public readonly string name;
+        public readonly int hp, exp;
+
+        public UnitSnapshot(string name, int hp, int exp)
+        {
+            this.name = name;
+            this.hp = hp;
+            this.exp = exp;
+        }
+    }
+
     public class Unit : IGameObj
     {
-        readonly AttackType type;
-        readonly Rectangle tile;
+        AttackType type;
+        Rectangle tile;
 
-        private int hp, exp = 0;
-        readonly int range;
-        readonly int damage;
-        private readonly int maxHp, nextLevel;
-        readonly string name;
+        int hp;
+        int exp;
+        int maxHp;
+        int range;
+        int damage;
+        int nextLevel;
+        string name;
 
         public Unit(UnitType type)
+        {
+            exp = 0;
+
+            InitUnit(type);
+        }
+
+        public Unit(UnitSnapshot snapshot)
+        {
+            UnitType type = UnitType.ABBITURENT;
+
+            switch (snapshot.name)
+            {
+                case "Абитурент":
+                    type = UnitType.ABBITURENT;
+                    break;
+                case "Технарь":
+                    type = UnitType.TECHNAR;
+                    break;
+                case "Гуманитарий":
+                    type = UnitType.GUMANITARIY;
+                    break;
+            }
+
+            InitUnit(type);
+
+            hp = snapshot.hp;
+            exp = snapshot.exp;
+        }
+
+        void InitUnit(UnitType type)
         {
             switch (type)
             {
@@ -98,6 +143,11 @@ namespace csheroes.src.unit
             writer.Write(name);
             writer.Write(hp);
             writer.Write(exp);
+        }
+
+        public UnitSnapshot MakeSnaphot()
+        {
+            return new(name, hp, exp);
         }
     }
 }

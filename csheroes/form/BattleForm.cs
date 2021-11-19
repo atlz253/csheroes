@@ -28,8 +28,12 @@ namespace csheroes.form
                 secondArmyCords;
         int firstArmyTurn = 0,
             secondArmyTurn = 0;
-        bool turn = true;
-        bool close = false;
+        bool turn = true,
+             close = false,
+             ai = true; // включен ли искусственный интелект
+        
+        BattleFormSnapshot[] snapshots;
+        int lastSnapshotIndex = -1;
 
         public BattleForm(ExploreForm parent, Hero hero, Army enemy)
         {
@@ -37,6 +41,7 @@ namespace csheroes.form
 
             this.hero = hero;
             this.parent = parent;
+            snapshots = new BattleFormSnapshot[10];
 
             InitBackground();
 
@@ -138,17 +143,16 @@ namespace csheroes.form
                     action[friendCords[index].Y, friendCords[index].X] = null;
 
                     if (tmp.X == dest.X)
-                        if (dest.Y - tmp.Y < 0)
+                        if (dest.Y - tmp.Y < 0 && action[dest.Y - 1, dest.X] == null)
                             while (tmp.Y != dest.Y + 1)
                                 tmp.Y--;
-                        else
+                        else if (action[dest.Y + 1, dest.X] == null)
                             while (tmp.Y != dest.Y - 1)
                                 tmp.Y++;
-                    else
-                        if (dest.X - tmp.X < 0)
+                    else if (dest.X - tmp.X < 0 && action[dest.Y, dest.X - 1] == null)
                         while (tmp.X != dest.X + 1)
                             tmp.X--;
-                    else
+                    else if (action[dest.Y, dest.X + 1] == null)
                         while (tmp.X != dest.X - 1)
                             tmp.X++;
 
@@ -168,6 +172,14 @@ namespace csheroes.form
                         arrow[tmp.Y, tmp.X] = Arrows.DOWN;
                         tmp.Y++;
                     }
+                }
+                else if (tmp != dest && tmp.Y != Height / Global.BattleCellSize - 2 && tmp.X != 0 && action[tmp.Y, tmp.X - 1] != null) // Пытаемся обойти препятствие
+                {
+#if DEBUG
+                    DrawArrow(Arrows.DOWN, tmp.X, tmp.Y);
+#endif
+                    arrow[tmp.Y, tmp.X] = Arrows.DOWN;
+                    tmp.Y++;
                 }
                 else if (tmp.Y != dest.Y && tmp.Y != 0 && action[tmp.Y - 1, tmp.X] == null && arrow[tmp.Y - 1, tmp.X] == Arrows.EMPTY)
                 {
@@ -276,6 +288,7 @@ namespace csheroes.form
             bool unitMove = ((action[dest.Y, dest.X] == null || unit.Attack == AttackType.MELEE) && Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range), 
                  unitTurn = false;
 
+            WriteSnapshot();
             if (unitMove)
                 unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
@@ -299,7 +312,7 @@ namespace csheroes.form
 
                 Army next = turn ? firstArmy : secondArmy;
 
-                if (next.Ai)
+                if (ai && next.Ai)
                     AIMove();
             }
             Draw();
@@ -314,6 +327,7 @@ namespace csheroes.form
             Unit unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
             Unit[] enemyUnits = turn ? firstArmy.Units : secondArmy.Units;
 
+            WriteSnapshot();
             while (unit == null) // если юнит, который должен был ходить, трагически погиб
             {
                 if (turn)
@@ -338,15 +352,38 @@ namespace csheroes.form
                 if (Math.Sqrt((dest.X - tmp.X)*(dest.X - tmp.X)+(dest.Y - tmp.Y)*(dest.Y - tmp.Y)) > Math.Sqrt((dest.X - cords.X) * (dest.X - cords.X) + (dest.Y - cords.Y) * (dest.Y - cords.Y)))
                     dest = cords;
 
-            if (Math.Abs(dest.X - tmp.X) > unit.Range && dest.X > tmp.X)
-                dest.X = tmp.X + unit.Range;
-            else if (Math.Abs(dest.X - tmp.X) > unit.Range && dest.X < tmp.X)
-                dest.X = tmp.X - unit.Range;
+            if (Math.Abs(dest.X - tmp.X) > unit.Range)
+                if (dest.X < tmp.X)
+                    {
+                        dest.X = tmp.X - unit.Range;
 
-            if (Math.Abs(dest.Y - tmp.Y) > unit.Range && dest.Y > tmp.Y)
-                dest.Y = tmp.Y + unit.Range;
-            else if (Math.Abs(dest.Y - tmp.Y) > unit.Range && dest.Y < tmp.Y)
-                dest.Y = tmp.Y - unit.Range;
+                        if (dest.X < 0)
+                            dest.X = 0;
+                    }
+                else // dest.X < tmp.X
+                {
+                    dest.X = tmp.X + unit.Range;
+
+                    if (dest.X > Width / Global.BattleCellSize - 1)
+                        dest.X = Width / Global.BattleCellSize - 1;
+                }
+
+            if (Math.Abs(dest.Y - tmp.Y) > unit.Range)
+                if (dest.Y > tmp.Y)
+                {
+
+                    dest.Y = tmp.Y - unit.Range;
+
+                    if (dest.Y < 0)
+                        dest.Y = 0;
+                }
+                else
+                { 
+                    dest.Y = tmp.Y + unit.Range;
+
+                    if (dest.Y > Height / Global.BattleCellSize - 1)
+                        dest.Y = Height / Global.BattleCellSize - 1;
+                }
 
             bool unitMove = ((unit.Attack == AttackType.MELEE) && (Math.Abs(dest.X - tmp.X) <= unit.Range && Math.Abs(dest.Y - tmp.Y) <= unit.Range)),
                  unitTurn = false;
@@ -394,6 +431,28 @@ namespace csheroes.form
             EndBattle();
         }
 
+        private void SwitchAIBtn(object sender, EventArgs e)
+        {
+            ai = false;
+        }
+
+        private void WaitBtnClick(object sender, EventArgs e)
+        {
+            WriteSnapshot();
+
+            if (turn)
+                NextTurn(firstArmy.Units, ref firstArmyTurn);
+            else
+                NextTurn(secondArmy.Units, ref secondArmyTurn);
+
+            turn = !turn;
+
+            Army next = turn ? firstArmy : secondArmy;
+
+            if (ai && next.Ai)
+                AIMove();
+        }
+
         void EndBattle()
         {
 #if !TEST_BATTLE
@@ -437,6 +496,11 @@ namespace csheroes.form
                         DrawArrow(arrow[i, j], j, i);
         }
 
+        private void TurnBackBtn(object sender, EventArgs e)
+        {
+            RestoreSnapshot();
+        }
+
         void DrawBackground()
         {
             for (int i = 0; i < Width / Global.BattleCellSize; i++)
@@ -453,6 +517,88 @@ namespace csheroes.form
                 action[i*2, column] = army.Units[i];
                 cordsArr[i] = new Point(column, i * 2);
             }
+        }
+
+        BattleFormSnapshot MakeSnapshot()
+        {
+            return new(hero.MakeSnapshot(), secondArmy.MakeSnapshot(), firstArmyCords, secondArmyCords, firstArmyTurn, secondArmyTurn, turn, ai);
+        }
+
+        void WriteSnapshot()
+        {
+            if (lastSnapshotIndex != 9)
+                lastSnapshotIndex++;
+            else
+                lastSnapshotIndex = 0;
+            snapshots[lastSnapshotIndex] = MakeSnapshot();
+        }
+
+        void RestoreSnapshot()
+        {
+            BattleFormSnapshot snapshot = snapshots[lastSnapshotIndex];
+            snapshots[lastSnapshotIndex] = null;
+
+            if (snapshot == null)
+                return;
+
+            if (lastSnapshotIndex != 0)
+                lastSnapshotIndex--;
+            else
+                lastSnapshotIndex = 9;
+
+            hero = new Hero(snapshot.hero);
+            firstArmy = hero.Army;
+            secondArmy = new Army(snapshot.secondArmy);
+            action = new IGameObj[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            arrow = null;
+
+            for (int i = 0; i < 7; i++)
+            {
+                firstArmyCords[i] = snapshot.firstArmyCords[i];
+                if (firstArmy.Units[i] != null)
+                    action[firstArmyCords[i].Y, firstArmyCords[i].X] = firstArmy.Units[i];
+
+                secondArmyCords[i] = snapshot.secondArmyCords[i];
+                if (secondArmy.Units[i] != null)
+                    action[secondArmyCords[i].Y, secondArmyCords[i].X] = secondArmy.Units[i];
+            }
+
+            firstArmyTurn = snapshot.firstArmyTurn;
+            secondArmyTurn = snapshot.secondArmyTurn;
+            turn = snapshot.turn;
+            ai = snapshot.ai;
+
+            Draw();
+        }
+    }
+
+    public class BattleFormSnapshot
+    {
+        public readonly HeroSnapshot hero;
+        public readonly ArmyShapshot secondArmy;
+        public readonly Point[] firstArmyCords,
+                                secondArmyCords;
+        public readonly int firstArmyTurn,
+            secondArmyTurn;
+        public readonly bool turn, ai;
+
+        public BattleFormSnapshot(HeroSnapshot hero, ArmyShapshot army, Point[] firstArmyCords, Point[] secondArmyCords, int firstArmyTurn, int secondArmyTurn, bool turn, bool ai)
+        {
+            this.hero = hero;
+            secondArmy = army;
+
+            this.firstArmyCords = new Point[7];
+            for (int i = 0; i < 7; i++)
+                this.firstArmyCords[i] = firstArmyCords[i];
+
+            this.secondArmyCords = new Point[7];
+            for (int i = 0; i < 7; i++)
+                this.secondArmyCords[i] = secondArmyCords[i];
+
+            this.firstArmyTurn = firstArmyTurn;
+            this.secondArmyTurn = secondArmyTurn;
+            this.turn = turn;
+            this.ai = ai;
         }
     }
 }
