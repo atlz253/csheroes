@@ -140,6 +140,8 @@ namespace csheroes.form
                     src.Y--;
                     break;
             }
+
+            arrow[src.Y, src.X] = direction;
         }
 
         void DrawArrow(Direction direction, Point dest)
@@ -180,7 +182,7 @@ namespace csheroes.form
             Point tmp = friendCords[index];
 
             if (!CellIsEmpty(dest.X, dest.Y)) // на клетке стоит юнит
-                if (CellIsEmpty(dest.X, dest.Y - 1))
+                if (CellIsEmpty(dest.X, dest.Y - 1)) // TODO: просчитывать расстояния до точек
                     dest.Y--;
                 else if (CellIsEmpty(dest.X, dest.Y + 1))
                     dest.Y++;
@@ -192,16 +194,17 @@ namespace csheroes.form
                     return false; // к юниту невозможно подойти
 
             while (tmp != dest)
-                if (tmp.Y < dest.Y && CellIsEmpty(tmp.X, tmp.Y + 1))
+                if (((tmp.Y < dest.Y || (tmp.X < dest.X && tmp.X + 1 != dest.X && !CellIsEmpty(tmp.X + 1, tmp.Y))) && CellIsEmpty(tmp.X, tmp.Y + 1)))
                     MovePoint(Direction.DOWN, ref tmp);
-                else if (tmp.Y != dest.Y && CellIsEmpty(tmp.X, tmp.Y - 1))
+                else if ((tmp.X > dest.X && tmp.Y - 1 != dest.Y && CellIsEmpty(tmp.X - 1, tmp.Y) && arrow[tmp.Y, tmp.X - 1] == Direction.NONE) ||
+                        (tmp.X == dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && tmp.Y != 0 && !CellIsEmpty(tmp.X, tmp.Y - 1)))
+                    MovePoint(Direction.LEFT, ref tmp);
+                else if (tmp.Y != dest.Y && CellIsEmpty(tmp.X, tmp.Y - 1) && arrow[tmp.Y - 1, tmp.X] == Direction.NONE)
                     MovePoint(Direction.UP, ref tmp);
                 else if (tmp.X < dest.X && CellIsEmpty(tmp.X + 1, tmp.Y))
                     MovePoint(Direction.RIGHT, ref tmp);
-                else if (CellIsEmpty(tmp.X - 1, tmp.Y))
-                    MovePoint(Direction.LEFT, ref tmp);
                 else
-                    return false;
+                    return false; // что-то пошло не так
 
             action[friendCords[index].Y, friendCords[index].X] = null; // перемещение на пустую клетку
             friendCords[index] = dest;
@@ -249,9 +252,16 @@ namespace csheroes.form
             return ((action[dest.Y, dest.X] == null || (unit.Attack == AttackType.MELEE && !UnitNearby(dest, unit))) && Math.Abs(dest.X - src.X) <= unit.Range && Math.Abs(dest.Y - src.Y) <= unit.Range);
         }
 
-        bool IsReadyAttack(Unit unit, Point dest)
+        bool IsReadyAttack(Unit unit, Point[] friends, Point dest)
         {
-            return ((unit.Attack == AttackType.RANGE) && (action[dest.Y, dest.X] != null)) || ((unit.Attack == AttackType.MELEE) && UnitNearby(dest, unit));
+            if (CellIsEmpty(dest.X, dest.Y))
+                return false;
+
+            foreach (Point friend in friends)
+                if (dest == friend)
+                    return false;
+
+            return ((unit.Attack == AttackType.RANGE)) || ((unit.Attack == AttackType.MELEE) && UnitNearby(dest, unit));
         }
 
         private void OnMouseClick(object sender, MouseEventArgs e)
@@ -289,7 +299,7 @@ namespace csheroes.form
             if (IsNeedUnitMove(unit, tmp, dest))
                 unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
-            if (IsReadyAttack(unit, dest))
+            if (IsReadyAttack(unit, friendCords, dest))
             {
                 AttackUnit((Unit)action[dest.Y, dest.X], dest, unit);
 
@@ -365,7 +375,7 @@ namespace csheroes.form
                 }
 
             if (Math.Abs(dest.Y - tmp.Y) > unit.Range)
-                if (dest.Y > tmp.Y)
+                if (dest.Y < tmp.Y)
                 {
 
                     dest.Y = tmp.Y - unit.Range;
@@ -386,7 +396,7 @@ namespace csheroes.form
             if (IsNeedUnitMove(unit, tmp, dest))
                 unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
-            if (IsReadyAttack(unit, dest))
+            if (IsReadyAttack(unit, friendCords, dest))
             {
                 AttackUnit((Unit)action[dest.Y, dest.X], dest, unit);
 

@@ -26,7 +26,7 @@ namespace csheroes.src
         Unit[] units;
         readonly bool ai;
 
-        public Army(bool ai = true, params Unit[] units) // TODO: передавать в params юнитов
+        public Army(bool ai = true, params Unit[] units)
         {
             this.ai = ai;
             this.units = new Unit[7];
