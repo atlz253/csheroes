@@ -11,31 +11,38 @@ using System.Windows.Forms;
 
 namespace csheroes.form.camp
 {
-    public partial class AbiturentUpgradeDialog : Form
+    public partial class UpgradeStatsDialog : Form
     {
-        public UnitType choice;
+        public UnitStats choice;
         public bool choiced;
 
-        public AbiturentUpgradeDialog()
+        public UpgradeStatsDialog()
         {
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void HealthUpgrade(object sender, EventArgs e)
         {
-            choice = UnitType.TECHNAR;
+            choice = UnitStats.HP;
             choiced = true;
             Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void RangeUpgrade(object sender, EventArgs e)
         {
-            choice = UnitType.GUMANITARIY;
+            choice = UnitStats.RANGE;
             choiced = true;
             Close();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void DamageUpgrade(object sender, EventArgs e)
+        {
+            choice = UnitStats.DAMAGE;
+            choiced = true;
+            Close();
+        }
+
+        private void CancelBtn(object sender, EventArgs e)
         {
             Close();
         }

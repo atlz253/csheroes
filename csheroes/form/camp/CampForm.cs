@@ -119,21 +119,69 @@ namespace csheroes.form.camp
             for (int i = 0; i < 7; i++)
                 if (expBtns[i] != null && (sender as Button).Name == expBtns[i].Name)
                 {
-                    if (hero.Army.Units[i].ToString() == "Абитурент")
+                    if (hero.Army.Units[i].Level == 5)
                     {
-                        AbiturentUpgradeDialog upgradeDialog = new();
-                        
+                        AttackTypeDialog upgradeDialog = new();
+
                         upgradeDialog.ShowDialog();
-                        
-                        if (hero.Respect == 0 || hero.Respect < 100)
-                            return;
 
-                        hero.Respect -= 100;
-                        hero.Army.Units[i] = new Unit(upgradeDialog.choice);
+                        if (upgradeDialog.choiced)
+                        {
+                            if (hero.Respect < 500)
+                                return;
 
-                        Controls.Remove(expBtns[i]);
-                        expBtns[i] = null;
-                        
+                            hero.Respect -= 500;
+
+                            hero.Army.Units[i].Level += 1;
+                            hero.Army.Units[i].Attack = upgradeDialog.choice;
+                            hero.Army.Units[i].NextLevel *= 2;
+
+                            Controls.Remove(expBtns[i]);
+                            expBtns[i] = null;
+                        }
+
+                        upgradeDialog.Dispose();
+                    }
+                    else
+                    {
+                        UpgradeStatsDialog upgradeDialog = new();
+
+                        upgradeDialog.ShowDialog();
+
+                        if (upgradeDialog.choiced)
+                        {
+                            BoolDialog acceptDialog = new($"Это будет стоить {hero.Army.Units[i].Level * 100} респекта");
+
+                            acceptDialog.ShowDialog();
+
+                            if (acceptDialog.choice && hero.Respect >= hero.Army.Units[i].Level * 100)
+                            {
+                                switch (upgradeDialog.choice)
+                                {
+                                    case UnitStats.HP:
+                                        hero.Army.Units[i].Hp += 1;
+                                        hero.Army.Units[i].MaxHp += 1;
+                                        break;
+                                    case UnitStats.DAMAGE:
+                                        hero.Army.Units[i].Damage += 1;
+                                        break;
+                                    case UnitStats.RANGE:
+                                        hero.Army.Units[i].Range += 1;
+                                        break;
+                                }
+
+                                hero.Army.Units[i].Level += 1;
+                                hero.Respect -= hero.Army.Units[i].Level * 100;
+                                hero.Army.Units[i].NextLevel *= 2;
+
+                                Controls.Remove(expBtns[i]);
+                                expBtns[i] = null;
+                            }
+                                
+
+                            acceptDialog.Dispose();
+                        }
+
                         upgradeDialog.Dispose();
                     }
                 }
@@ -159,7 +207,7 @@ namespace csheroes.form.camp
                             break;
                         hero.Respect -= 100;
 
-                        hero.Army.Units[i] = new(UnitType.ABBITURENT);
+                        hero.Army.Units[i] = new();
                         break;
                     }
                 }

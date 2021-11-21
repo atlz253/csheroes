@@ -290,16 +290,16 @@ namespace csheroes.form
             for (int i = 1; i < 25; i++)
                 action[23, i] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
 
-            hero = new Hero(new Army(false, new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) }));
+            hero = new Hero(new Army(false, new Unit[] { new Unit(), new Unit() }));
             heroCords = new Point(24, 0);
             action[heroCords.Y, heroCords.X] = hero;
             UpdateRespect();
 
-            action[2, 21] = new Army(true, new Unit[] { new Unit(UnitType.ABBITURENT) });
-            action[4, 21] = new Army(true, new Unit[] { new Unit(UnitType.ABBITURENT) });
-            action[3, 20] = new Army(true, new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
-            action[5, 20] = new Army(true, new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
-            action[6, 24] = new Army(true, new Unit[] { new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT) });
+            action[2, 21] = new Army(true, new Unit(3, 3, 1));
+            action[4, 21] = new Army(true, new Unit[] { new Unit(3, 3, 1) });
+            action[3, 20] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1) });
+            action[5, 20] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1) });
+            action[6, 24] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1) });
         }
 #else
 

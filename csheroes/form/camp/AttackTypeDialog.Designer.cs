@@ -1,7 +1,7 @@
 ﻿
 namespace csheroes.form.camp
 {
-    partial class AbiturentUpgradeDialog
+    partial class AttackTypeDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -40,9 +40,9 @@ namespace csheroes.form.camp
             // 
             this.button1.Location = new System.Drawing.Point(12, 67);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(76, 23);
+            this.button1.Size = new System.Drawing.Size(88, 23);
             this.button1.TabIndex = 0;
-            this.button1.Text = "Технарь";
+            this.button1.Text = "Дальний бой";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -52,7 +52,7 @@ namespace csheroes.form.camp
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(94, 23);
             this.button2.TabIndex = 1;
-            this.button2.Text = "Гуманитарий";
+            this.button2.Text = "Ближний бой";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -82,9 +82,9 @@ namespace csheroes.form.camp
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(379, 15);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Он просит вас помочь ему с выбором направления (100 респекта):";
+            this.label2.Text = "Он просит вас помочь ему с выбором направления (500 респекта):";
             // 
-            // AbiturentUpgradeDialog
+            // AttackTypeDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -96,7 +96,7 @@ namespace csheroes.form.camp
             this.Controls.Add(this.button1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "AbiturentUpgradeDialog";
+            this.Name = "AttackTypeDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "AbiturentUpgradeDialog";
             this.ResumeLayout(false);

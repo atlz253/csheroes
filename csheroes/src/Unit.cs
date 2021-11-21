@@ -8,146 +8,117 @@ using System.Threading.Tasks;
 
 namespace csheroes.src.unit
 {
-    public enum UnitType
-    {
-        ABBITURENT,
-        TECHNAR,
-        GUMANITARIY
-    }
-
     public enum AttackType
     {
         MELEE,
         RANGE
     }
 
+    public enum UnitStats
+    {
+        HP,
+        RANGE,
+        DAMAGE
+    }
+
     public class UnitSnapshot
     {
-        public readonly string name;
-        public readonly int hp, exp;
+        public readonly Point tile;
+        public readonly AttackType type;
 
-        public UnitSnapshot(string name, int hp, int exp)
+        public readonly int hp, exp, maxHp, range, damage, nextLevel;
+
+        public UnitSnapshot(int hp, int maxHp, int exp, int range, int damage, int nextLevel, Point tile, AttackType type)
         {
-            this.name = name;
+            this.tile = tile;
+            this.type = type;
+
             this.hp = hp;
+            this.maxHp = maxHp;
             this.exp = exp;
+            this.range = range;
+            this.damage = damage;
+
+            this.nextLevel = nextLevel;
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write("Unit");
         }
     }
 
     public class Unit : IGameObj
     {
-        AttackType type;
-        Rectangle tile;
+        Point tile;
+        AttackType type = AttackType.MELEE;
 
-        int hp;
-        int exp;
-        int maxHp;
-        int range;
-        int damage;
-        int nextLevel;
-        string name;
+        int hp = 10;
+        int exp = 0;
+        int maxHp = 10;
+        int range = 3;
+        int level = 1;
+        int damage = 1;
+        int nextLevelExp = 1;
 
-        public Unit(UnitType type)
+        public Unit()
         {
-            exp = 0;
+            tile = RandomTile();
+        }
 
-            InitUnit(type);
+        public Unit(int hp, int range, int damage, AttackType type = AttackType.MELEE) : this()
+        {
+            maxHp = hp;
+            this.hp = hp;
+            this.range = range;
+            this.damage = damage;
         }
 
         public Unit(UnitSnapshot snapshot)
         {
-            UnitType type = UnitType.ABBITURENT;
-
-            switch (snapshot.name)
-            {
-                case "Абитурент":
-                    type = UnitType.ABBITURENT;
-                    break;
-                case "Технарь":
-                    type = UnitType.TECHNAR;
-                    break;
-                case "Гуманитарий":
-                    type = UnitType.GUMANITARIY;
-                    break;
-            }
-
-            InitUnit(type);
-
+            tile = RandomTile();
+            type = snapshot.type;
+            maxHp = snapshot.maxHp;
             hp = snapshot.hp;
+            range = snapshot.range;
+            damage = snapshot.damage;
             exp = snapshot.exp;
+            nextLevelExp = snapshot.nextLevel;
         }
 
-        void InitUnit(UnitType type)
+        Point RandomTile()
         {
-            switch (type)
-            {
-                case UnitType.ABBITURENT:
-                    tile = new Rectangle(256, 0, Global.CellSize, Global.CellSize);
-                    this.type = AttackType.MELEE;
-                    maxHp = 3;
-                    Hp = 3;
-                    range = 3;
-                    damage = 1;
-                    nextLevel = 1;
-                    name = "Абитурент";
-                    break;
-                case UnitType.TECHNAR:
-                    tile = new Rectangle(320, 0, Global.CellSize, Global.CellSize);
-                    this.type = AttackType.RANGE; // TODO: дальний бой
-                    maxHp = 3;
-                    Hp = 3;
-                    range = 3;
-                    damage = 2;
-                    nextLevel = 2;
-                    name = "Технарь";
-                    break;
-                case UnitType.GUMANITARIY:
-                    tile = new Rectangle(288, 0, Global.CellSize, Global.CellSize);
-                    this.type = AttackType.MELEE;
-                    maxHp = 5;
-                    Hp = 5;
-                    range = 5;
-                    damage = 3;
-                    nextLevel = 2;
-                    name = "Гуманитарий";
-                    break;
-            }
+            return new(256 + Global.CellSize * Global.Rand.Next(0, 3), 0);
         }
 
-        internal AttackType Attack { get => type; }
+        internal AttackType Attack { get => type; set => type = value; }
 
-        public int Range => range;
+        public int Range { get => range; set => range = value; }
 
-        public int Damage => damage;
+        public int Damage { get => damage; set => damage = value; }
 
         public int Hp { get => hp; set => hp = value; }
 
-        public int MaxHp => maxHp;
+        public int MaxHp { get => maxHp; set => maxHp = value; }
 
         public int Exp { get => exp; set => exp = value; }
 
-        public int NextLevel => nextLevel;
+        public int NextLevel { get => nextLevelExp; set => nextLevelExp = value; }
+
+        public int Level { get => level; set => level = value; }
 
         public Rectangle GetTile()
         {
-            return tile;
+            return new(tile.X, tile.Y, Global.CellSize, Global.CellSize);
         }
 
-        public override string ToString()
+        public void Save(BinaryWriter writer) // TODO: remove
         {
-            return name;
-        }
-
-        public void Save(BinaryWriter writer)
-        {
-            writer.Write(name);
-            writer.Write(hp);
-            writer.Write(exp);
         }
 
         public UnitSnapshot MakeSnaphot()
         {
-            return new(name, hp, exp);
+            return new(hp, maxHp, exp, range, damage, nextLevelExp, tile, type);
         }
     }
 }

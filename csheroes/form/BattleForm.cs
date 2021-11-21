@@ -223,7 +223,7 @@ namespace csheroes.form
                         break;
                 }
             }
-                
+
 
             while (tmp != dest)
                 if (((tmp.Y < dest.Y || (tmp.X < dest.X && tmp.X + 1 != dest.X && !CellIsEmpty(tmp.X + 1, tmp.Y))) && CellIsEmpty(tmp.X, tmp.Y + 1)))
@@ -234,14 +234,10 @@ namespace csheroes.form
                 else if (tmp.Y != dest.Y && CellIsEmpty(tmp.X, tmp.Y - 1) && arrow[tmp.Y - 1, tmp.X] == Direction.NONE)
                     MovePoint(Direction.UP, ref tmp);
                 else if ((tmp.X < dest.X && CellIsEmpty(tmp.X + 1, tmp.Y)) ||
-                        (tmp.X == dest.X && CellIsEmpty(tmp.X + 1, tmp.Y) && tmp.Y != 0 && !CellIsEmpty(tmp.X, tmp.Y - 1)))
+                        (tmp.X == dest.X && (CellIsEmpty(tmp.X + 1, tmp.Y) && !CellIsEmpty(tmp.X, tmp.Y - 1) && (tmp.Y != 0 || tmp.Y != Height / Global.BattleCellSize - 2))))
                     MovePoint(Direction.RIGHT, ref tmp);
                 else
-#if DEBUG
-                    return false; // что-то пошло не так
-#else
-                    return true; // ожидание вместо хода
-#endif
+                    tmp = friendCords[index]; // выбранный путь оказался неудачным
 
             action[friendCords[index].Y, friendCords[index].X] = null; // перемещение на пустую клетку
             friendCords[index] = dest;
