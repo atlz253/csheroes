@@ -177,34 +177,71 @@ namespace csheroes.form
             return (action[y, x] == null);
         }
 
+        bool IsCellInRange(Point src, Point dest, int range)
+        {
+            return src.X - dest.X <= range && src.Y - dest.Y <= range;
+        }
+
         bool MoveUnit(Point dest, Unit unit, Point[] friendCords, int index)
         {
             Point tmp = friendCords[index];
 
             if (!CellIsEmpty(dest.X, dest.Y)) // на клетке стоит юнит
-                if (CellIsEmpty(dest.X, dest.Y - 1)) // TODO: просчитывать расстояния до точек
-                    dest.Y--;
-                else if (CellIsEmpty(dest.X, dest.Y + 1))
-                    dest.Y++;
-                else if (CellIsEmpty(dest.X - 1, dest.Y))
-                    dest.X--;
-                else if (CellIsEmpty(dest.X + 1, dest.Y))
-                    dest.X++;
-                else
+            {
+                int min = -1;
+                double[] distance = new double[4] { -1, -1, -1, -1 }; // up, down, left, right
+
+                if (IsCellInRange(tmp, new(dest.X, dest.Y - 1), unit.Range) && CellIsEmpty(dest.X, dest.Y - 1))
+                    distance[0] = VectorLenght(dest, new(dest.X, dest.Y - 1));
+                if (IsCellInRange(tmp, new(dest.X, dest.Y + 1), unit.Range) && CellIsEmpty(dest.X, dest.Y + 1))
+                    distance[1] = VectorLenght(dest, new(dest.X, dest.Y + 1));
+                if (IsCellInRange(tmp, new(dest.X - 1, dest.Y), unit.Range) && CellIsEmpty(dest.X - 1, dest.Y))
+                    distance[2] = VectorLenght(dest, new(dest.X - 1, dest.Y));
+                if (IsCellInRange(tmp, new(dest.X + 1, dest.Y), unit.Range) && CellIsEmpty(dest.X + 1, dest.Y))
+                    distance[3] = VectorLenght(dest, new(dest.X + 1, dest.Y));
+
+                for (int i = 0; i < 4; i++)
+                    if (distance[i] != -1 && (min == -1 || distance[i] < distance[min]))
+                        min = i;
+
+                if (min == -1)
                     return false; // к юниту невозможно подойти
+
+                switch (min)
+                {
+                    case 0:
+                        dest.Y--;
+                        break;
+                    case 1:
+                        dest.Y++;
+                        break;
+                    case 2:
+                        dest.X--;
+                        break;
+                    case 3:
+                        dest.X++;
+                        break;
+                }
+            }
+                
 
             while (tmp != dest)
                 if (((tmp.Y < dest.Y || (tmp.X < dest.X && tmp.X + 1 != dest.X && !CellIsEmpty(tmp.X + 1, tmp.Y))) && CellIsEmpty(tmp.X, tmp.Y + 1)))
                     MovePoint(Direction.DOWN, ref tmp);
-                else if ((tmp.X > dest.X && tmp.Y - 1 != dest.Y && CellIsEmpty(tmp.X - 1, tmp.Y) && arrow[tmp.Y, tmp.X - 1] == Direction.NONE) ||
+                else if ((tmp.X > dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && arrow[tmp.Y, tmp.X - 1] == Direction.NONE) ||
                         (tmp.X == dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && tmp.Y != 0 && !CellIsEmpty(tmp.X, tmp.Y - 1)))
                     MovePoint(Direction.LEFT, ref tmp);
                 else if (tmp.Y != dest.Y && CellIsEmpty(tmp.X, tmp.Y - 1) && arrow[tmp.Y - 1, tmp.X] == Direction.NONE)
                     MovePoint(Direction.UP, ref tmp);
-                else if (tmp.X < dest.X && CellIsEmpty(tmp.X + 1, tmp.Y))
+                else if ((tmp.X < dest.X && CellIsEmpty(tmp.X + 1, tmp.Y)) ||
+                        (tmp.X == dest.X && CellIsEmpty(tmp.X + 1, tmp.Y) && tmp.Y != 0 && !CellIsEmpty(tmp.X, tmp.Y - 1)))
                     MovePoint(Direction.RIGHT, ref tmp);
                 else
+#if DEBUG
                     return false; // что-то пошло не так
+#else
+                    return true; // ожидание вместо хода
+#endif
 
             action[friendCords[index].Y, friendCords[index].X] = null; // перемещение на пустую клетку
             friendCords[index] = dest;
@@ -323,9 +360,9 @@ namespace csheroes.form
             Draw();
         }
 
-        double VectorLenght(int x, int y)
+        double VectorLenght(Point begin, Point end)
         {
-            return Math.Sqrt(x * x + y * y);
+            return Math.Sqrt((begin.X - end.X)*(begin.X-end.X) + (begin.Y - end.Y) * (begin.Y - end.Y));
         }
 
         void AIMove()
@@ -355,7 +392,7 @@ namespace csheroes.form
             Point dest = new(-1, -1), tmp = new(friendCords[index].X, friendCords[index].Y);
 
             for (int i = 0; i < 7; i++)
-                if (enemyUnits[i] != null && (dest.X == -1 || (VectorLenght(dest.X - tmp.X, dest.Y - tmp.Y) > VectorLenght(enemyCords[i].X - tmp.X, enemyCords[i].Y - tmp.Y))))
+                if (enemyUnits[i] != null && (dest.X == -1 || (VectorLenght(dest, tmp) > VectorLenght(enemyCords[i], tmp))))
                     dest = enemyCords[i];
 
             if (Math.Abs(dest.X - tmp.X) > unit.Range)
