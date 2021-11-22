@@ -150,11 +150,14 @@ namespace csheroes.form.camp
 
                         if (upgradeDialog.choiced)
                         {
-                            BoolDialog acceptDialog = new($"Это будет стоить {hero.Army.Units[i].Level * 100} респекта");
+                            int upgradeCost = hero.Army.Units[i].Level * 100;
+                            BoolDialog acceptDialog = new($"Это будет стоить {upgradeCost} респекта");
 
                             acceptDialog.ShowDialog();
 
-                            if (acceptDialog.choice && hero.Respect >= hero.Army.Units[i].Level * 100)
+
+
+                            if (acceptDialog.choice && hero.Respect >= upgradeCost)
                             {
                                 switch (upgradeDialog.choice)
                                 {
@@ -171,7 +174,7 @@ namespace csheroes.form.camp
                                 }
 
                                 hero.Army.Units[i].Level += 1;
-                                hero.Respect -= hero.Army.Units[i].Level * 100;
+                                hero.Respect -= upgradeCost;
                                 hero.Army.Units[i].NextLevel *= 2;
 
                                 Controls.Remove(expBtns[i]);

@@ -182,6 +182,22 @@ namespace csheroes.form
             return src.X - dest.X <= range && src.Y - dest.Y <= range;
         }
 
+        Double[] UnitsAround(Point dest)
+        {
+            double[] distance = new double[4] { -1, -1, -1, -1 }; // up, down, left, right
+
+            if (CellIsEmpty(dest.X, dest.Y - 1))
+                distance[0] = VectorLenght(dest, new(dest.X, dest.Y - 1));
+            if (CellIsEmpty(dest.X, dest.Y + 1))
+                distance[1] = VectorLenght(dest, new(dest.X, dest.Y + 1));
+            if (CellIsEmpty(dest.X - 1, dest.Y))
+                distance[2] = VectorLenght(dest, new(dest.X - 1, dest.Y));
+            if (CellIsEmpty(dest.X + 1, dest.Y))
+                distance[3] = VectorLenght(dest, new(dest.X + 1, dest.Y));
+
+            return distance;
+        }
+
         bool MoveUnit(Point dest, Unit unit, Point[] friendCords, int index)
         {
             Point tmp = friendCords[index];
@@ -189,23 +205,54 @@ namespace csheroes.form
             if (!CellIsEmpty(dest.X, dest.Y)) // на клетке стоит юнит
             {
                 int min = -1;
+                bool[] free = new bool[4];
                 double[] distance = new double[4] { -1, -1, -1, -1 }; // up, down, left, right
 
+                distance[0] = VectorLenght(tmp, new(dest.X, dest.Y - 1));
+                distance[1] = VectorLenght(tmp, new(dest.X, dest.Y + 1));
+                distance[2] = VectorLenght(tmp, new(dest.X - 1, dest.Y));
+                distance[3] = VectorLenght(tmp, new(dest.X + 1, dest.Y));
+
                 if (IsCellInRange(tmp, new(dest.X, dest.Y - 1), unit.Range) && CellIsEmpty(dest.X, dest.Y - 1))
-                    distance[0] = VectorLenght(dest, new(dest.X, dest.Y - 1));
+                    free[0] = true;
                 if (IsCellInRange(tmp, new(dest.X, dest.Y + 1), unit.Range) && CellIsEmpty(dest.X, dest.Y + 1))
-                    distance[1] = VectorLenght(dest, new(dest.X, dest.Y + 1));
+                    free[1] = true;
                 if (IsCellInRange(tmp, new(dest.X - 1, dest.Y), unit.Range) && CellIsEmpty(dest.X - 1, dest.Y))
-                    distance[2] = VectorLenght(dest, new(dest.X - 1, dest.Y));
+                    free[2] = true;
                 if (IsCellInRange(tmp, new(dest.X + 1, dest.Y), unit.Range) && CellIsEmpty(dest.X + 1, dest.Y))
-                    distance[3] = VectorLenght(dest, new(dest.X + 1, dest.Y));
+                    free[3] = true;
 
                 for (int i = 0; i < 4; i++)
-                    if (distance[i] != -1 && (min == -1 || distance[i] < distance[min]))
+                    if (free[i] && (min == -1 || distance[i] < distance[min]))
                         min = i;
 
                 if (min == -1)
-                    return false; // к юниту невозможно подойти
+                {
+                    min = 0;
+
+                    for (int i = 0; i < 4; i++)
+                        if (distance[i] < distance[min])
+                            min = i;
+
+                    switch (min)
+                    {
+                        case 0:
+                            dest.Y--;
+                            break;
+                        case 1:
+                            dest.Y++;
+                            break;
+                        case 2:
+                            dest.X--;
+                            break;
+                        case 3:
+                            dest.X++;
+                            break;
+                    }
+
+                    return MoveUnit(dest, unit, friendCords, index);
+                    //return false; // к юниту невозможно подойти
+                }
 
                 switch (min)
                 {
@@ -224,18 +271,24 @@ namespace csheroes.form
                 }
             }
 
-
+            //arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            //Draw();
             while (tmp != dest)
-                if (((tmp.Y < dest.Y || (tmp.X < dest.X && tmp.X + 1 != dest.X && !CellIsEmpty(tmp.X + 1, tmp.Y))) && CellIsEmpty(tmp.X, tmp.Y + 1)))
+                if ((!CellIsEmpty(tmp.X + 1, tmp.Y) || arrow[tmp.Y, tmp.X + 1] != Direction.NONE) && (!CellIsEmpty(tmp.X - 1, tmp.Y) || arrow[tmp.Y, tmp.X - 1] != Direction.NONE) &&
+                    (!CellIsEmpty(tmp.X, tmp.Y + 1) || arrow[tmp.Y + 1, tmp.X] != Direction.NONE) && (!CellIsEmpty(tmp.X, tmp.Y - 1) || arrow[tmp.Y - 1, tmp.X] != Direction.NONE))
+                        tmp = friendCords[index]; // зашли в тупик
+                else if ((tmp.Y < dest.Y || (tmp.X < dest.X && tmp.X + 1 != dest.X && !CellIsEmpty(tmp.X + 1, tmp.Y)) || 
+                         (tmp.X > dest.X && tmp.X - 1 == dest.X && !CellIsEmpty(dest.X - 1, dest.Y))) && CellIsEmpty(tmp.X, tmp.Y + 1) && arrow[tmp.Y + 1, tmp.X] == Direction.NONE)
                     MovePoint(Direction.DOWN, ref tmp);
                 else if ((tmp.X > dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && arrow[tmp.Y, tmp.X - 1] == Direction.NONE) ||
-                        (tmp.X == dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && tmp.Y != 0 && !CellIsEmpty(tmp.X, tmp.Y - 1)))
+                         (tmp.X == dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && tmp.Y != 0 && !CellIsEmpty(tmp.X, tmp.Y - 1)) ||
+                         (!CellIsEmpty(tmp.X + 1, tmp.Y) && !CellIsEmpty(tmp.X, tmp.Y + 1)))
                     MovePoint(Direction.LEFT, ref tmp);
-                else if (tmp.Y != dest.Y && CellIsEmpty(tmp.X, tmp.Y - 1) && arrow[tmp.Y - 1, tmp.X] == Direction.NONE)
+                else if ((tmp.Y != dest.Y && CellIsEmpty(tmp.X, tmp.Y - 1) && arrow[tmp.Y - 1, tmp.X] == Direction.NONE))
                     MovePoint(Direction.UP, ref tmp);
                 else if ((tmp.X < dest.X && CellIsEmpty(tmp.X + 1, tmp.Y)) ||
                         (tmp.X == dest.X && (CellIsEmpty(tmp.X + 1, tmp.Y) && !CellIsEmpty(tmp.X, tmp.Y - 1) && (tmp.Y != 0 || tmp.Y != Height / Global.BattleCellSize - 2))))
-                    MovePoint(Direction.RIGHT, ref tmp);
+                    MovePoint(Direction.RIGHT, ref tmp); 
                 else
                     tmp = friendCords[index]; // выбранный путь оказался неудачным
 
@@ -285,13 +338,15 @@ namespace csheroes.form
             return ((action[dest.Y, dest.X] == null || (unit.Attack == AttackType.MELEE && !UnitNearby(dest, unit))) && Math.Abs(dest.X - src.X) <= unit.Range && Math.Abs(dest.Y - src.Y) <= unit.Range);
         }
 
-        bool IsReadyAttack(Unit unit, Point[] friends, Point dest)
+        bool IsReadyAttack(Unit[] friends, int index, Point[] friendCords, Point dest)
         {
+            Unit unit = friends[index];
+
             if (CellIsEmpty(dest.X, dest.Y))
                 return false;
 
-            foreach (Point friend in friends)
-                if (dest == friend)
+            for (int i = 0; i < 7; i++)
+                if (dest == friendCords[i] && action[dest.Y, dest.X] == friends[i])
                     return false;
 
             return ((unit.Attack == AttackType.RANGE)) || ((unit.Attack == AttackType.MELEE) && UnitNearby(dest, unit));
@@ -308,7 +363,8 @@ namespace csheroes.form
                     return;
 
             int index = turn ? firstArmyTurn : secondArmyTurn;
-            Unit unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
+            Army friendArmy = turn ? firstArmy : secondArmy;
+            Unit unit = friendArmy.Units[index];
 
             while (unit == null) // если юнит, который должен был ходить, трагически погиб
             {
@@ -332,7 +388,7 @@ namespace csheroes.form
             if (IsNeedUnitMove(unit, tmp, dest))
                 unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
-            if (IsReadyAttack(unit, friendCords, dest))
+            if (IsReadyAttack(friendArmy.Units, index, friendCords, dest))
             {
                 AttackUnit((Unit)action[dest.Y, dest.X], dest, unit);
 
@@ -367,7 +423,8 @@ namespace csheroes.form
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords,
                     enemyCords = turn ? secondArmyCords : firstArmyCords;
             int index = turn ? firstArmyTurn : secondArmyTurn;
-            Unit unit = turn ? firstArmy.Units[firstArmyTurn] : secondArmy.Units[secondArmyTurn];
+            Army friendArmy = turn ? firstArmy : secondArmy;
+            Unit unit = friendArmy.Units[index];
             Unit[] enemyUnits = turn ? secondArmy.Units :firstArmy.Units;
 
             WriteSnapshot();
@@ -398,6 +455,7 @@ namespace csheroes.form
 
                         if (dest.X < 0)
                             dest.X = 0;
+
                     }
                 else // dest.X < tmp.X
                 {
@@ -405,16 +463,17 @@ namespace csheroes.form
 
                     if (dest.X > Width / Global.BattleCellSize - 1)
                         dest.X = Width / Global.BattleCellSize - 1;
+
                 }
 
             if (Math.Abs(dest.Y - tmp.Y) > unit.Range)
                 if (dest.Y < tmp.Y)
                 {
-
                     dest.Y = tmp.Y - unit.Range;
 
                     if (dest.Y < 0)
                         dest.Y = 0;
+
                 }
                 else
                 { 
@@ -422,6 +481,7 @@ namespace csheroes.form
 
                     if (dest.Y > Height / Global.BattleCellSize - 1)
                         dest.Y = Height / Global.BattleCellSize - 1;
+
                 }
 
             bool unitTurn = false;
@@ -429,7 +489,7 @@ namespace csheroes.form
             if (IsNeedUnitMove(unit, tmp, dest))
                 unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
-            if (IsReadyAttack(unit, friendCords, dest))
+            if (IsReadyAttack(friendArmy.Units, index, friendCords, dest))
             {
                 AttackUnit((Unit)action[dest.Y, dest.X], dest, unit);
 

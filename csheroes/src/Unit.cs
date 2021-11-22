@@ -21,6 +21,11 @@ namespace csheroes.src.unit
         DAMAGE
     }
 
+    public enum UnitTemplate
+    {
+        CREEP
+    }
+
     public class UnitSnapshot
     {
         public readonly Point tile;
@@ -66,6 +71,19 @@ namespace csheroes.src.unit
             tile = RandomTile();
         }
 
+        public Unit(UnitTemplate template) : this()
+        {
+            switch (template)
+            {
+                case UnitTemplate.CREEP:
+                    maxHp = 3;
+                    hp = 3;
+                    range = 3;
+                    damage = 1;
+                    break;
+            }
+        }
+
         public Unit(int hp, int range, int damage, AttackType type = AttackType.MELEE) : this()
         {
             maxHp = hp;
@@ -76,7 +94,7 @@ namespace csheroes.src.unit
 
         public Unit(UnitSnapshot snapshot)
         {
-            tile = RandomTile();
+            tile = snapshot.tile;
             type = snapshot.type;
             maxHp = snapshot.maxHp;
             hp = snapshot.hp;
@@ -88,7 +106,7 @@ namespace csheroes.src.unit
 
         Point RandomTile()
         {
-            return new(256 + Global.CellSize * Global.Rand.Next(0, 3), 0);
+            return new(256 + Global.CellSize * Global.Rand.Next(0, 4), 0);
         }
 
         internal AttackType Attack { get => type; set => type = value; }
