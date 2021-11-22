@@ -29,50 +29,82 @@ namespace csheroes.form.camp
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.respectLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // button1
+            // statusStrip1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(300, 100);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Нанять абитурента";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Hire);
+            this.statusStrip1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel2,
+            this.respectLabel,
+            this.toolStripStatusLabel1,
+            this.toolStripSplitButton3});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 802);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(802, 22);
+            this.statusStrip1.SizingGrip = false;
+            this.statusStrip1.TabIndex = 4;
+            this.statusStrip1.Text = "statusStrip1";
             // 
-            // button4
+            // toolStripStatusLabel2
             // 
-            this.button4.Location = new System.Drawing.Point(490, 12);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(300, 100);
-            this.button4.TabIndex = 3;
-            this.button4.Text = "Выход";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.Exit);
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(57, 17);
+            this.toolStripStatusLabel2.Text = "Влияние:";
+            // 
+            // respectLabel
+            // 
+            this.respectLabel.Name = "respectLabel";
+            this.respectLabel.Size = new System.Drawing.Size(13, 17);
+            this.respectLabel.Text = "0";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(665, 17);
+            this.toolStripStatusLabel1.Spring = true;
+            // 
+            // toolStripSplitButton3
+            // 
+            this.toolStripSplitButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripSplitButton3.DropDownButtonWidth = 0;
+            this.toolStripSplitButton3.Image = global::csheroes.Properties.Resources.exitico;
+            this.toolStripSplitButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSplitButton3.Name = "toolStripSplitButton3";
+            this.toolStripSplitButton3.Size = new System.Drawing.Size(21, 20);
+            this.toolStripSplitButton3.Text = "toolStripSplitButton3";
+            this.toolStripSplitButton3.ButtonClick += new System.EventHandler(this.toolStripSplitButton3_ButtonClick);
             // 
             // CampForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(802, 808);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(802, 824);
+            this.Controls.Add(this.statusStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximumSize = new System.Drawing.Size(818, 847);
-            this.MinimumSize = new System.Drawing.Size(818, 847);
+            this.MaximumSize = new System.Drawing.Size(818, 863);
+            this.MinimumSize = new System.Drawing.Size(818, 863);
             this.Name = "CampForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "CampForm";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel respectLabel;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton3;
     }
 }

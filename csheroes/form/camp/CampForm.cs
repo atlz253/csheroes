@@ -21,16 +21,20 @@ namespace csheroes.form.camp
 
         Label[] labels;
         Button[] healBtns,
-                 expBtns;
+                 expBtns,
+                 newUnitBtns;
 
         public CampForm(ExploreForm parent, Hero hero)
         {
             InitializeComponent();
 
+
             surface = CreateGraphics();
 
-            this.hero = hero;
             this.parent = parent;
+            
+            this.hero = hero;
+            UpdateRespect();
 
             InitCards();
         }
@@ -40,6 +44,7 @@ namespace csheroes.form.camp
             labels = new Label[7];
             healBtns = new Button[7];
             expBtns = new Button[7];
+            newUnitBtns = new Button[7];
 
             for (int i = 0; i < 7; i++)
                 if (hero.Army.Units[i] != null)
@@ -60,7 +65,7 @@ namespace csheroes.form.camp
                         healBtns[i].Text = "HP";
                         healBtns[i].Name = $"healBtn{i}";
                         healBtns[i].Size = new Size(25, 25);
-                        healBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 700);
+                        healBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 680);
                         healBtns[i].Click += new EventHandler(Heal);
                         Controls.Add(healBtns[i]);
                     }
@@ -71,10 +76,20 @@ namespace csheroes.form.camp
                         expBtns[i].Text = "EXP";
                         expBtns[i].Name = $"expBtn{i}";
                         expBtns[i].Size = new Size(25, 25);
-                        expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 730);
+                        expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 710);
                         expBtns[i].Click += new EventHandler(Upgrade);
                         Controls.Add(expBtns[i]);
                     }
+                }
+                else
+                {
+                    newUnitBtns[i] = new();
+                    newUnitBtns[i].Text = "+";
+                    newUnitBtns[i].Name = $"newUnitBtns{1}";
+                    newUnitBtns[i].Size = new Size(25, 25);
+                    newUnitBtns[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 10, 610);
+                    newUnitBtns[i].Click += new EventHandler(AddUnit);
+                    Controls.Add(newUnitBtns[i]);
                 }
         }
 
@@ -87,6 +102,33 @@ namespace csheroes.form.camp
         {
             for (int i = 0; i < 7; i++)
                 surface.DrawLines(Global.GridPen, new PointF[] { new PointF((float) 100 / 8 * (i + 1) + i * 100, 600), new PointF((float) 100 / 8 * (i + 1) + i * 100, 750), new PointF((float) 100 / 8 * (i + 1) + (i + 1) * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 600) });
+        }
+
+        void AddUnit(object sender, EventArgs e)
+        {
+            for (int i = 0; i < 7; i++)
+                if (newUnitBtns[i] != null && (sender as Button).Name == newUnitBtns[i].Name)
+                {
+                    BoolDialog dialog = new("Завербовать нового абитурента (100 респекта)?");
+
+                    dialog.ShowDialog();
+
+                    if (dialog.choice)
+                        if (hero.Army.Units[i] == null)
+                        {
+                            if (hero.Respect == 0 || hero.Respect < 100)
+                                break;
+                            hero.Respect -= 100;
+                            UpdateRespect();
+
+                            hero.Army.Units[i] = new();
+
+                            Controls.Remove(newUnitBtns[i]);
+                            newUnitBtns[i] = null;
+
+                            return;
+                        }
+                }
         }
 
         void Heal(object sender, EventArgs e)
@@ -131,13 +173,25 @@ namespace csheroes.form.camp
                                 return;
 
                             hero.Respect -= 500;
+                            UpdateRespect();
 
                             hero.Army.Units[i].Level += 1;
                             hero.Army.Units[i].Attack = upgradeDialog.choice;
-                            hero.Army.Units[i].NextLevel *= 2;
+                            hero.Army.Units[i].NextLevel = hero.Army.Units[i].NextLevel * 2;
 
                             Controls.Remove(expBtns[i]);
                             expBtns[i] = null;
+
+                            if (hero.Army.Units[i].Exp >= hero.Army.Units[i].NextLevel)
+                            {
+                                expBtns[i] = new();
+                                expBtns[i].Text = "EXP";
+                                expBtns[i].Name = $"expBtn{i}";
+                                expBtns[i].Size = new Size(25, 25);
+                                expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 710);
+                                expBtns[i].Click += new EventHandler(Upgrade);
+                                Controls.Add(expBtns[i]);
+                            }
                         }
 
                         upgradeDialog.Dispose();
@@ -175,10 +229,22 @@ namespace csheroes.form.camp
 
                                 hero.Army.Units[i].Level += 1;
                                 hero.Respect -= upgradeCost;
-                                hero.Army.Units[i].NextLevel *= 2;
+                                UpdateRespect();
+                                hero.Army.Units[i].NextLevel = hero.Army.Units[i].NextLevel * 2;
 
                                 Controls.Remove(expBtns[i]);
                                 expBtns[i] = null;
+
+                                if (hero.Army.Units[i].Exp >= hero.Army.Units[i].NextLevel)
+                                {
+                                    expBtns[i] = new();
+                                    expBtns[i].Text = "EXP";
+                                    expBtns[i].Name = $"expBtn{i}";
+                                    expBtns[i].Size = new Size(25, 25);
+                                    expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 730);
+                                    expBtns[i].Click += new EventHandler(Upgrade);
+                                    Controls.Add(expBtns[i]);
+                                }
                             }
                                 
 
@@ -209,11 +275,24 @@ namespace csheroes.form.camp
                         if (hero.Respect == 0 || hero.Respect < 100)
                             break;
                         hero.Respect -= 100;
+                        UpdateRespect();
 
                         hero.Army.Units[i] = new();
                         break;
                     }
                 }
+        }
+
+        void UpdateRespect()
+        {
+            respectLabel.Text = hero.Respect.ToString();
+        }
+
+        private void toolStripSplitButton3_ButtonClick(object sender, EventArgs e)
+        {
+            parent.Location = new Point(Location.X, Location.Y);
+
+            Close();
         }
 
         private void Exit(object sender, EventArgs e)
