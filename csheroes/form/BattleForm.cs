@@ -31,9 +31,11 @@ namespace csheroes.form
         bool turn = true,
              close = false,
              ai = true; // включен ли искусственный интелект
-        
+
+#if DEBUG
         BattleFormSnapshot[] snapshots;
         int lastSnapshotIndex = -1;
+#endif
 
         public BattleForm(ExploreForm parent, Hero hero, Army enemy)
         {
@@ -41,7 +43,9 @@ namespace csheroes.form
 
             this.hero = hero;
             this.parent = parent;
+#if DEBUG
             snapshots = new BattleFormSnapshot[10];
+#endif
 
             InitBackground();
 
@@ -271,6 +275,10 @@ namespace csheroes.form
                 }
             }
 
+#if RELEASE
+            int try = 0;
+#endif
+
             //arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
             //Draw();
             while (tmp != dest)
@@ -288,9 +296,19 @@ namespace csheroes.form
                     MovePoint(Direction.UP, ref tmp);
                 else if ((tmp.X < dest.X && CellIsEmpty(tmp.X + 1, tmp.Y)) ||
                         (tmp.X == dest.X && (CellIsEmpty(tmp.X + 1, tmp.Y) && !CellIsEmpty(tmp.X, tmp.Y - 1) && (tmp.Y != 0 || tmp.Y != Height / Global.BattleCellSize - 2))))
-                    MovePoint(Direction.RIGHT, ref tmp); 
+                    MovePoint(Direction.RIGHT, ref tmp);
+#if RELEASE
+                else if (try != 100)
+                {
+                    tmp = friendCords[index];
+                    try++;
+                }
+                else
+                    return true;
+#else
                 else
                     tmp = friendCords[index]; // выбранный путь оказался неудачным
+#endif
 
             action[friendCords[index].Y, friendCords[index].X] = null; // перемещение на пустую клетку
             friendCords[index] = dest;
@@ -384,7 +402,9 @@ namespace csheroes.form
 
             bool unitTurn = false;
 
+#if DEBUG
             WriteSnapshot();
+#endif
             if (IsNeedUnitMove(unit, tmp, dest))
                 unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
@@ -427,7 +447,9 @@ namespace csheroes.form
             Unit unit = friendArmy.Units[index];
             Unit[] enemyUnits = turn ? secondArmy.Units :firstArmy.Units;
 
+#if DEBUG
             WriteSnapshot();
+#endif
             while (unit == null) // если юнит, который должен был ходить, трагически погиб
             {
                 if (turn)
@@ -534,7 +556,9 @@ namespace csheroes.form
 
         private void WaitBtnClick(object sender, EventArgs e)
         {
+#if DEBUG
             WriteSnapshot();
+#endif
 
             if (turn)
                 NextTurn(firstArmy.Units, ref firstArmyTurn);
@@ -590,6 +614,7 @@ namespace csheroes.form
             }
         }
 
+#if DEBUG
         BattleFormSnapshot MakeSnapshot()
         {
             return new(hero.MakeSnapshot(), secondArmy.MakeSnapshot(), firstArmyCords, secondArmyCords, firstArmyTurn, secondArmyTurn, turn, ai);
@@ -641,6 +666,7 @@ namespace csheroes.form
 
             Draw();
         }
+#endif
     }
 
     enum Direction
