@@ -470,7 +470,7 @@ namespace csheroes.form
                 if (enemyUnits[i] != null && (dest.X == -1 || (VectorLenght(dest, tmp) > VectorLenght(enemyCords[i], tmp))))
                     dest = enemyCords[i];
 
-            if (Math.Abs(dest.X - tmp.X) > unit.Range)
+            if (unit.Attack == AttackType.MELEE && Math.Abs(dest.X - tmp.X) > unit.Range)
                 if (dest.X < tmp.X)
                     {
                         dest.X = tmp.X - unit.Range;
@@ -488,7 +488,7 @@ namespace csheroes.form
 
                 }
 
-            if (Math.Abs(dest.Y - tmp.Y) > unit.Range)
+            if (unit.Attack == AttackType.MELEE && Math.Abs(dest.Y - tmp.Y) > unit.Range)
                 if (dest.Y < tmp.Y)
                 {
                     dest.Y = tmp.Y - unit.Range;
