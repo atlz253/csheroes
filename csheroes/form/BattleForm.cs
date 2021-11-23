@@ -281,7 +281,7 @@ namespace csheroes.form
                          (tmp.X > dest.X && tmp.X - 1 == dest.X && !CellIsEmpty(dest.X - 1, dest.Y))) && CellIsEmpty(tmp.X, tmp.Y + 1) && arrow[tmp.Y + 1, tmp.X] == Direction.NONE)
                     MovePoint(Direction.DOWN, ref tmp);
                 else if ((tmp.X > dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && arrow[tmp.Y, tmp.X - 1] == Direction.NONE) ||
-                         (tmp.X == dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && tmp.Y != 0 && !CellIsEmpty(tmp.X, tmp.Y - 1)) ||
+                         (tmp.X == dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && !CellIsEmpty(tmp.X, tmp.Y - 1)) ||
                          (!CellIsEmpty(tmp.X + 1, tmp.Y) && !CellIsEmpty(tmp.X, tmp.Y + 1)))
                     MovePoint(Direction.LEFT, ref tmp);
                 else if ((tmp.Y != dest.Y && CellIsEmpty(tmp.X, tmp.Y - 1) && arrow[tmp.Y - 1, tmp.X] == Direction.NONE))
