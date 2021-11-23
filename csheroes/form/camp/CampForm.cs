@@ -288,7 +288,7 @@ namespace csheroes.form.camp
                                     expBtns[i].Text = "EXP";
                                     expBtns[i].Name = $"expBtn{i}";
                                     expBtns[i].Size = new Size(25, 25);
-                                    expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 730);
+                                    expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715);
                                     expBtns[i].Click += new EventHandler(Upgrade);
                                     Controls.Add(expBtns[i]);
                                 }
