@@ -7,6 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "csheroes", "csheroes\cshero
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CampMenu|Any CPU = CampMenu|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		FirstMap|Any CPU = FirstMap|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -14,6 +15,8 @@ Global
 		TestMap|Any CPU = TestMap|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.CampMenu|Any CPU.ActiveCfg = CampMenu|Any CPU
+		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.CampMenu|Any CPU.Build.0 = CampMenu|Any CPU
 		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B7E733F-931A-464A-8B19-C1BEC46FB45D}.FirstMap|Any CPU.ActiveCfg = FirstMap|Any CPU

@@ -305,96 +305,96 @@ namespace csheroes.form
 
         void InitAction(string fileName)
         {
-            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
+            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize]; // FIXME: чтение с файла
 
-            using (BinaryReader reader = new(File.Open(fileName, FileMode.Open)))
-            {
-                for (int i = 0; i < Width / Global.CellSize; i++)
-                    for (int j = 0; j < Height / Global.CellSize; j++)
-                    {
-                        string name = reader.ReadString();
+            //using (BinaryReader reader = new(File.Open(fileName, FileMode.Open)))
+            //{
+            //    for (int i = 0; i < Width / Global.CellSize; i++)
+            //        for (int j = 0; j < Height / Global.CellSize; j++)
+            //        {
+            //            string name = reader.ReadString();
 
-                        if (name == "NullObj")
-                        {
-                            continue;
-                        }
-                        else if (name == "Obstacle")
-                        {
-                            action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
-                        }
-                        else if (name == "Hero")
-                        {
-                            int respect = reader.ReadInt32();
+            //            if (name == "NullObj")
+            //            {
+            //                continue;
+            //            }
+            //            else if (name == "Obstacle")
+            //            {
+            //                action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
+            //            }
+            //            else if (name == "Hero")
+            //            {
+            //                int respect = reader.ReadInt32();
 
-                            reader.ReadString(); // считываем строку "Army"
-                            Unit[] units = new Unit[7];
-                            for (int k = 0; k < 7; k++)
-                            {
-                                string unitName = reader.ReadString();
-                                UnitType type = UnitType.ABBITURENT;
+            //                reader.ReadString(); // считываем строку "Army"
+            //                Unit[] units = new Unit[7];
+            //                for (int k = 0; k < 7; k++)
+            //                {
+            //                    string unitName = reader.ReadString();
+            //                    UnitType type = UnitType.ABBITURENT;
 
-                                if (unitName == "NoUnit")
-                                    continue;
+            //                    if (unitName == "NoUnit")
+            //                        continue;
 
-                                switch (unitName)
-                                {
-                                    case "Абитурент":
-                                        type = UnitType.ABBITURENT;
-                                        break;
-                                    case "Технарь":
-                                        type = UnitType.TECHNAR;
-                                        break;
-                                    case "Гуманитарий":
-                                        type = UnitType.GUMANITARIY;
-                                        break;
-                                }
+            //                    switch (unitName)
+            //                    {
+            //                        case "Абитурент":
+            //                            type = UnitType.ABBITURENT;
+            //                            break;
+            //                        case "Технарь":
+            //                            type = UnitType.TECHNAR;
+            //                            break;
+            //                        case "Гуманитарий":
+            //                            type = UnitType.GUMANITARIY;
+            //                            break;
+            //                    }
 
-                                Unit unit = new(type);
-                                unit.Hp = reader.ReadInt32();
-                                unit.Exp = reader.ReadInt32();
+            //                    Unit unit = new(type);
+            //                    unit.Hp = reader.ReadInt32();
+            //                    unit.Exp = reader.ReadInt32();
 
-                                units[k] = unit;
-                            }
+            //                    units[k] = unit;
+            //                }
 
-                            hero = new Hero(new Army(false, units), respect);
-                            action[i, j] = hero;
-                            heroCords = new Point(i, j);
-                        }
-                        else if (name == "Army")
-                        {
-                            Unit[] units = new Unit[7];
-                            for (int k = 0; k < 7; k++)
-                            {
-                                string unitName = reader.ReadString();
-                                UnitType type = UnitType.ABBITURENT;
+            //                hero = new Hero(new Army(false, units), respect);
+            //                action[i, j] = hero;
+            //                heroCords = new Point(i, j);
+            //            }
+            //            else if (name == "Army")
+            //            {
+            //                Unit[] units = new Unit[7];
+            //                for (int k = 0; k < 7; k++)
+            //                {
+            //                    string unitName = reader.ReadString();
+            //                    UnitType type = UnitType.ABBITURENT;
 
-                                if (unitName == "NoUnit")
-                                    continue;
+            //                    if (unitName == "NoUnit")
+            //                        continue;
 
-                                switch (unitName)
-                                {
-                                    case "Абитурент":
-                                        type = UnitType.ABBITURENT;
-                                        break;
-                                    case "Технарь":
-                                        type = UnitType.TECHNAR;
-                                        break;
-                                    case "Гуманитарий":
-                                        type = UnitType.GUMANITARIY;
-                                        break;
-                                }
+            //                    switch (unitName)
+            //                    {
+            //                        case "Абитурент":
+            //                            type = UnitType.ABBITURENT;
+            //                            break;
+            //                        case "Технарь":
+            //                            type = UnitType.TECHNAR;
+            //                            break;
+            //                        case "Гуманитарий":
+            //                            type = UnitType.GUMANITARIY;
+            //                            break;
+            //                    }
 
-                                Unit unit = new(type);
-                                unit.Hp = reader.ReadInt32();
-                                unit.Exp = reader.ReadInt32();
+            //                    Unit unit = new(type);
+            //                    unit.Hp = reader.ReadInt32();
+            //                    unit.Exp = reader.ReadInt32();
 
-                                units[k] = unit;
-                            }
+            //                    units[k] = unit;
+            //                }
 
-                            action[i, j] = new Army(true, units);
-                        }
-                    }
-            }
+            //                action[i, j] = new Army(true, units);
+            //            }
+            //        }
+            //}
         }
 #endif
 
