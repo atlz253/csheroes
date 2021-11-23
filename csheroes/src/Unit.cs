@@ -23,7 +23,12 @@ namespace csheroes.src.unit
 
     public enum UnitTemplate
     {
-        CREEP
+        CREEP,
+        PHYSIC_MELEE,
+        PHYSIC_RANGE,
+        ECONOMIST,
+        STALKER_1,
+        STALKER_2
     }
 
     public class UnitSnapshot
@@ -77,11 +82,43 @@ namespace csheroes.src.unit
             {
                 case UnitTemplate.CREEP:
                     maxHp = 3;
-                    hp = 3;
                     range = 3;
                     damage = 1;
                     break;
+                case UnitTemplate.PHYSIC_MELEE:
+                    tile = new Point(224, 64);
+                    maxHp = 10;
+                    range = 5;
+                    damage = 1;
+                    break;
+                case UnitTemplate.PHYSIC_RANGE:
+                    tile = new Point(256, 64);
+                    type = AttackType.RANGE;
+                    maxHp = 3;
+                    range = 3;
+                    damage = 1;
+                    break;
+                case UnitTemplate.ECONOMIST:
+                    tile = new Point(288 + Global.Rand.Next(0, 3) * Global.CellSize, 64);
+                    maxHp = 10;
+                    range = 3;
+                    damage = 3;
+                    break;
+                case UnitTemplate.STALKER_1:
+                    tile = new Point(384, 64);
+                    maxHp = 5;
+                    range = 3;
+                    damage = 2;
+                    break;
+                case UnitTemplate.STALKER_2:
+                    tile = new Point(416, 64);
+                    maxHp = 5;
+                    range = 3;
+                    damage = 2;
+                    break;
             }
+
+            hp = maxHp;
         }
 
         public Unit(int hp, int range, int damage, AttackType type = AttackType.MELEE) : this()

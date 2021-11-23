@@ -295,11 +295,16 @@ namespace csheroes.form
             action[heroCords.Y, heroCords.X] = hero;
             UpdateRespect();
 
-            action[2, 21] = new Army(true, new Unit(3, 3, 1));
-            action[4, 21] = new Army(true, new Unit[] { new Unit(3, 3, 1) });
+            action[0, 8] = new Army(true, new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST));
+            action[2, 21] = new Army(true, new Unit(UnitTemplate.CREEP));
+            action[2, 13] = new Army(true, new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP));
+            action[4, 21] = new Army(true, new Unit(UnitTemplate.CREEP));
             action[3, 20] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1) });
+            action[3, 13] = new Army(true, new Unit[] { new Unit(UnitTemplate.STALKER_1), new Unit(UnitTemplate.STALKER_2) });
             action[5, 20] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1) });
             action[6, 24] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1) });
+            action[6, 12] = new Army(true, new Unit(UnitTemplate.PHYSIC_RANGE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_RANGE));
+            action[4, 0] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1) });
         }
 #else
 
