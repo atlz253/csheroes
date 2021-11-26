@@ -18,6 +18,9 @@ namespace csheroes.form
     {
         readonly Graphics surface;
 
+        readonly int maxCellWidth;
+        readonly int maxCellHeight;
+
         Rectangle[,] background = null;
         IGameObj[,] action = null;
         Arrows[,] arrow = null;
@@ -28,6 +31,9 @@ namespace csheroes.form
         public ExploreForm(string fileName)
         {
             InitializeComponent();
+
+            maxCellWidth = Width / Global.CellSize;
+            maxCellHeight = Height / Global.CellSize;
 
             InitBackground();
 #if TEST_MAP
@@ -56,33 +62,33 @@ namespace csheroes.form
 
         void DrawGrid()
         {
-            for (int i = 0; i < Width / Global.CellSize; i++)
+            for (int i = 0; i < maxCellWidth; i++)
                 surface.DrawLine(Global.GridPen, Global.CellSize * i, 0, Global.CellSize * i, Height);
 
-            for (int i = 0; i < Height / Global.CellSize; i++)
+            for (int i = 0; i < maxCellHeight; i++)
                 surface.DrawLine(Global.GridPen, 0, Global.CellSize * i, Width, Global.CellSize * i);
         }
 
         void InitBackground()
         {
-            background = new Rectangle[Width / Global.CellSize, Height / Global.CellSize];
+            background = new Rectangle[maxCellWidth, maxCellHeight];
 
-            for (int i = 0; i < Width / Global.CellSize; i++)
-                for (int j = 0; j < Height / Global.CellSize; j++)
+            for (int i = 0; i < maxCellWidth; i++)
+                for (int j = 0; j < maxCellHeight; j++)
                     background[i, j] = new Rectangle(Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize, Global.CellSize);
         }
 
         void DrawBackground()
         {
-            for (int i = 0; i < Width / Global.CellSize; i++)
-                for (int j = 0; j < Height / Global.CellSize; j++)
+            for (int i = 0; i < maxCellWidth; i++)
+                for (int j = 0; j < maxCellHeight; j++)
                     surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i,j], GraphicsUnit.Pixel);
         }
 
 #if TEST_MAP
         void InitAction()
         {
-            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
+            action = new IGameObj[maxCellWidth, maxCellHeight];
 
             action[0, 3] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
             action[0, 7] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
@@ -410,8 +416,8 @@ namespace csheroes.form
 
         void DrawAction()
         {
-            for (int i = 0; i < Width / Global.CellSize; i++)
-                for (int j = 0; j < Height / Global.CellSize; j++)
+            for (int i = 0; i < maxCellWidth; i++)
+                for (int j = 0; j < maxCellHeight; j++)
                     if (action[i, j] != null)
                         surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
         }
@@ -426,7 +432,7 @@ namespace csheroes.form
             int tmpX = heroCords.X,
                 tmpY = heroCords.Y;
             bool heroMove = true;
-            arrow = new Arrows[Width / Global.CellSize, Height / Global.CellSize];
+            arrow = new Arrows[maxCellWidth, maxCellHeight];
 
             while (heroMove)
             {
@@ -443,9 +449,9 @@ namespace csheroes.form
                     MoveHero(destX, destY);
                     heroMove = false;
                 }
-                else if (tmpY < destY && tmpY != Height / Global.CellSize - 2 && action[tmpY + 1, tmpX] == null && arrow[tmpY + 1, tmpX] == Arrows.EMPTY)
+                else if (tmpY < destY && tmpY != maxCellHeight - 2 && action[tmpY + 1, tmpX] == null && arrow[tmpY + 1, tmpX] == Arrows.EMPTY)
                 {
-                    while (tmpY != Height / Global.CellSize - 2 && tmpY != destY && action[tmpY + 1, tmpX] == null && arrow[tmpY + 1, tmpX] == Arrows.EMPTY)
+                    while (tmpY != maxCellHeight - 2 && tmpY != destY && action[tmpY + 1, tmpX] == null && arrow[tmpY + 1, tmpX] == Arrows.EMPTY)
                     {
 #if DEBUG
                         DrawArrow(Arrows.DOWN, tmpX, tmpY);
@@ -466,9 +472,9 @@ namespace csheroes.form
                         tmpY--;
                     }
                 }
-                else if (tmpX < destX && tmpX != Width / Global.CellSize - 1 && action[tmpY, tmpX + 1] == null && arrow[tmpY, tmpX + 1] == Arrows.EMPTY)
+                else if (tmpX < destX && tmpX != maxCellWidth - 1 && action[tmpY, tmpX + 1] == null && arrow[tmpY, tmpX + 1] == Arrows.EMPTY)
                 {
-                    while (tmpX != Width / Global.CellSize - 1 && action[tmpY, tmpX + 1] == null && tmpX != destX)
+                    while (tmpX != maxCellWidth - 1 && action[tmpY, tmpX + 1] == null && tmpX != destX)
                     {
 #if DEBUG
                         DrawArrow(Arrows.RIGHT, tmpX, tmpY);
@@ -550,8 +556,8 @@ namespace csheroes.form
         void DrawArrows()
         {
             if (arrow != null)
-                for (int i = 0; i < Width / Global.CellSize; i++)
-                    for (int j = 0; j < Height / Global.CellSize; j++)
+                for (int i = 0; i < maxCellWidth; i++)
+                    for (int j = 0; j < maxCellHeight; j++)
                         DrawArrow(arrow[i, j], j, i);
         }
 
@@ -602,8 +608,8 @@ namespace csheroes.form
 
                 using (BinaryWriter writer = new(File.Open($"saves/{dialog.fileName}", FileMode.OpenOrCreate)))
                 {
-                    for (int i = 0; i < Width / Global.CellSize; i++)
-                        for (int j = 0; j < Height / Global.CellSize; j++)
+                    for (int i = 0; i < maxCellWidth; i++)
+                        for (int j = 0; j < maxCellHeight; j++)
                             if (action[i, j] == null)
                                 writer.Write("NullObj");
                             else
