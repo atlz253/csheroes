@@ -343,7 +343,7 @@ namespace csheroes.form
 
                 if (hero.Army != enemyArmy)
                 {
-                    hero.Respect += 100;
+                    hero.Respect += enemy.Level;
                     damager.Exp += 1;
                 }
 
@@ -628,7 +628,7 @@ namespace csheroes.form
 #if DEBUG
         BattleFormSnapshot MakeSnapshot()
         {
-            return new(hero.MakeSnapshot(), secondArmy.MakeSnapshot(), firstArmyCords, secondArmyCords, firstArmyTurn, secondArmyTurn, turn, ai);
+            return new((HeroSnapshot) hero.MakeSnapshot(), (ArmyShapshot) secondArmy.MakeSnapshot(), firstArmyCords, secondArmyCords, firstArmyTurn, secondArmyTurn, turn, ai);
         }
 
         void WriteSnapshot()

@@ -9,15 +9,27 @@ using System.Threading.Tasks;
 
 namespace csheroes.src
 {
-    public class ArmyShapshot
+    public class ArmyShapshot : ISnapshot
     {
         public bool ai;
-        public UnitSnapshot[] units;
+        public ISnapshot[] units;
 
-        public ArmyShapshot(bool ai, UnitSnapshot[] units)
+        public ArmyShapshot(bool ai, ISnapshot[] units)
         {
             this.ai = ai;
             this.units = units;
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write("Army");
+            writer.Write(ai);
+
+            for (int i = 0; i < 7; i++)
+                if (units[i] != null)
+                    units[i].Save(writer);
+                else
+                    writer.Write("NoUnit");
         }
     }
 
@@ -42,7 +54,7 @@ namespace csheroes.src
 
             for (int i = 0; i < 7; i++)
                 if (snapshot.units[i] != null)
-                    units[i] = new Unit(snapshot.units[i]);
+                    units[i] = new Unit((UnitSnapshot) snapshot.units[i]);
         }
 
         public Unit[] Units { get => units; set => units = value; }
@@ -65,30 +77,20 @@ namespace csheroes.src
             return Units[0].GetTile();
         }
 
-        public void Save(BinaryWriter writer)
+        public ISnapshot MakeSnapshot()
         {
-            writer.Write(ToString());
+            ISnapshot[] unitstate = new ISnapshot[7];
 
             for (int i = 0; i < 7; i++)
                 if (units[i] != null)
-                    units[i].Save(writer);
-                else
-                    writer.Write("NoUnit");
+                    unitstate[i] = units[i].MakeSnapshot();
+
+            return new ArmyShapshot(ai, unitstate);
         }
 
         public override string ToString()
         {
             return "Army";
-        }
-
-        public ArmyShapshot MakeSnapshot()
-        {
-            UnitSnapshot[] unitstate = new UnitSnapshot[7];
-            for (int i = 0; i < 7; i++)
-                if (units[i] != null)
-                    unitstate[i] = units[i].MakeSnaphot();
-
-            return new(ai, unitstate);
         }
     }
 }

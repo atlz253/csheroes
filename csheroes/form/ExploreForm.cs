@@ -36,6 +36,7 @@ namespace csheroes.form
             maxCellHeight = Height / Global.CellSize;
 
             InitBackground();
+
 #if TEST_MAP
             InitAction();
 #else
@@ -85,7 +86,6 @@ namespace csheroes.form
                     surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i,j], GraphicsUnit.Pixel);
         }
 
-#if TEST_MAP
         void InitAction()
         {
             action = new IGameObj[maxCellWidth, maxCellHeight];
@@ -304,110 +304,79 @@ namespace csheroes.form
             action[0, 8] = new Army(true, new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST));
             action[2, 21] = new Army(true, new Unit(UnitTemplate.CREEP));
             action[2, 13] = new Army(true, new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP));
+            action[2, 17] = new Army(true, new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK));
             action[4, 21] = new Army(true, new Unit(UnitTemplate.CREEP));
-            action[3, 20] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1) });
+            action[3, 20] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP) });
             action[3, 13] = new Army(true, new Unit[] { new Unit(UnitTemplate.STALKER_1), new Unit(UnitTemplate.STALKER_2) });
-            action[5, 20] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1) });
-            action[6, 24] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1) });
+            action[5, 20] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP) });
+            action[6, 24] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP) });
             action[6, 12] = new Army(true, new Unit(UnitTemplate.PHYSIC_RANGE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_RANGE));
-            action[4, 0] = new Army(true, new Unit[] { new Unit(3, 3, 1), new Unit(3, 3, 1), new Unit(3, 3, 1) });
+            action[4, 0] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP) });
         }
-#else
 
         void InitAction(string fileName)
         {
-            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize]; // FIXME: чтение с файла
+            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
-            //using (BinaryReader reader = new(File.Open(fileName, FileMode.Open)))
-            //{
-            //    for (int i = 0; i < Width / Global.CellSize; i++)
-            //        for (int j = 0; j < Height / Global.CellSize; j++)
-            //        {
-            //            string name = reader.ReadString();
+            using (BinaryReader reader = new(File.Open(fileName, FileMode.Open)))
+            {
+                for (int i = 0; i < maxCellWidth; i++)
+                    for (int j = 0; j < maxCellHeight; j++)
+                    {
+                        string name = reader.ReadString();
 
-            //            if (name == "NullObj")
-            //            {
-            //                continue;
-            //            }
-            //            else if (name == "Obstacle")
-            //            {
-            //                action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
-            //            }
-            //            else if (name == "Hero")
-            //            {
-            //                int respect = reader.ReadInt32();
+                        if (name == "NullObj")
+                        {
+                            continue;
+                        }
+                        else if (name == "Obstacle")
+                        {
+                            action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
+                        }
+                        else if (name == "Hero")
+                        {
+                            int respect = reader.ReadInt32();
 
-            //                reader.ReadString(); // считываем строку "Army"
-            //                Unit[] units = new Unit[7];
-            //                for (int k = 0; k < 7; k++)
-            //                {
-            //                    string unitName = reader.ReadString();
-            //                    UnitType type = UnitType.ABBITURENT;
+                            reader.ReadString(); // считываем строку "Army"
+                            bool ai = reader.ReadBoolean();
+                            Unit[] units = new Unit[7];
+                            for (int k = 0; k < 7; k++)
+                            {
+                                string unitName = reader.ReadString();
 
-            //                    if (unitName == "NoUnit")
-            //                        continue;
+                                if (unitName == "NoUnit")
+                                    continue;
 
-            //                    switch (unitName)
-            //                    {
-            //                        case "Абитурент":
-            //                            type = UnitType.ABBITURENT;
-            //                            break;
-            //                        case "Технарь":
-            //                            type = UnitType.TECHNAR;
-            //                            break;
-            //                        case "Гуманитарий":
-            //                            type = UnitType.GUMANITARIY;
-            //                            break;
-            //                    }
 
-            //                    Unit unit = new(type);
-            //                    unit.Hp = reader.ReadInt32();
-            //                    unit.Exp = reader.ReadInt32();
+                                Unit unit = new(new UnitSnapshot(reader));
+                                units[k] = unit;
+                            }
 
-            //                    units[k] = unit;
-            //                }
+                            hero = new Hero(new Army(ai, units), respect);
+                            action[i, j] = hero;
+                            heroCords = new Point(j, i);
+                        }
+                        else if (name == "Army")
+                        {
+                            bool ai = reader.ReadBoolean();
+                            Unit[] units = new Unit[7];
+                            for (int k = 0; k < 7; k++)
+                            {
+                                string unitName = reader.ReadString();
 
-            //                hero = new Hero(new Army(false, units), respect);
-            //                action[i, j] = hero;
-            //                heroCords = new Point(i, j);
-            //            }
-            //            else if (name == "Army")
-            //            {
-            //                Unit[] units = new Unit[7];
-            //                for (int k = 0; k < 7; k++)
-            //                {
-            //                    string unitName = reader.ReadString();
-            //                    UnitType type = UnitType.ABBITURENT;
+                                if (unitName == "NoUnit")
+                                    continue;
 
-            //                    if (unitName == "NoUnit")
-            //                        continue;
 
-            //                    switch (unitName)
-            //                    {
-            //                        case "Абитурент":
-            //                            type = UnitType.ABBITURENT;
-            //                            break;
-            //                        case "Технарь":
-            //                            type = UnitType.TECHNAR;
-            //                            break;
-            //                        case "Гуманитарий":
-            //                            type = UnitType.GUMANITARIY;
-            //                            break;
-            //                    }
+                                Unit unit = new(new UnitSnapshot(reader));
+                                units[k] = unit;
+                            }
 
-            //                    Unit unit = new(type);
-            //                    unit.Hp = reader.ReadInt32();
-            //                    unit.Exp = reader.ReadInt32();
-
-            //                    units[k] = unit;
-            //                }
-
-            //                action[i, j] = new Army(true, units);
-            //            }
-            //        }
-            //}
+                            action[i, j] = new Army(ai, units);
+                        }
+                    }
+            }
         }
-#endif
 
         void UpdateRespect()
         {
@@ -442,8 +411,8 @@ namespace csheroes.form
                         switch (action[destY, destX].ToString())
                         {
                             case "Army":
-                            StartBattle((Army) action[destY, destX]);
-                            break;
+                                StartBattle((Army) action[destY, destX]);
+                                break;
                         }
 
                     MoveHero(destX, destY);
@@ -597,7 +566,7 @@ namespace csheroes.form
 
         private void Save(object sender, EventArgs e)
         {
-            SaveDialog dialog = new();
+            SaveLoadDialog dialog = new(this);
 
             dialog.ShowDialog();
 
@@ -608,13 +577,24 @@ namespace csheroes.form
 
                 using (BinaryWriter writer = new(File.Open($"saves/{dialog.fileName}", FileMode.OpenOrCreate)))
                 {
+                    ISnapshot[,] actionstate = new ISnapshot[maxCellWidth, maxCellHeight];
+
                     for (int i = 0; i < maxCellWidth; i++)
                         for (int j = 0; j < maxCellHeight; j++)
-                            if (action[i, j] == null)
-                                writer.Write("NullObj");
+                            if (action[i, j] != null)
+                                action[i, j].MakeSnapshot().Save(writer);
                             else
-                                action[i, j].Save(writer);
+                                writer.Write("NullObj");
                 }
+            }
+
+            if (dialog.load)
+            {
+                if (!File.Exists($"saves/{dialog.fileName}"))
+                    return;
+
+                InitAction($"saves/{dialog.fileName}");
+                Draw();
             }
         }
 

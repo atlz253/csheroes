@@ -24,6 +24,7 @@ namespace csheroes.src.unit
     public enum UnitTemplate
     {
         CREEP,
+        WEAK,
         PHYSIC_MELEE,
         PHYSIC_RANGE,
         ECONOMIST,
@@ -31,7 +32,7 @@ namespace csheroes.src.unit
         STALKER_2
     }
 
-    public class UnitSnapshot
+    public class UnitSnapshot : ISnapshot
     {
         public readonly Point tile;
         public readonly AttackType type;
@@ -52,9 +53,40 @@ namespace csheroes.src.unit
             this.nextLevel = nextLevel;
         }
 
+        public UnitSnapshot(BinaryReader reader)
+        {
+            tile = new Point(reader.ReadInt32(), reader.ReadInt32());
+
+            switch (reader.ReadString())
+            {
+                case "MELEE":
+                    type = AttackType.MELEE;
+                    break;
+                case "RANGE":
+                    type = AttackType.RANGE;
+                    break;
+            }
+
+            hp = reader.ReadInt32();
+            maxHp = reader.ReadInt32();
+            exp = reader.ReadInt32();
+            range = reader.ReadInt32();
+            damage = reader.ReadInt32();
+            nextLevel = reader.ReadInt32();
+        }
+
         public void Save(BinaryWriter writer)
         {
             writer.Write("Unit");
+            writer.Write(tile.X);
+            writer.Write(tile.Y);
+            writer.Write(type.ToString());
+            writer.Write(hp);
+            writer.Write(exp);
+            writer.Write(maxHp);
+            writer.Write(range);
+            writer.Write(damage);
+            writer.Write(nextLevel);
         }
     }
 
@@ -84,12 +116,20 @@ namespace csheroes.src.unit
                     maxHp = 3;
                     range = 3;
                     damage = 1;
+                    level = 1;
+                    break;
+                case UnitTemplate.WEAK:
+                    maxHp = 5;
+                    range = 3;
+                    damage = 1;
+                    level = 1;
                     break;
                 case UnitTemplate.PHYSIC_MELEE:
                     tile = new Point(224, 64);
                     maxHp = 10;
                     range = 5;
                     damage = 1;
+                    level = 3;
                     break;
                 case UnitTemplate.PHYSIC_RANGE:
                     tile = new Point(256, 64);
@@ -97,24 +137,28 @@ namespace csheroes.src.unit
                     maxHp = 3;
                     range = 3;
                     damage = 1;
+                    level = 3;
                     break;
                 case UnitTemplate.ECONOMIST:
                     tile = new Point(288 + Global.Rand.Next(0, 3) * Global.CellSize, 64);
                     maxHp = 10;
                     range = 3;
                     damage = 3;
+                    level = 3;
                     break;
                 case UnitTemplate.STALKER_1:
                     tile = new Point(384, 64);
                     maxHp = 5;
                     range = 3;
                     damage = 2;
+                    level = 2;
                     break;
                 case UnitTemplate.STALKER_2:
                     tile = new Point(416, 64);
                     maxHp = 5;
                     range = 3;
                     damage = 2;
+                    level = 2;
                     break;
             }
 
@@ -167,13 +211,9 @@ namespace csheroes.src.unit
             return new(tile.X, tile.Y, Global.CellSize, Global.CellSize);
         }
 
-        public void Save(BinaryWriter writer) // TODO: remove
+        public ISnapshot MakeSnapshot()
         {
-        }
-
-        public UnitSnapshot MakeSnaphot()
-        {
-            return new(hp, maxHp, exp, range, damage, nextLevelExp, tile, type);
+            return new UnitSnapshot(hp, maxHp, exp, range, damage, nextLevelExp, tile, type);
         }
     }
 }
