@@ -8,15 +8,22 @@ using System.Threading.Tasks;
 
 namespace csheroes.src
 {
-    public class HeroSnapshot
+    public class HeroSnapshot : ISnapshot
     {
-        public readonly ArmyShapshot army;
+        public readonly ISnapshot army;
         public readonly int respect;
 
-        public HeroSnapshot(ArmyShapshot army, int respect)
+        public HeroSnapshot(ISnapshot army, int respect)
         {
             this.army = army;
             this.respect = respect;
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write("Hero");
+            writer.Write(respect);
+            army.Save(writer);
         }
     }
 
@@ -35,7 +42,7 @@ namespace csheroes.src
 
         public Hero(HeroSnapshot snapshot)
         {
-            army = new Army(snapshot.army);
+            army = new Army((ArmyShapshot) snapshot.army);
             respect = snapshot.respect;
         }
 
@@ -48,21 +55,14 @@ namespace csheroes.src
             return tile;
         }
 
-        public void Save(BinaryWriter writer)
-        {
-            writer.Write(ToString());
-            writer.Write(respect);
-            army.Save(writer);
-        }
-
         public override string ToString()
         {
             return "Hero";
         }
 
-        public HeroSnapshot MakeSnapshot()
+        public ISnapshot MakeSnapshot()
         {
-            return new(army.MakeSnapshot(), respect);
+            return new HeroSnapshot(army.MakeSnapshot(), respect);
         }
     }
 }

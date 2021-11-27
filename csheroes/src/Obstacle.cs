@@ -14,6 +14,23 @@ namespace csheroes.src
         NEW_KORPUS_WALL
     }
 
+    class ObstacleSnapshot : ISnapshot
+    {
+        public readonly Point tile;
+
+        public ObstacleSnapshot(Rectangle tile)
+        {
+            this.tile = new(tile.X, tile.Y);
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write("Obstacle");
+            writer.Write(tile.X);
+            writer.Write(tile.Y);
+        }
+    }
+
     class Obstacle : IGameObj
     {
         private Rectangle tile;
@@ -41,16 +58,9 @@ namespace csheroes.src
             return tile;
         }
 
-        public void Save(BinaryWriter writer)
+        public ISnapshot MakeSnapshot()
         {
-            writer.Write(ToString());
-            writer.Write(tile.X);
-            writer.Write(tile.Y);
-        }
-
-        public override string ToString()
-        {
-            return "Obstacle";
+            return new ObstacleSnapshot(tile);
         }
     }
 }

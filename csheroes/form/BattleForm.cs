@@ -202,119 +202,129 @@ namespace csheroes.form
             return distance;
         }
 
-        bool MoveUnit(Point dest, Unit unit, Point[] friendCords, int index)
+        bool RightCellIsEmpty(Point src)
         {
-            Point tmp = friendCords[index];
+            return CellIsEmpty(src.X + 1, src.Y);
+        }
 
-            if (!CellIsEmpty(dest.X, dest.Y)) // на клетке стоит юнит
+        bool LeftCellIsEmpty(Point src)
+        {
+            return CellIsEmpty(src.X - 1, src.Y);
+        }
+
+        bool UpCellIsEmpty(Point src)
+        {
+            return CellIsEmpty(src.X, src.Y - 1);
+        }
+
+        bool DownCellIsEmpty(Point src)
+        {
+            return CellIsEmpty(src.X, src.Y + 1);
+        }
+
+        bool RightArrowIsEmpty(Point src)
+        {
+            return arrow[src.Y, src.X + 1] == Direction.NONE;
+        }
+
+        bool LeftArrowIsEmpty(Point src)
+        {
+            return arrow[src.Y, src.X - 1] == Direction.NONE;
+        }
+
+        bool UpArrowIsEmpty(Point src)
+        {
+            return arrow[src.Y - 1, src.X] == Direction.NONE;
+        }
+
+        bool DownArrowIsEmpty(Point src)
+        {
+            return arrow[src.Y + 1, src.X] == Direction.NONE;
+        }
+
+        bool MoveUnit(Point src, Point dest, Unit unit, Point[] friendCords, int index)
+        {
+            if (CellIsEmpty(src.X, src.Y))
+                return false;
+
+            Queue<Point> visit = new();
+            bool[,] used = new bool[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            
+            visit.Enqueue(src);
+            used[src.Y, src.X] = true;
+
+            while (visit.Any())
             {
-                int min = -1;
-                bool[] free = new bool[4];
-                double[] distance = new double[4] { -1, -1, -1, -1 }; // up, down, left, right
+                Point p = visit.Dequeue();
 
-                distance[0] = VectorLenght(tmp, new(dest.X, dest.Y - 1));
-                distance[1] = VectorLenght(tmp, new(dest.X, dest.Y + 1));
-                distance[2] = VectorLenght(tmp, new(dest.X - 1, dest.Y));
-                distance[3] = VectorLenght(tmp, new(dest.X + 1, dest.Y));
-
-                if (IsCellInRange(tmp, new(dest.X, dest.Y - 1), unit.Range) && CellIsEmpty(dest.X, dest.Y - 1))
-                    free[0] = true;
-                if (IsCellInRange(tmp, new(dest.X, dest.Y + 1), unit.Range) && CellIsEmpty(dest.X, dest.Y + 1))
-                    free[1] = true;
-                if (IsCellInRange(tmp, new(dest.X - 1, dest.Y), unit.Range) && CellIsEmpty(dest.X - 1, dest.Y))
-                    free[2] = true;
-                if (IsCellInRange(tmp, new(dest.X + 1, dest.Y), unit.Range) && CellIsEmpty(dest.X + 1, dest.Y))
-                    free[3] = true;
-
-                for (int i = 0; i < 4; i++)
-                    if (free[i] && (min == -1 || distance[i] < distance[min]))
-                        min = i;
-
-                if (min == -1)
+                if (CellIsEmpty(dest.X, dest.Y))
                 {
-                    min = 0;
-
-                    for (int i = 0; i < 4; i++)
-                        if (distance[i] < distance[min])
-                            min = i;
-
-                    switch (min)
+                    if (p == dest)
                     {
-                        case 0:
-                            dest.Y--;
-                            break;
-                        case 1:
-                            dest.Y++;
-                            break;
-                        case 2:
-                            dest.X--;
-                            break;
-                        case 3:
-                            dest.X++;
-                            break;
+                        friendCords[index] = dest;
+                        action[src.Y, src.X] = null;
+                        action[dest.Y, dest.X] = unit;
+                        return true;
                     }
-
-                    return MoveUnit(dest, unit, friendCords, index);
-                    //return false; // к юниту невозможно подойти
+                }
+                else
+                {
+                    if (CellIsEmpty(dest.X - 1, dest.Y) && p.X == dest.X - 1 && p.Y == dest.Y)
+                    {
+                        friendCords[index] = new(dest.X - 1, dest.Y);
+                        action[src.Y, src.X] = null;
+                        action[dest.Y, dest.X - 1] = unit;
+                        return true;
+                    }
+                    else if (CellIsEmpty(dest.X + 1, dest.Y) && p.X == dest.X + 1 && p.Y == dest.Y)
+                    {
+                        friendCords[index] = new(dest.X + 1, dest.Y);
+                        action[src.Y, src.X] = null;
+                        action[dest.Y, dest.X + 1] = unit;
+                        return true;
+                    }
+                    else if (CellIsEmpty(dest.X, dest.Y - 1) && p.X == dest.X && p.Y == dest.Y - 1)
+                    {
+                        friendCords[index] = new(dest.X, dest.Y - 1);
+                        action[src.Y, src.X] = null;
+                        action[dest.Y - 1, dest.X] = unit;
+                        return true;
+                    }
+                    else if (CellIsEmpty(dest.X, dest.Y + 1) && p.X == dest.X && p.Y == dest.Y + 1)
+                    {
+                        friendCords[index] = new(dest.X, dest.Y + 1);
+                        action[src.Y, src.X] = null;
+                        action[dest.Y + 1, dest.X] = unit;
+                        return true;
+                    }
                 }
 
-                switch (min)
+                if (CellIsEmpty(p.X, p.Y - 1) && !used[p.Y - 1, p.X])
                 {
-                    case 0:
-                        dest.Y--;
-                        break;
-                    case 1:
-                        dest.Y++;
-                        break;
-                    case 2:
-                        dest.X--;
-                        break;
-                    case 3:
-                        dest.X++;
-                        break;
+                    used[p.Y - 1, p.X] = true;
+                    visit.Enqueue(new(p.Y - 1, p.X));
+                }
+                
+                if (CellIsEmpty(p.X, p.Y + 1) && !used[p.Y + 1, p.X])
+                {
+                    used[p.Y + 1, p.X] = true;
+                    visit.Enqueue(new(p.Y + 1, p.X));
+                }
+
+                if (CellIsEmpty(p.X - 1, p.Y) && !used[p.Y, p.X - 1])
+                {
+                    used[p.Y, p.X - 1] = true;
+                    visit.Enqueue(new(p.Y, p.X - 1));
+                }
+
+                if (CellIsEmpty(p.X + 1, p.Y) && !used[p.Y, p.X + 1])
+                {
+                    used[p.Y, p.X + 1] = true;
+                    visit.Enqueue(new(p.Y, p.X + 1));
                 }
             }
 
-#if RELEASE
-            int try = 0;
-#endif
-
-            //arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
-            //Draw();
-            while (tmp != dest)
-                if ((!CellIsEmpty(tmp.X + 1, tmp.Y) || arrow[tmp.Y, tmp.X + 1] != Direction.NONE) && (!CellIsEmpty(tmp.X - 1, tmp.Y) || arrow[tmp.Y, tmp.X - 1] != Direction.NONE) &&
-                    (!CellIsEmpty(tmp.X, tmp.Y + 1) || arrow[tmp.Y + 1, tmp.X] != Direction.NONE) && (!CellIsEmpty(tmp.X, tmp.Y - 1) || arrow[tmp.Y - 1, tmp.X] != Direction.NONE))
-                        tmp = friendCords[index]; // зашли в тупик
-                else if ((tmp.Y < dest.Y || (tmp.X < dest.X && tmp.X + 1 != dest.X && !CellIsEmpty(tmp.X + 1, tmp.Y)) || 
-                         (tmp.X > dest.X && tmp.X - 1 == dest.X && !CellIsEmpty(dest.X - 1, dest.Y))) && CellIsEmpty(tmp.X, tmp.Y + 1) && arrow[tmp.Y + 1, tmp.X] == Direction.NONE)
-                    MovePoint(Direction.DOWN, ref tmp);
-                else if ((tmp.X > dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && arrow[tmp.Y, tmp.X - 1] == Direction.NONE) ||
-                         (tmp.X == dest.X && CellIsEmpty(tmp.X - 1, tmp.Y) && !CellIsEmpty(tmp.X, tmp.Y - 1)) ||
-                         (!CellIsEmpty(tmp.X + 1, tmp.Y) && !CellIsEmpty(tmp.X, tmp.Y + 1)))
-                    MovePoint(Direction.LEFT, ref tmp);
-                else if ((tmp.Y != dest.Y && CellIsEmpty(tmp.X, tmp.Y - 1) && arrow[tmp.Y - 1, tmp.X] == Direction.NONE))
-                    MovePoint(Direction.UP, ref tmp);
-                else if ((tmp.X < dest.X && CellIsEmpty(tmp.X + 1, tmp.Y)) ||
-                        (tmp.X == dest.X && (CellIsEmpty(tmp.X + 1, tmp.Y) && !CellIsEmpty(tmp.X, tmp.Y - 1) && (tmp.Y != 0 || tmp.Y != Height / Global.BattleCellSize - 2))))
-                    MovePoint(Direction.RIGHT, ref tmp);
-#if RELEASE
-                else if (try != 100)
-                {
-                    tmp = friendCords[index];
-                    try++;
-                }
-                else
-                    return true;
-#else
-                else
-                    tmp = friendCords[index]; // выбранный путь оказался неудачным
-#endif
-
-            action[friendCords[index].Y, friendCords[index].X] = null; // перемещение на пустую клетку
-            friendCords[index] = dest;
-            action[dest.Y, dest.X] = unit;
-
-            return true;
+            return false;
         }
 
         void AttackUnit(Unit enemy, Point pos, Unit damager)
@@ -333,7 +343,7 @@ namespace csheroes.form
 
                 if (hero.Army != enemyArmy)
                 {
-                    hero.Respect += 100;
+                    hero.Respect += enemy.Level;
                     damager.Exp += 1;
                 }
 
@@ -376,9 +386,10 @@ namespace csheroes.form
             Point dest = new Point(e.X / Global.BattleCellSize, e.Y / Global.BattleCellSize);
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords;
 
-            foreach (Point cords in friendCords)
-                if (dest == cords) // клик на дружественного юнита
-                    return;
+            if (!CellIsEmpty(dest.X, dest.Y))
+                foreach (Point cords in friendCords)
+                    if (dest == cords) // клик на дружественного юнита
+                        return;
 
             int index = turn ? firstArmyTurn : secondArmyTurn;
             Army friendArmy = turn ? firstArmy : secondArmy;
@@ -406,7 +417,7 @@ namespace csheroes.form
             WriteSnapshot();
 #endif
             if (IsNeedUnitMove(unit, tmp, dest))
-                unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
+                unitTurn = MoveUnit(tmp, dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
             if (IsReadyAttack(friendArmy.Units, index, friendCords, dest))
             {
@@ -509,7 +520,7 @@ namespace csheroes.form
             bool unitTurn = false;
 
             if (IsNeedUnitMove(unit, tmp, dest))
-                unitTurn = MoveUnit(dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
+                unitTurn = MoveUnit(tmp, dest, unit, friendCords, index); // TODO: если на range + 1 противник, то ударить его
 
             if (IsReadyAttack(friendArmy.Units, index, friendCords, dest))
             {
@@ -617,7 +628,7 @@ namespace csheroes.form
 #if DEBUG
         BattleFormSnapshot MakeSnapshot()
         {
-            return new(hero.MakeSnapshot(), secondArmy.MakeSnapshot(), firstArmyCords, secondArmyCords, firstArmyTurn, secondArmyTurn, turn, ai);
+            return new((HeroSnapshot) hero.MakeSnapshot(), (ArmyShapshot) secondArmy.MakeSnapshot(), firstArmyCords, secondArmyCords, firstArmyTurn, secondArmyTurn, turn, ai);
         }
 
         void WriteSnapshot()
