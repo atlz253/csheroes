@@ -343,7 +343,7 @@ namespace csheroes.form
 
                 if (hero.Army != enemyArmy)
                 {
-                    hero.Respect += enemy.Level;
+                    hero.Respect += enemy.Level * 100;
                     damager.Exp += 1;
                 }
 

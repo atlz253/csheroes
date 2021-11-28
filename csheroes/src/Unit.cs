@@ -37,9 +37,9 @@ namespace csheroes.src.unit
         public readonly Point tile;
         public readonly AttackType type;
 
-        public readonly int hp, exp, maxHp, range, damage, nextLevel;
+        public readonly int hp, exp, maxHp, range, damage, level, nextLevel;
 
-        public UnitSnapshot(int hp, int maxHp, int exp, int range, int damage, int nextLevel, Point tile, AttackType type)
+        public UnitSnapshot(int hp, int maxHp, int exp, int range, int damage, int level, int nextLevel, Point tile, AttackType type)
         {
             this.tile = tile;
             this.type = type;
@@ -50,6 +50,7 @@ namespace csheroes.src.unit
             this.range = range;
             this.damage = damage;
 
+            this.level = level;
             this.nextLevel = nextLevel;
         }
 
@@ -72,6 +73,7 @@ namespace csheroes.src.unit
             exp = reader.ReadInt32();
             range = reader.ReadInt32();
             damage = reader.ReadInt32();
+            level = reader.ReadInt32();
             nextLevel = reader.ReadInt32();
         }
 
@@ -82,10 +84,11 @@ namespace csheroes.src.unit
             writer.Write(tile.Y);
             writer.Write(type.ToString());
             writer.Write(hp);
-            writer.Write(exp);
             writer.Write(maxHp);
+            writer.Write(exp);
             writer.Write(range);
             writer.Write(damage);
+            writer.Write(level);
             writer.Write(nextLevel);
         }
     }
@@ -213,7 +216,7 @@ namespace csheroes.src.unit
 
         public ISnapshot MakeSnapshot()
         {
-            return new UnitSnapshot(hp, maxHp, exp, range, damage, nextLevelExp, tile, type);
+            return new UnitSnapshot(hp, maxHp, exp, range, damage, level, nextLevelExp, tile, type);
         }
     }
 }
