@@ -194,6 +194,7 @@ namespace csheroes.form.camp
                         healBtns[i] = null;
 
                         hpLabels[i].Text = "HP:   " + hero.Army.Units[i].Hp.ToString();
+                        UpdateRespect();
                     }
 
                     return;
@@ -205,7 +206,7 @@ namespace csheroes.form.camp
             for (int i = 0; i < 7; i++)
                 if (expBtns[i] != null && (sender as Button).Name == expBtns[i].Name)
                 {
-                    if (hero.Army.Units[i].Level == 5)
+                    if (hero.Army.Units[i].Range == 5)
                     {
                         AttackTypeDialog upgradeDialog = new();
 

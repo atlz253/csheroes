@@ -24,12 +24,18 @@ namespace csheroes.src.unit
     public enum UnitTemplate
     {
         CREEP,
+        CREEP_RANGE,
         WEAK,
         PHYSIC_MELEE,
         PHYSIC_RANGE,
         ECONOMIST,
         STALKER_1,
-        STALKER_2
+        STALKER_2,
+        PHILOSOPH_STRONG,
+        PHILOSOPH_FAST,
+        PHILOSOPH_BALANCED,
+        PHILOSOPH_TENACIOUS,
+        PHILOSOPH_RANGE
     }
 
     public class UnitSnapshot : ISnapshot
@@ -121,6 +127,14 @@ namespace csheroes.src.unit
                     damage = 1;
                     level = 1;
                     break;
+                case UnitTemplate.CREEP_RANGE:
+                    tile = new Point(256 + Global.Rand.Next(0, 2) * Global.CellSize, 32);
+                    type = AttackType.RANGE;
+                    maxHp = 3;
+                    range = 3;
+                    damage = 1;
+                    level = 1;
+                    break;
                 case UnitTemplate.WEAK:
                     maxHp = 5;
                     range = 3;
@@ -163,6 +177,41 @@ namespace csheroes.src.unit
                     damage = 2;
                     level = 2;
                     break;
+                case UnitTemplate.PHILOSOPH_BALANCED:
+                    tile = new Point(704, 64);
+                    maxHp = 10;
+                    range = 3;
+                    damage = 2;
+                    level = 3;
+                    break;
+                case UnitTemplate.PHILOSOPH_FAST:
+                    tile = new Point(672, 64);
+                    maxHp = 3;
+                    range = 6;
+                    damage = 1;
+                    level = 1;
+                    break;
+                case UnitTemplate.PHILOSOPH_RANGE:
+                    tile = new Point(768, 64);
+                    maxHp = 3;
+                    range = 3;
+                    damage = 1;
+                    level = 2;
+                    break;
+                case UnitTemplate.PHILOSOPH_STRONG:
+                    tile = new Point(736, 64);
+                    maxHp = 10;
+                    range = 1;
+                    damage = 4;
+                    level = 5;
+                    break;
+                case UnitTemplate.PHILOSOPH_TENACIOUS:
+                    tile = new Point(640, 64);
+                    maxHp = 30;
+                    range = 2;
+                    damage = 1;
+                    level = 4;
+                    break;
             }
 
             hp = maxHp;
@@ -185,6 +234,7 @@ namespace csheroes.src.unit
             range = snapshot.range;
             damage = snapshot.damage;
             exp = snapshot.exp;
+            level = snapshot.level;
             nextLevelExp = snapshot.nextLevel;
         }
 

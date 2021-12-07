@@ -23,14 +23,14 @@ namespace csheroes.form.camp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            choice = AttackType.MELEE;
+            choice = AttackType.RANGE;
             choiced = true;
             Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            choice = AttackType.RANGE;
+            choice = AttackType.MELEE;
             choiced = true;
             Close();
         }

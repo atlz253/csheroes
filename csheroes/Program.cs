@@ -26,7 +26,7 @@ namespace csheroes
 #elif TEST_MAP
             Application.Run(new ExploreForm(""));
 #elif TEST_BATTLE
-            Application.Run(new BattleForm(null, new Hero(new Army(false, new Unit(UnitType.TECHNAR), new Unit(UnitType.TECHNAR), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT))), new Army(true, new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT), new Unit(UnitType.ABBITURENT))));
+            Application.Run(new BattleForm(null, new Hero(new Army(false, new Unit(UnitTemplate.CREEP))), new Army(true, new Unit(UnitTemplate.CREEP))));
 #elif CAMPMENU
             Application.Run(new CampForm(null, new Hero(new Army(false, new Unit(), new Unit(new UnitSnapshot(5, 10, 1, 3, 1, 1, new(256, 0), AttackType.MELEE))), 1000)));
 #else

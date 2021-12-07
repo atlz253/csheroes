@@ -195,7 +195,6 @@ namespace csheroes.form
             action[10, 14] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
             action[10, 15] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
             action[10, 16] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
-            action[10, 17] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
             action[10, 18] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
             action[10, 19] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
             action[10, 20] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
@@ -301,17 +300,34 @@ namespace csheroes.form
             action[heroCords.Y, heroCords.X] = hero;
             UpdateRespect();
 
-            action[0, 8] = new Army(true, new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST));
+            action[0, 8] = new Army(true, new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST));
+            action[0, 2] = new Army(true, new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.WEAK));
             action[2, 21] = new Army(true, new Unit(UnitTemplate.CREEP));
             action[2, 13] = new Army(true, new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP));
             action[2, 17] = new Army(true, new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK));
+            action[4, 0] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP) });
+            action[4, 9] = new Army(true, new Unit[] { new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK) });
             action[4, 21] = new Army(true, new Unit(UnitTemplate.CREEP));
             action[3, 20] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP) });
             action[3, 13] = new Army(true, new Unit[] { new Unit(UnitTemplate.STALKER_1), new Unit(UnitTemplate.STALKER_2) });
             action[5, 20] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP) });
+            action[6, 2] = new Army(true, new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK));
+            action[6, 12] = new Army(true, new Unit(UnitTemplate.PHYSIC_RANGE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE));
             action[6, 24] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP) });
-            action[6, 12] = new Army(true, new Unit(UnitTemplate.PHYSIC_RANGE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_RANGE));
-            action[4, 0] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP) });
+            action[8, 2] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHYSIC_RANGE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE) });
+            action[8, 8] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.CREEP_RANGE) });
+            action[8, 14] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP_RANGE) });
+            action[8, 24] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHILOSOPH_TENACIOUS), new Unit(UnitTemplate.PHILOSOPH_STRONG), new Unit(UnitTemplate.PHILOSOPH_STRONG), new Unit(UnitTemplate.PHILOSOPH_STRONG), new Unit(UnitTemplate.PHILOSOPH_STRONG), new Unit(UnitTemplate.PHILOSOPH_TENACIOUS) });
+            action[10, 17] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHILOSOPH_STRONG), new Unit(UnitTemplate.PHILOSOPH_BALANCED), new Unit(UnitTemplate.PHILOSOPH_BALANCED), new Unit(UnitTemplate.PHILOSOPH_BALANCED), new Unit(UnitTemplate.PHILOSOPH_STRONG) });
+            action[10, 21] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHILOSOPH_RANGE), new Unit(UnitTemplate.PHILOSOPH_BALANCED), new Unit(UnitTemplate.PHILOSOPH_FAST), new Unit(UnitTemplate.PHILOSOPH_STRONG), new Unit(UnitTemplate.PHILOSOPH_TENACIOUS) });
+            action[11, 7] = new Army(true, new Unit[] { new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK) });
+            action[11, 23] = new Army(true, new Unit[] { new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST) });
+            action[12, 5] = new Army(true, new Unit[] { new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.WEAK) });
+            action[13, 14] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHILOSOPH_RANGE), new Unit(UnitTemplate.PHILOSOPH_BALANCED), new Unit(UnitTemplate.PHILOSOPH_BALANCED), new Unit(UnitTemplate.PHILOSOPH_RANGE) });
+            action[13, 21] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHILOSOPH_RANGE), new Unit(UnitTemplate.PHILOSOPH_RANGE), new Unit(UnitTemplate.PHILOSOPH_RANGE), new Unit(UnitTemplate.PHILOSOPH_RANGE) });
+            action[14, 1] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP_RANGE) });
+            action[14, 9] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHILOSOPH_FAST), new Unit(UnitTemplate.PHILOSOPH_FAST), new Unit(UnitTemplate.PHILOSOPH_FAST) });
+            action[14, 17] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE) });
         }
 
         void InitAction(string fileName)

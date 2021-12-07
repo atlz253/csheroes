@@ -363,7 +363,7 @@ namespace csheroes.form
 
         bool IsNeedUnitMove(Unit unit, Point src, Point dest)
         {
-            return ((action[dest.Y, dest.X] == null || (unit.Attack == AttackType.MELEE && !UnitNearby(dest, unit))) && Math.Abs(dest.X - src.X) <= unit.Range && Math.Abs(dest.Y - src.Y) <= unit.Range);
+            return (((dest.Y > Height / Global.BattleCellSize - 2 && action[dest.Y, dest.X] == null) || (unit.Attack == AttackType.MELEE && !UnitNearby(dest, unit))) && Math.Abs(dest.X - src.X) <= unit.Range && Math.Abs(dest.Y - src.Y) <= unit.Range);
         }
 
         bool IsReadyAttack(Unit[] friends, int index, Point[] friendCords, Point dest)
