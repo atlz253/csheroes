@@ -62,5 +62,7 @@ namespace csheroes.src
         {
             return new ObstacleSnapshot(tile);
         }
+
+        public override string ToString() => "Obstacle";
     }
 }
