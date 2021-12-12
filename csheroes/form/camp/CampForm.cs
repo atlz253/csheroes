@@ -222,6 +222,10 @@ namespace csheroes.form.camp
 
                             hero.Army.Units[i].Level += 1;
                             hero.Army.Units[i].Attack = upgradeDialog.choice;
+
+                            hero.Army.Units[i].Range += 1;
+                            rangeLabels[i].Text = "RNG: " + hero.Army.Units[i].Range.ToString();
+                            
                             hero.Army.Units[i].NextLevel = hero.Army.Units[i].NextLevel * 2;
 
                             Controls.Remove(expBtns[i]);
@@ -261,8 +265,8 @@ namespace csheroes.form.camp
                                 switch (upgradeDialog.choice)
                                 {
                                     case UnitStats.HP:
-                                        hero.Army.Units[i].Hp += 1;
-                                        hero.Army.Units[i].MaxHp += 1;
+                                        hero.Army.Units[i].Hp += 3;
+                                        hero.Army.Units[i].MaxHp += 3;
                                         hpLabels[i].Text = "HP: " + hero.Army.Units[i].Hp.ToString();
                                         break;
                                     case UnitStats.DAMAGE:
