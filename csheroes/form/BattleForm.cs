@@ -181,27 +181,6 @@ namespace csheroes.form
             return (action[y, x] == null);
         }
 
-        bool IsCellInRange(Point src, Point dest, int range)
-        {
-            return src.X - dest.X <= range && src.Y - dest.Y <= range;
-        }
-
-        Double[] UnitsAround(Point dest)
-        {
-            double[] distance = new double[4] { -1, -1, -1, -1 }; // up, down, left, right
-
-            if (CellIsEmpty(dest.X, dest.Y - 1))
-                distance[0] = VectorLenght(dest, new(dest.X, dest.Y - 1));
-            if (CellIsEmpty(dest.X, dest.Y + 1))
-                distance[1] = VectorLenght(dest, new(dest.X, dest.Y + 1));
-            if (CellIsEmpty(dest.X - 1, dest.Y))
-                distance[2] = VectorLenght(dest, new(dest.X - 1, dest.Y));
-            if (CellIsEmpty(dest.X + 1, dest.Y))
-                distance[3] = VectorLenght(dest, new(dest.X + 1, dest.Y));
-
-            return distance;
-        }
-
         bool RightCellIsEmpty(Point src)
         {
             return CellIsEmpty(src.X + 1, src.Y);
@@ -302,29 +281,38 @@ namespace csheroes.form
                 if (CellIsEmpty(p.X, p.Y - 1) && !used[p.Y - 1, p.X])
                 {
                     used[p.Y - 1, p.X] = true;
-                    visit.Enqueue(new(p.Y - 1, p.X));
+                    visit.Enqueue(new(p.X, p.Y - 1));
                 }
                 
                 if (CellIsEmpty(p.X, p.Y + 1) && !used[p.Y + 1, p.X])
                 {
                     used[p.Y + 1, p.X] = true;
-                    visit.Enqueue(new(p.Y + 1, p.X));
+                    visit.Enqueue(new(p.X, p.Y + 1));
                 }
 
                 if (CellIsEmpty(p.X - 1, p.Y) && !used[p.Y, p.X - 1])
                 {
                     used[p.Y, p.X - 1] = true;
-                    visit.Enqueue(new(p.Y, p.X - 1));
+                    visit.Enqueue(new(p.X - 1, p.Y));
                 }
 
                 if (CellIsEmpty(p.X + 1, p.Y) && !used[p.Y, p.X + 1])
                 {
                     used[p.Y, p.X + 1] = true;
-                    visit.Enqueue(new(p.Y, p.X + 1));
+                    visit.Enqueue(new(p.X + 1, p.Y));
                 }
             }
 
-            return false;
+#if DEBUG
+            SolidBrush pen = new(Color.FromArgb(128, 0, 0, 255));
+
+            for (int i = 0; i < Width / Global.BattleCellSize; i++)
+                for (int j = 0; j < Height / Global.BattleCellSize; j++)
+                    if (used[i, j] == true)
+                        surface.FillRectangle(pen, j * Global.BattleCellSize, i * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize);
+#endif
+
+                        return false;
         }
 
         void AttackUnit(Unit enemy, Point pos, Unit damager)
@@ -352,18 +340,25 @@ namespace csheroes.form
 
         bool UnitNearby(Point cords, Unit unit)
         {
-            if  ((cords.X != 0 && action[cords.Y, cords.X - 1] == unit) ||
-                (cords.X != Width / Global.BattleCellSize - 1 && action[cords.Y, cords.X + 1] == unit) ||
+            if  (cords.Y != Height / Global.BattleCellSize - 2 && cords.X != Width / Global.BattleCellSize - 1 && action[cords.Y, cords.X] != null &&
+                ((cords.X != 0 && action[cords.Y, cords.X - 1] == unit) ||
+                (action[cords.Y, cords.X + 1] == unit) ||
                 (cords.Y != 0 && action[cords.Y - 1, cords.X] == unit) ||
-                (cords.Y != Height / Global.BattleCellSize - 2 && action[cords.Y + 1, cords.X] == unit))
+                (action[cords.Y + 1, cords.X] == unit)))
                 return true;
             else
                 return false;
         }
 
+        bool IsCellInRange(Point src, Point dest, int range)
+        {
+            return Math.Abs(dest.X - src.X) <= range && Math.Abs(dest.Y - src.Y) <= range;
+        }
+
         bool IsNeedUnitMove(Unit unit, Point src, Point dest)
         {
-            return (((dest.Y > Height / Global.BattleCellSize - 2 && action[dest.Y, dest.X] == null) || (unit.Attack == AttackType.MELEE && !UnitNearby(dest, unit))) && Math.Abs(dest.X - src.X) <= unit.Range && Math.Abs(dest.Y - src.Y) <= unit.Range);
+            bool meleeAttack = (unit.Attack == AttackType.MELEE && !UnitNearby(dest, unit) && IsCellInRange(src, dest, unit.Range));
+            return meleeAttack;
         }
 
         bool IsReadyAttack(Unit[] friends, int index, Point[] friendCords, Point dest)
@@ -377,7 +372,7 @@ namespace csheroes.form
                 if (dest == friendCords[i] && action[dest.Y, dest.X] == friends[i])
                     return false;
 
-            return ((unit.Attack == AttackType.RANGE)) || ((unit.Attack == AttackType.MELEE) && UnitNearby(dest, unit));
+            return (unit.Attack == AttackType.RANGE) || ((unit.Attack == AttackType.MELEE) && UnitNearby(dest, unit));
         }
 
         private void OnMouseClick(object sender, MouseEventArgs e)
@@ -529,15 +524,16 @@ namespace csheroes.form
                 unitTurn = true;
             }
 
-            if (unitTurn)
-            {
-                if (turn)
-                    NextTurn(firstArmy.Units, ref firstArmyTurn);
-                else
-                    NextTurn(secondArmy.Units, ref secondArmyTurn);
+            if (!unitTurn)
+                Console.WriteLine("AI Move error");
 
-                turn = !turn;
-            }
+            if (turn)
+                NextTurn(firstArmy.Units, ref firstArmyTurn);
+            else
+                NextTurn(secondArmy.Units, ref secondArmyTurn);
+
+            turn = !turn;
+
             Draw();
         }
 
@@ -605,6 +601,28 @@ namespace csheroes.form
         private void TurnBackBtn(object sender, EventArgs e)
         {
             RestoreSnapshot();
+        }
+
+        private void BattleForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.W)
+            {
+#if DEBUG
+                WriteSnapshot();
+#endif
+
+                if (turn)
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
+                else
+                    NextTurn(secondArmy.Units, ref secondArmyTurn);
+
+                turn = !turn;
+
+                Army next = turn ? firstArmy : secondArmy;
+
+                if (ai && next.Ai)
+                    AIMove();
+            }
         }
 
         void DrawBackground()

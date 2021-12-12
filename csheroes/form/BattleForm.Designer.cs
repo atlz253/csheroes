@@ -55,7 +55,7 @@ namespace csheroes.form
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(693, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(724, 17);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // toolStripSplitButton1
@@ -103,6 +103,7 @@ namespace csheroes.form
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "BattleForm";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BattleForm_KeyDown);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
