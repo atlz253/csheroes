@@ -160,7 +160,7 @@ namespace csheroes.src.unit
                     tile = new Point(288 + Global.Rand.Next(0, 3) * Global.CellSize, 64);
                     maxHp = 10;
                     range = 3;
-                    damage = 3;
+                    damage = 2;
                     level = 3;
                     break;
                 case UnitTemplate.STALKER_1:
@@ -193,9 +193,10 @@ namespace csheroes.src.unit
                     break;
                 case UnitTemplate.PHILOSOPH_RANGE:
                     tile = new Point(768, 64);
-                    maxHp = 3;
+                    type = AttackType.RANGE;
+                    maxHp = 6;
                     range = 3;
-                    damage = 1;
+                    damage = 2;
                     level = 2;
                     break;
                 case UnitTemplate.PHILOSOPH_STRONG:
