@@ -283,14 +283,14 @@ namespace csheroes.src.unit
                     level = 3;
                     break;
                 case UnitTemplate.ERROR:
-                    tile = new Point(832, 64);
+                    tile = new Point(864, 64);
                     maxHp = 10;
                     range = 5;
                     damage = 1;
                     level = 3;
                     break;
                 case UnitTemplate.BUG:
-                    tile = new Point(832, 64);
+                    tile = new Point(896, 64);
                     maxHp = 10;
                     range = 5;
                     damage = 2;
