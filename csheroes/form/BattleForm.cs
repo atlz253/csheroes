@@ -31,6 +31,9 @@ namespace csheroes.form
         bool turn = true,
              close = false,
              ai = true; // включен ли искусственный интелект
+        bool battleEnd = false;
+
+        public bool BattleEnd => battleEnd;
 
 #if DEBUG
         BattleFormSnapshot[] snapshots;
@@ -130,15 +133,6 @@ namespace csheroes.form
                         hpLabels.Add(hp);
                     }
         }
-
-        //void InitBackground(Rectangle tile)
-        //{
-        //    background = new Rectangle[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
-
-        //    for (int i = 0; i < Width / Global.BattleCellSize; i++)
-        //        for (int j = 0; j < Height / Global.BattleCellSize; j++)
-        //            background[i, j] = new Rectangle(Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize, Global.CellSize);
-        //}
 
         void MovePoint(Direction direction, ref Point src)
         {
@@ -606,7 +600,7 @@ namespace csheroes.form
 #if !TEST_BATTLE
             parent.Location = new Point(Location.X, Location.Y);
 #endif
-
+            battleEnd = true;
             Close();
             close = true;
         }
@@ -621,7 +615,9 @@ namespace csheroes.form
 
         private void TurnBackBtn(object sender, EventArgs e)
         {
+#if DEBUG
             RestoreSnapshot();
+#endif
         }
 
         private void BattleForm_KeyDown(object sender, KeyEventArgs e)

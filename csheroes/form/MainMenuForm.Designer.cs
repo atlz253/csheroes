@@ -73,6 +73,7 @@ namespace csheroes.form
             this.button3.TabIndex = 3;
             this.button3.Text = "Рекорды";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.RecordsMenu);
             // 
             // button4
             // 

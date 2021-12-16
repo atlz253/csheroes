@@ -45,7 +45,7 @@ namespace csheroes.form
             if (!File.Exists(path))
                 return;
 
-            ExploreForm exploreForm = new(path); // TODO: parent
+            ExploreForm exploreForm = new(path);
 
             exploreForm.Location = new Point(Location.X, Location.Y);
 
@@ -53,6 +53,19 @@ namespace csheroes.form
 
             exploreForm.ShowDialog();
             exploreForm.Dispose();
+
+            Visible = true;
+        }
+
+        private void RecordsMenu(object sender, EventArgs e)
+        {
+            RecordForm recordForm = new();
+            recordForm.Location = new Point(Location.X, Location.Y);
+
+            Visible = false;
+
+            recordForm.ShowDialog();
+            recordForm.Dispose();
 
             Visible = true;
         }

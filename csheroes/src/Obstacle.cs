@@ -10,8 +10,8 @@ namespace csheroes.src
 {
     enum ObstacleType
     {
-        MOUNTAIN_1,
-        NEW_KORPUS_WALL
+        NEW_KORPUS_WALL,
+        MAC_WALL
     }
 
     class ObstacleSnapshot : ISnapshot
@@ -39,11 +39,11 @@ namespace csheroes.src
         {
             switch (type)
             {
-                case ObstacleType.MOUNTAIN_1:
-                    tile = new(96, 0, Global.CellSize, Global.CellSize);
-                    break;
                 case ObstacleType.NEW_KORPUS_WALL:
                     tile = new(0, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_WALL:
+                    tile = new(32, 192, Global.CellSize, Global.CellSize);
                     break;
             }
         }
