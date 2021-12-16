@@ -22,6 +22,7 @@ namespace csheroes.form
         readonly int maxCellHeight;
 
         Rectangle[,] background = null;
+        Rectangle battleTile;
         IGameObj[,] action = null;
         Arrows[,] arrow = null;
 
@@ -35,7 +36,7 @@ namespace csheroes.form
             maxCellWidth = Width / Global.CellSize;
             maxCellHeight = Height / Global.CellSize;
 
-            InitBackground();
+            //InitBackground();
 
 #if TEST_MAP
             InitAction();
@@ -70,14 +71,14 @@ namespace csheroes.form
                 surface.DrawLine(Global.GridPen, 0, Global.CellSize * i, Width, Global.CellSize * i);
         }
 
-        void InitBackground()
-        {
-            background = new Rectangle[maxCellWidth, maxCellHeight];
+        //void InitBackground()
+        //{
+        //    background = new Rectangle[maxCellWidth, maxCellHeight];
 
-            for (int i = 0; i < maxCellWidth; i++)
-                for (int j = 0; j < maxCellHeight; j++)
-                    background[i, j] = new Rectangle(Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize, Global.CellSize);
-        }
+        //    for (int i = 0; i < maxCellWidth; i++)
+        //        for (int j = 0; j < maxCellHeight; j++)
+        //            background[i, j] = new Rectangle(Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize, Global.CellSize);
+        //}
 
         void DrawBackground()
         {
@@ -88,6 +89,13 @@ namespace csheroes.form
 
         void InitAction()
         {
+            background = new Rectangle[maxCellWidth, maxCellHeight];
+            battleTile = new Rectangle(0, 0, Global.CellSize, Global.CellSize);
+
+            for (int i = 0; i < maxCellWidth; i++)
+                for (int j = 0; j < maxCellHeight; j++)
+                    background[i, j] = new Rectangle(0, 0, Global.CellSize, Global.CellSize);
+
             action = new IGameObj[maxCellWidth, maxCellHeight];
 
             action[0, 3] = new Obstacle(ObstacleType.NEW_KORPUS_WALL);
@@ -328,6 +336,16 @@ namespace csheroes.form
             action[14, 1] = new Army(true, new Unit[] { new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP_RANGE) });
             action[14, 9] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHILOSOPH_FAST), new Unit(UnitTemplate.PHILOSOPH_FAST), new Unit(UnitTemplate.PHILOSOPH_FAST) });
             action[14, 17] = new Army(true, new Unit[] { new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE), new Unit(UnitTemplate.PHYSIC_MELEE) });
+            action[16, 13] = new Army(true, new Unit[] { new Unit(UnitTemplate.HACKER_FAST), new Unit(UnitTemplate.HACKER_FAST), new Unit(UnitTemplate.HACKER_FAST), new Unit(UnitTemplate.HACKER_FAST), new Unit(UnitTemplate.HACKER_FAST), new Unit(UnitTemplate.HACKER_FAST), new Unit(UnitTemplate.HACKER_FAST) });
+            action[16, 22] = new Army(true, new Unit[] { new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_FAST), new Unit(UnitTemplate.HACKER_FAST), new Unit(UnitTemplate.HACKER_MIDDLE) });
+            action[17, 10] = new Army(true, new Unit[] { new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_SENIOR) });
+            action[18, 5] = new Army(true, new Unit[] { new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR) });
+            action[18, 17] = new Army(true, new Unit[] { new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR) });
+            action[19, 2] = new Army(true, new Unit[] { new Unit(UnitTemplate.SUSLOV), new Unit(UnitTemplate.KERNEL_PANIC), new Unit(UnitTemplate.ERROR), new Unit(UnitTemplate.BUG), new Unit(UnitTemplate.KERNEL_PANIC), new Unit(UnitTemplate.ERROR), new Unit(UnitTemplate.BUG) });
+            action[21, 18] = new Army(true, new Unit[] { new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE) });
+            action[22, 2] = new Army(true, new Unit[] { new Unit(UnitTemplate.SQUID_EASY), new Unit(UnitTemplate.SQUID_EASY), new Unit(UnitTemplate.SQUID_MEDIUM), new Unit(UnitTemplate.SQUID_MEDIUM), new Unit(UnitTemplate.SQUID_HARD), new Unit(UnitTemplate.SQUID_RANGE), new Unit(UnitTemplate.SQUID_RANGE) });
+            action[22, 24] = new Army(true, new Unit[] { new Unit(UnitTemplate.ANONIMUS), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD) });
+            action[24, 1] = new Army(true, new Unit[] { new Unit(UnitTemplate.MATRIX_BALANCED), new Unit(UnitTemplate.MATRIX_STRONG), new Unit(UnitTemplate.MATRIX_FAST)  });
         }
 
         void InitAction(string fileName)
@@ -336,6 +354,12 @@ namespace csheroes.form
 
             using (BinaryReader reader = new(File.Open(fileName, FileMode.Open)))
             {
+                for (int i = 0; i < maxCellWidth; i++)
+                    for (int j = 0; j < maxCellHeight; j++)
+                        background[i, j] = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
+                
+                battleTile = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
+
                 for (int i = 0; i < maxCellWidth; i++)
                     for (int j = 0; j < maxCellHeight; j++)
                     {
@@ -548,7 +572,7 @@ namespace csheroes.form
 
         void StartBattle(Army enemy)
         {
-            BattleForm battleForm = new(this, hero, enemy);
+            BattleForm battleForm = new(this, hero, enemy, battleTile);
 
             battleForm.Location = new Point(Location.X, Location.Y);
 
@@ -556,7 +580,7 @@ namespace csheroes.form
 
             battleForm.ShowDialog();
             battleForm.Dispose();
-
+            
             Visible = true;
             UpdateRespect();
 
@@ -593,6 +617,15 @@ namespace csheroes.form
 
                 using (BinaryWriter writer = new(File.Open($"saves/{dialog.fileName}", FileMode.OpenOrCreate)))
                 {
+                    for (int i = 0; i < maxCellWidth; i++)
+                        for (int j = 0; j < maxCellHeight; j++)
+                        {
+                            writer.Write(background[i, j].X);
+                            writer.Write(background[i, j].Y);
+                        }
+                    writer.Write(battleTile.X);
+                    writer.Write(battleTile.Y);
+
                     ISnapshot[,] actionstate = new ISnapshot[maxCellWidth, maxCellHeight];
 
                     for (int i = 0; i < maxCellWidth; i++)

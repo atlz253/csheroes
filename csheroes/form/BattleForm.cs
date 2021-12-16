@@ -17,7 +17,7 @@ namespace csheroes.form
         Graphics surface;
         ExploreForm parent;
 
-        Rectangle[,] background = null;
+        Rectangle background;
         IGameObj[,] action = null;
         Direction[,] arrow = null;
 
@@ -37,7 +37,7 @@ namespace csheroes.form
         int lastSnapshotIndex = -1;
 #endif
 
-        public BattleForm(ExploreForm parent, Hero hero, Army enemy)
+        public BattleForm(ExploreForm parent, Hero hero, Army enemy, Rectangle tile)
         {
             InitializeComponent();
 
@@ -47,7 +47,8 @@ namespace csheroes.form
             snapshots = new BattleFormSnapshot[10];
 #endif
 
-            InitBackground();
+            background = tile;
+            //InitBackground(tile);
 
             action = new IGameObj[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
 
@@ -107,22 +108,37 @@ namespace csheroes.form
                 surface.DrawLine(Global.GridPen, 0, Global.BattleCellSize * i, Width, Global.BattleCellSize * i);
         }
 
+        List<Label> hpLabels = new();
         void DrawAction()
         {
             for (int i = 0; i < Width / Global.BattleCellSize; i++)
                 for (int j = 0; j < Height / Global.BattleCellSize; j++)
-                    if (action[i, j] != null)
+                    if (action[i, j] != null && action[i, j].ToString() == "Unit")
+                    {
                         surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
+                        
+                        Label hp = new();
+                        hp.Text = ((Unit)action[i, j]).Hp.ToString();
+                        hp.Location = new(Global.BattleCellSize * j + 25, Global.BattleCellSize * i + 37);
+                        hp.BackColor = Color.Green;
+                        hp.ForeColor = Color.White;
+                        hp.Width = 25;
+                        hp.Height = 13;
+                        hp.TextAlign = ContentAlignment.MiddleCenter;
+                        hp.Font = new(FontFamily.GenericSerif, 8);
+                        Controls.Add(hp);
+                        hpLabels.Add(hp);
+                    }
         }
 
-        void InitBackground()
-        {
-            background = new Rectangle[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+        //void InitBackground(Rectangle tile)
+        //{
+        //    background = new Rectangle[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
 
-            for (int i = 0; i < Width / Global.BattleCellSize; i++)
-                for (int j = 0; j < Height / Global.BattleCellSize; j++)
-                    background[i, j] = new Rectangle(Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize, Global.CellSize);
-        }
+        //    for (int i = 0; i < Width / Global.BattleCellSize; i++)
+        //        for (int j = 0; j < Height / Global.BattleCellSize; j++)
+        //            background[i, j] = new Rectangle(Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize * Global.Rand.Next(0, 2), Global.CellSize, Global.CellSize);
+        //}
 
         void MovePoint(Direction direction, ref Point src)
         {
@@ -539,6 +555,11 @@ namespace csheroes.form
 
         void NextTurn(Unit[] units, ref int index)
         {
+            if (hpLabels != null) // удаляем старое количество hp
+                foreach (Label label in hpLabels)
+                    Controls.Remove(label);
+            hpLabels = new();
+
             for (int i = index + 1; i < 7; i++) // проверяем остаток массива
                 if (units[i] != null)
                 {
@@ -629,7 +650,7 @@ namespace csheroes.form
         {
             for (int i = 0; i < Width / Global.BattleCellSize; i++)
                 for (int j = 0; j < Height / Global.BattleCellSize; j++)
-                    surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), background[i, j], GraphicsUnit.Pixel);
+                    surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), background, GraphicsUnit.Pixel);
         }
 
         void LinedArmy(Army army, out Point[] cordsArr, int column)

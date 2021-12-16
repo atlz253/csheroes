@@ -35,7 +35,27 @@ namespace csheroes.src.unit
         PHILOSOPH_FAST,
         PHILOSOPH_BALANCED,
         PHILOSOPH_TENACIOUS,
-        PHILOSOPH_RANGE
+        PHILOSOPH_RANGE,
+        MATRIX_FAST,
+        MATRIX_STRONG,
+        MATRIX_BALANCED,
+        ANONIMUS,
+        BITARD,
+        SUSLOV,
+        KERNEL_PANIC,
+        ERROR,
+        BUG,
+        HACKER_JUNIOR,
+        HACKER_MIDDLE,
+        HACKER_SENIOR,
+        HACKER_FAST,
+        SQUID_EASY,
+        SQUID_MEDIUM,
+        SQUID_HARD,
+        SQUID_RANGE,
+        VAXTER,
+        OXRANA,
+
     }
 
     public class UnitSnapshot : ISnapshot
@@ -213,6 +233,126 @@ namespace csheroes.src.unit
                     damage = 1;
                     level = 4;
                     break;
+                case UnitTemplate.MATRIX_FAST:
+                    tile = new Point(128, 64);
+                    maxHp = 20;
+                    range = 6;
+                    damage = 2;
+                    level = 4;
+                    break;
+                case UnitTemplate.MATRIX_STRONG:
+                    tile = new Point(160, 64);
+                    maxHp = 20;
+                    range = 2;
+                    damage = 4;
+                    level = 4;
+                    break;
+                case UnitTemplate.MATRIX_BALANCED:
+                    tile = new Point(192, 64);
+                    maxHp = 15;
+                    range = 3;
+                    damage = 3;
+                    level = 4;
+                    break;
+                case UnitTemplate.ANONIMUS:
+                    tile = new Point(448, 64);
+                    maxHp = 70;
+                    range = 3;
+                    damage = 4;
+                    level = 6;
+                    break;
+                case UnitTemplate.BITARD:
+                    tile = new Point(480, 64);
+                    maxHp = 10;
+                    range = 5;
+                    damage = 1;
+                    level = 4;
+                    break;
+                case UnitTemplate.SUSLOV:
+                    tile = new Point(800, 64);
+                    maxHp = 100;
+                    range = 1;
+                    damage = 2;
+                    level = 10;
+                    break;
+                case UnitTemplate.KERNEL_PANIC:
+                    tile = new Point(832, 64);
+                    maxHp = 10;
+                    range = 7;
+                    damage = 1;
+                    level = 3;
+                    break;
+                case UnitTemplate.ERROR:
+                    tile = new Point(832, 64);
+                    maxHp = 10;
+                    range = 5;
+                    damage = 1;
+                    level = 3;
+                    break;
+                case UnitTemplate.BUG:
+                    tile = new Point(832, 64);
+                    maxHp = 10;
+                    range = 5;
+                    damage = 2;
+                    level = 3;
+                    break;
+                case UnitTemplate.HACKER_JUNIOR:
+                    tile = new Point(128, 96);
+                    maxHp = 10;
+                    range = 3;
+                    damage = 2;
+                    level = 3;
+                    break;
+                case UnitTemplate.HACKER_MIDDLE:
+                    tile = new Point(160, 96);
+                    maxHp = 15;
+                    range = 3;
+                    damage = 2;
+                    level = 4;
+                    break;
+                case UnitTemplate.HACKER_SENIOR:
+                    tile = new Point(192, 96);
+                    maxHp = 20;
+                    range = 3;
+                    damage = 3;
+                    level = 5;
+                    break;
+                case UnitTemplate.HACKER_FAST:
+                    tile = new Point(224, 96);
+                    maxHp = 10;
+                    range = 5;
+                    damage = 2;
+                    level = 5;
+                    break;
+                case UnitTemplate.SQUID_EASY:
+                    tile = new Point(256, 96);
+                    maxHp = 30;
+                    range = 3;
+                    damage = 2;
+                    level = 5;
+                    break;
+                case UnitTemplate.SQUID_MEDIUM:
+                    tile = new Point(288, 96);
+                    maxHp = 50;
+                    range = 3;
+                    damage = 2;
+                    level = 5;
+                    break;
+                case UnitTemplate.SQUID_HARD:
+                    tile = new Point(320, 96);
+                    maxHp = 50;
+                    range = 3;
+                    damage = 3;
+                    level = 5;
+                    break;
+                case UnitTemplate.SQUID_RANGE:
+                    tile = new Point(320, 96);
+                    type = AttackType.RANGE;
+                    maxHp = 20;
+                    range = 3;
+                    damage = 2;
+                    level = 5;
+                    break;
             }
 
             hp = maxHp;
@@ -224,6 +364,7 @@ namespace csheroes.src.unit
             this.hp = hp;
             this.range = range;
             this.damage = damage;
+            this.type = type;
         }
 
         public Unit(UnitSnapshot snapshot)
@@ -268,6 +409,11 @@ namespace csheroes.src.unit
         public ISnapshot MakeSnapshot()
         {
             return new UnitSnapshot(hp, maxHp, exp, range, damage, level, nextLevelExp, tile, type);
+        }
+
+        public override string ToString()
+        {
+            return "Unit";
         }
     }
 }
