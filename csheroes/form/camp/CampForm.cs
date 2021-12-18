@@ -143,7 +143,7 @@ namespace csheroes.form.camp
                             hero.Respect -= 100;
                             UpdateRespect();
 
-                            hero.Army.Units[i] = new();
+                            hero.Army.Units[i] = new(true);
 
                             Controls.Remove(newUnitBtns[i]);
                             newUnitBtns[i] = null;

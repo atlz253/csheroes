@@ -61,24 +61,33 @@ namespace csheroes.form
             secondArmy = enemy;
             LinedArmy(secondArmy, out secondArmyCords, Width / Global.BattleCellSize - 1);
 
+            timer1.Interval = 100;
+            timer1.Tick += new EventHandler(Update);
+            timer1.Start();
+
             surface = CreateGraphics();
         }
 
-        void Draw()
+        private void Update(object sender, EventArgs e)
         {
-            DrawBackground();
-            DrawArrows();
-            DrawAction();
-            DrawGrid();
-            DrawHighlight();
+            Invalidate();
+        }
+
+        void Draw(Graphics g)
+        {
+            DrawBackground(g);
+            //DrawArrows();
+            DrawAction(g);
+            DrawGrid(g);
+            DrawHighlight(g);
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            Draw();
+            Draw(e.Graphics);
         }
 
-        void DrawHighlight()
+        void DrawHighlight(Graphics g)
         {
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords;
             int index = turn ? firstArmyTurn : secondArmyTurn;
@@ -99,26 +108,26 @@ namespace csheroes.form
             }
 
             Point tmp = new(friendCords[index].X, friendCords[index].Y);
-            surface.DrawRectangle(Global.HighlightPen, new Rectangle(tmp.X * Global.BattleCellSize, tmp.Y * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
+            g.DrawRectangle(Global.HighlightPen, new Rectangle(tmp.X * Global.BattleCellSize, tmp.Y * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
         }
 
-        void DrawGrid()
+        void DrawGrid(Graphics g)
         {
             for (int i = 0; i < Width / Global.BattleCellSize; i++)
-                surface.DrawLine(Global.GridPen, Global.BattleCellSize * i, 0, Global.BattleCellSize * i, Height);
+                g.DrawLine(Global.GridPen, Global.BattleCellSize * i, 0, Global.BattleCellSize * i, Height);
 
             for (int i = 0; i < Height / Global.BattleCellSize; i++)
-                surface.DrawLine(Global.GridPen, 0, Global.BattleCellSize * i, Width, Global.BattleCellSize * i);
+                g.DrawLine(Global.GridPen, 0, Global.BattleCellSize * i, Width, Global.BattleCellSize * i);
         }
 
         List<Label> hpLabels = new();
-        void DrawAction()
+        void DrawAction(Graphics g)
         {
             for (int i = 0; i < Width / Global.BattleCellSize; i++)
                 for (int j = 0; j < Height / Global.BattleCellSize; j++)
                     if (action[i, j] != null && action[i, j].ToString() == "Unit")
                     {
-                        surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
+                        g.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
                         
                         Label hp = new();
                         hp.Text = ((Unit)action[i, j]).Hp.ToString();
@@ -445,7 +454,7 @@ namespace csheroes.form
                 if (ai && next.Ai)
                     AIMove();
             }
-            Draw();
+            //Draw();
         }
 
         double VectorLenght(Point begin, Point end)
@@ -544,7 +553,7 @@ namespace csheroes.form
 
             turn = !turn;
 
-            Draw();
+            //Draw();
         }
 
         void NextTurn(Unit[] units, ref int index)
@@ -642,11 +651,11 @@ namespace csheroes.form
             }
         }
 
-        void DrawBackground()
+        void DrawBackground(Graphics g)
         {
             for (int i = 0; i < Width / Global.BattleCellSize; i++)
                 for (int j = 0; j < Height / Global.BattleCellSize; j++)
-                    surface.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), background, GraphicsUnit.Pixel);
+                    g.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), background, GraphicsUnit.Pixel);
         }
 
         void LinedArmy(Army army, out Point[] cordsArr, int column)
@@ -710,7 +719,7 @@ namespace csheroes.form
             turn = snapshot.turn;
             ai = snapshot.ai;
 
-            Draw();
+            //Draw();
         }
 #endif
     }

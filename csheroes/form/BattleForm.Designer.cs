@@ -29,11 +29,13 @@ namespace csheroes.form
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSplitButton2 = new System.Windows.Forms.ToolStripSplitButton();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,6 +70,9 @@ namespace csheroes.form
             this.toolStripSplitButton1.Size = new System.Drawing.Size(21, 20);
             this.toolStripSplitButton1.Text = "toolStripSplitButton1";
             this.toolStripSplitButton1.ButtonClick += new System.EventHandler(this.SwitchAIBtn);
+#if RELEASE
+            this.toolStripSplitButton1.Visible = false;
+#endif
             // 
             // toolStripSplitButton3
             // 
@@ -79,6 +84,9 @@ namespace csheroes.form
             this.toolStripSplitButton3.Size = new System.Drawing.Size(21, 20);
             this.toolStripSplitButton3.Text = "toolStripSplitButton3";
             this.toolStripSplitButton3.ButtonClick += new System.EventHandler(this.TurnBackBtn);
+#if RELEASE
+            this.toolStripSplitButton3.Visible = false;
+#endif
             // 
             // toolStripSplitButton2
             // 
@@ -96,6 +104,7 @@ namespace csheroes.form
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(802, 824);
             this.Controls.Add(this.statusStrip1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximumSize = new System.Drawing.Size(818, 863);
             this.MinimumSize = new System.Drawing.Size(818, 863);
@@ -112,12 +121,13 @@ namespace csheroes.form
 
         }
 
-        #endregion
+#endregion
 
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton2;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton3;
+        private System.Windows.Forms.Timer timer1;
     }
 }

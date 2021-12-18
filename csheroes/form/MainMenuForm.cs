@@ -25,7 +25,11 @@ namespace csheroes.form
 
         private void NewGame(object sender, EventArgs e)
         {
+#if RELEASE
+            LoadGame("Maps/FirstMap");
+#else
             LoadGame("../../../Resources/Maps/FirstMap");
+#endif
         }
 
         private void LoadGameDialog(object sender, EventArgs e)

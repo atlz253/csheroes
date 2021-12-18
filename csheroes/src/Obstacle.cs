@@ -11,7 +11,20 @@ namespace csheroes.src
     enum ObstacleType
     {
         NEW_KORPUS_WALL,
-        MAC_WALL
+        MAC_WALL,
+        MAC_TABLE_1,
+        MAC_TABLE_2,
+        MAC_TABLE_3,
+        MAC_TABLE_4,
+        MAC_TABLE_5,
+        MAC_TABLE_6,
+        MAC_SOFA,
+        MAC_CHAIR_1,
+        MAC_CHAIR_2,
+        MAC_CHAIR_3,
+        MAC_CHAIR_4,
+        MAC_BARRIER,
+        MAC_WORK_TABLE
     }
 
     class ObstacleSnapshot : ISnapshot
@@ -44,6 +57,45 @@ namespace csheroes.src
                     break;
                 case ObstacleType.MAC_WALL:
                     tile = new(32, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_TABLE_1:
+                    tile = new(64, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_TABLE_2:
+                    tile = new(96, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_TABLE_3:
+                    tile = new(128, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_TABLE_4:
+                    tile = new(160, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_SOFA:
+                    tile = new(192, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_CHAIR_1:
+                    tile = new(224, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_CHAIR_2:
+                    tile = new(256, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_CHAIR_3:
+                    tile = new(288, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_CHAIR_4:
+                    tile = new(320, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_TABLE_5:
+                    tile = new(352, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_TABLE_6:
+                    tile = new(384, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_BARRIER:
+                    tile = new(416, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.MAC_WORK_TABLE:
+                    tile = new(448, 192, Global.CellSize, Global.CellSize);
                     break;
             }
         }

@@ -29,6 +29,7 @@ namespace csheroes.form
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.respectLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -36,6 +37,7 @@ namespace csheroes.form
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSplitButton2 = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,7 +73,7 @@ namespace csheroes.form
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(623, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(654, 17);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // toolStripSplitButton1
@@ -112,6 +114,7 @@ namespace csheroes.form
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(802, 824);
             this.Controls.Add(this.statusStrip1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
@@ -139,6 +142,7 @@ namespace csheroes.form
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton3;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel respectLabel;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

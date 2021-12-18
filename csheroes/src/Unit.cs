@@ -53,9 +53,8 @@ namespace csheroes.src.unit
         SQUID_MEDIUM,
         SQUID_HARD,
         SQUID_RANGE,
-        VAXTER,
-        OXRANA,
-
+        MAC_WORKER,
+        RONALD
     }
 
     public class UnitSnapshot : ISnapshot
@@ -132,9 +131,9 @@ namespace csheroes.src.unit
         int damage = 1;
         int nextLevelExp = 1;
 
-        public Unit()
+        public Unit(bool hero = false)
         {
-            tile = RandomTile();
+            tile = RandomTile(hero);
         }
 
         public Unit(UnitTemplate template) : this()
@@ -346,12 +345,26 @@ namespace csheroes.src.unit
                     level = 5;
                     break;
                 case UnitTemplate.SQUID_RANGE:
-                    tile = new Point(320, 96);
+                    tile = new Point(352, 96);
                     type = AttackType.RANGE;
                     maxHp = 20;
                     range = 3;
                     damage = 2;
                     level = 5;
+                    break;
+                case UnitTemplate.MAC_WORKER:
+                    tile = new Point(384, 96);
+                    maxHp = 20;
+                    range = 3;
+                    damage = 2;
+                    level = 5;
+                    break;
+                case UnitTemplate.RONALD:
+                    tile = new Point(416, 96);
+                    maxHp = 100;
+                    range = 2;
+                    damage = 4;
+                    level = 7;
                     break;
             }
 
@@ -380,9 +393,15 @@ namespace csheroes.src.unit
             nextLevelExp = snapshot.nextLevel;
         }
 
-        Point RandomTile()
+        Point RandomTile(bool hero)
         {
-            return new(256 + Global.CellSize * Global.Rand.Next(0, 4), 0);
+            if (hero)
+                if (Global.Rand.Next(0, 2) == 1)
+                    return new(256 + Global.CellSize * Global.Rand.Next(0, 4), 0);
+                else
+                    return new(128, 128);
+            else
+                return new(256 + Global.CellSize * Global.Rand.Next(0, 4), 0);
         }
 
         internal AttackType Attack { get => type; set => type = value; }

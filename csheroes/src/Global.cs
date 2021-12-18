@@ -25,7 +25,11 @@ namespace csheroes.src
                             highlightPen = new(Color.Red, 1);
 
         static readonly Random rand = new();
+#if RELEASE
+        static readonly Image texture = Image.FromFile("textures.png");
+#else
         static readonly Image texture = Image.FromFile("../../../res/textures.png");
+#endif
 
         public static int CellSize
         {
