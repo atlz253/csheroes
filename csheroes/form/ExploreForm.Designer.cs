@@ -29,7 +29,6 @@ namespace csheroes.form
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.respectLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -37,7 +36,6 @@ namespace csheroes.form
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSplitButton2 = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -142,7 +140,6 @@ namespace csheroes.form
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton3;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel respectLabel;
-        private System.Windows.Forms.Timer timer1;
     }
 }
 

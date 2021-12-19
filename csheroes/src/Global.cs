@@ -23,6 +23,8 @@ namespace csheroes.src
 
         static readonly Pen gridPen = new(Color.Black, 1),
                             highlightPen = new(Color.Red, 1);
+        static readonly SolidBrush moveHighlightBrush = new(Color.FromArgb(70, 174, 198, 207)),
+                                   enemyHighlightBrush = new(Color.FromArgb(70, 219, 88, 86));
 
         static readonly Random rand = new();
 #if RELEASE
@@ -50,14 +52,12 @@ namespace csheroes.src
             }
         }
 
-        public static Random Rand
-        {
-            get
-            {
-                return rand;
-            }
-        }
+        public static Random Rand => rand;
 
         public static int BattleCellSize => battleCellSize;
+
+        public static SolidBrush MoveHighlightBrush => moveHighlightBrush;
+
+        public static SolidBrush EnemyHighlightBrush => enemyHighlightBrush;
     }
 }

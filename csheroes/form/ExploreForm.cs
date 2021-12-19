@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,7 +37,7 @@ namespace csheroes.form
             InitializeComponent();
 
             maxCellWidth = Width / Global.CellSize;
-            maxCellHeight = Height / Global.CellSize;
+            maxCellHeight = (Height - 22) / Global.CellSize;
 
 #if TEST_MAP
             InitAction();
@@ -45,10 +46,6 @@ namespace csheroes.form
 #endif
 
             surface = CreateGraphics();
-
-            timer1.Interval = 100;
-            timer1.Tick += new EventHandler(Update);
-            timer1.Start();
         }
 
         public void Update(object sender, EventArgs e)
@@ -56,22 +53,16 @@ namespace csheroes.form
             Invalidate();
         }
 
-        //public void Draw(object sender, EventArgs e)
-        //{
-        //    DrawBackground();
-        //    DrawArrows();
-        //    DrawAction();
-        //    DrawGrid();
-        //}
+        public void Draw(Graphics g)
+        {
+            DrawBackground(g);
+            DrawAction(g);
+            DrawGrid(g);
+        }
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
-
-            DrawBackground(g);
-            //DrawArrows();
-            DrawAction(g);
-            DrawGrid(g);
+            Draw(e.Graphics);
         }
 
         void DrawGrid(Graphics g)
@@ -213,6 +204,8 @@ namespace csheroes.form
             action[11, 4] = new Obstacle(ObstacleType.MAC_CHAIR_2);
             action[11, 5] = new Obstacle(ObstacleType.MAC_TABLE_3);
             action[11, 8] = new Obstacle(ObstacleType.MAC_WORK_TABLE);
+            for (int i = 0; i < 15; i++)
+                action[11, 22 - i] = new Obstacle(ObstacleType.MAC_WORK_TABLE);
             action[12, 1] = new Obstacle(ObstacleType.MAC_TABLE_1);
             action[12, 2] = new Obstacle(ObstacleType.MAC_CHAIR_1);
             action[12, 8] = new Obstacle(ObstacleType.MAC_WORK_TABLE);
@@ -220,8 +213,12 @@ namespace csheroes.form
             action[13, 4] = new Obstacle(ObstacleType.MAC_CHAIR_2);
             action[13, 5] = new Obstacle(ObstacleType.MAC_TABLE_1);
             action[13, 8] = new Obstacle(ObstacleType.MAC_WORK_TABLE);
+            for (int i = 0; i < 14; i++)
+                action[13, 23 - i] = new Obstacle(ObstacleType.MAC_WORK_TABLE);
             action[14, 1] = new Obstacle(ObstacleType.MAC_CHAIR_3);
             action[14, 8] = new Obstacle(ObstacleType.MAC_WORK_TABLE);
+            for (int i = 0; i < 14; i++)
+                action[14, 23 - i] = new Obstacle(ObstacleType.MAC_WORK_TABLE);
             action[15, 1] = new Obstacle(ObstacleType.MAC_TABLE_1);
             action[15, 2] = new Obstacle(ObstacleType.MAC_CHAIR_1);
             action[15, 4] = new Obstacle(ObstacleType.MAC_CHAIR_2);
@@ -254,21 +251,35 @@ namespace csheroes.form
             action[heroCords.Y, heroCords.X] = hero;
             UpdateRespect();
 
+            action[5, 0] = new Army(true, new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP));
+            action[2, 2] = new Army(true, new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK));
             action[1, 19] = new Army(true, new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.HACKER_JUNIOR));
+            action[1, 24] = new Army(true, new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK));
             action[2, 6] = new Army(true, new Unit(UnitTemplate.PHILOSOPH_BALANCED), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.PHILOSOPH_FAST), new Unit(UnitTemplate.HACKER_JUNIOR));
-            action[2, 10] = new Army(true, new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE));
+            action[2, 10] = new Army(true, new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_JUNIOR));
             action[2, 12] = new Army(true, new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST), new Unit(UnitTemplate.ECONOMIST));
+            action[2, 18] = new Army(true, new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL));
             action[4, 22] = new Army(true, new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.CREEP_RANGE));
+            action[6, 3] = new Army(true, new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.NORMAL), new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.CREEP_RANGE));
             action[7, 6] = new Army(true, new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP));
             action[7, 10] = new Army(true, new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK));
             action[7, 12] = new Army(true, new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP_RANGE), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.CREEP_RANGE));
+            action[7, 16] = new Army(true, new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK));
+            action[7, 18] = new Army(true, new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK));
+            action[8, 2] = new Army(true, new Unit(UnitTemplate.HARD), new Unit(UnitTemplate.HARD), new Unit(UnitTemplate.HARD), new Unit(UnitTemplate.HARD));
             action[8, 7] = new Army(true, new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP));
-            action[8, 14] = new Army(true, new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR));
-            action[8, 22] = new Army(true, new Unit(UnitTemplate.HACKER_MIDDLE), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_MIDDLE));
+            action[8, 14] = new Army(true, new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.CREEP), new Unit(UnitTemplate.CREEP));
+            action[8, 22] = new Army(true, new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.HACKER_JUNIOR), new Unit(UnitTemplate.WEAK), new Unit(UnitTemplate.WEAK));
             action[10, 0] = new Army(true, new Unit(UnitTemplate.ANONIMUS), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD), new Unit(UnitTemplate.BITARD));
             action[12, 5] = new Army(true, new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_SENIOR), new Unit(UnitTemplate.HACKER_FAST));
+            action[12, 14] = new Army(true, new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
+            action[12, 18] = new Army(true, new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
             action[14, 5] = new Army(true, new Unit(UnitTemplate.PHILOSOPH_TENACIOUS), new Unit(UnitTemplate.PHILOSOPH_TENACIOUS), new Unit(UnitTemplate.PHILOSOPH_TENACIOUS), new Unit(UnitTemplate.PHILOSOPH_BALANCED), new Unit(UnitTemplate.PHILOSOPH_BALANCED));
-            action[16, 5] = new Army(true, new Unit(UnitTemplate.MATRIX_BALANCED), new Unit(UnitTemplate.MATRIX_FAST), new Unit(UnitTemplate.MATRIX_BALANCED));
+            action[14, 9] = new Army(true, new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
+            action[15, 11] = new Army(true, new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
+            action[15, 15] = new Army(true, new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
+            action[15, 20] = new Army(true, new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
+            action[16, 5] = new Army(true, new Unit(UnitTemplate.MATRIX_BALANCED), new Unit(UnitTemplate.MATRIX_FAST), new Unit(UnitTemplate.MATRIX_STRONG));
             action[18, 10] = new Army(true, new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
             action[18, 13] = new Army(true, new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
             action[18, 17] = new Army(true, new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
@@ -521,7 +532,7 @@ namespace csheroes.form
         {
             int destX = e.X / Global.CellSize,
                 destY = e.Y / Global.CellSize;
-            if (action[destY, destX] != null && action[destY, destX].ToString() == "Obstacle")
+            if (destY < action.GetLength(0) && action[destY, destX] != null && action[destY, destX].ToString() == "Obstacle")
                 return;
 
             MoveHero(new Point(destX, destY));
@@ -536,7 +547,7 @@ namespace csheroes.form
 
             action[heroCords.Y, heroCords.X] = hero;
 
-            //Draw();
+            Invalidate();
         }
 
         void DrawArrow(Arrows direction, int x, int y)
@@ -666,7 +677,7 @@ namespace csheroes.form
                     return;
 
                 InitAction($"saves/{dialog.fileName}");
-                //Draw();
+                Invalidate();
             }
         }
 
