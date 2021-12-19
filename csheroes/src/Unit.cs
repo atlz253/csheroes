@@ -26,6 +26,8 @@ namespace csheroes.src.unit
         CREEP,
         CREEP_RANGE,
         WEAK,
+        NORMAL,
+        HARD,
         PHYSIC_MELEE,
         PHYSIC_RANGE,
         ECONOMIST,
@@ -160,6 +162,18 @@ namespace csheroes.src.unit
                     damage = 1;
                     level = 1;
                     break;
+                case UnitTemplate.NORMAL:
+                    maxHp = 7;
+                    range = 3;
+                    damage = 2;
+                    level = 1;
+                    break;
+                case UnitTemplate.HARD:
+                    maxHp = 10;
+                    range = 3;
+                    damage = 3;
+                    level = 2;
+                    break;
                 case UnitTemplate.PHYSIC_MELEE:
                     tile = new Point(224, 64);
                     maxHp = 10;
@@ -255,15 +269,15 @@ namespace csheroes.src.unit
                     break;
                 case UnitTemplate.ANONIMUS:
                     tile = new Point(448, 64);
-                    maxHp = 70;
+                    maxHp = 50;
                     range = 3;
-                    damage = 4;
+                    damage = 3;
                     level = 6;
                     break;
                 case UnitTemplate.BITARD:
                     tile = new Point(480, 64);
-                    maxHp = 10;
-                    range = 5;
+                    maxHp = 5;
+                    range = 6;
                     damage = 1;
                     level = 4;
                     break;
@@ -297,22 +311,22 @@ namespace csheroes.src.unit
                     break;
                 case UnitTemplate.HACKER_JUNIOR:
                     tile = new Point(128, 96);
-                    maxHp = 10;
+                    maxHp = 8;
                     range = 3;
                     damage = 2;
                     level = 3;
                     break;
                 case UnitTemplate.HACKER_MIDDLE:
                     tile = new Point(160, 96);
-                    maxHp = 15;
-                    range = 3;
+                    maxHp = 12;
+                    range = 2;
                     damage = 2;
                     level = 4;
                     break;
                 case UnitTemplate.HACKER_SENIOR:
                     tile = new Point(192, 96);
-                    maxHp = 20;
-                    range = 3;
+                    maxHp = 15;
+                    range = 2;
                     damage = 3;
                     level = 5;
                     break;
