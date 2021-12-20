@@ -21,6 +21,9 @@ namespace csheroes.form
 
         void LoadRecords()
         {
+            if (!File.Exists("records.bin"))
+                return;
+
             using (BinaryReader reader = new(File.Open("records.bin", FileMode.Open)))
             {
                 int count = 0;

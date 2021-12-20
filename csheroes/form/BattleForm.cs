@@ -27,8 +27,8 @@ namespace csheroes.form
              secondArmy;
         Point[] firstArmyCords,
                 secondArmyCords;
-        int firstArmyTurn = 0,
-            secondArmyTurn = 0;
+        int firstArmyTurn = -1,
+            secondArmyTurn = -1;
         bool turn = true,
              close = false,
              ai = true; // включен ли искусственный интелект
@@ -63,6 +63,8 @@ namespace csheroes.form
             LinedArmy(secondArmy, out secondArmyCords, Width / Global.BattleCellSize - 1);
 
             surface = CreateGraphics();
+
+            NextTurn(firstArmy.Units, ref firstArmyTurn);
         }
 
         void Draw(Graphics g)
@@ -91,9 +93,9 @@ namespace csheroes.form
             while (unit == null) // если юнит, который должен был ходить, трагически погиб
             {
                 if (turn)
-                    NextTurn(firstArmy.Units, ref firstArmyTurn);
-                else
                     NextTurn(secondArmy.Units, ref secondArmyTurn);
+                else
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
 
                 if (close) // не осталось юнитов
                     return;
@@ -127,7 +129,7 @@ namespace csheroes.form
                         if (unit.Attack == AttackType.MELEE && !CellIsEmpty(p.X, p.Y - 1))
                         {
                             for (int i = 0; i < 7; i++)
-                                if (enemyArmy.Units[i] != null && enemyCords[i].X == p.X && enemyCords[i].Y == p.Y - 1)
+                                if (enemyArmy.Units[i] != null && enemyArmy.Units[i].Hp != 0 && enemyCords[i].X == p.X && enemyCords[i].Y == p.Y - 1)
                                     g.FillRectangle(Global.EnemyHighlightBrush, new Rectangle(p.X * Global.BattleCellSize, (p.Y - 1) * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
                         }
                         else
@@ -147,7 +149,7 @@ namespace csheroes.form
                         if (unit.Attack == AttackType.MELEE && !CellIsEmpty(p.X, p.Y + 1))
                         {
                             for (int i = 0; i < 7; i++)
-                                if (enemyArmy.Units[i] != null && enemyCords[i].X == p.X && enemyCords[i].Y == p.Y + 1)
+                                if (enemyArmy.Units[i] != null && enemyArmy.Units[i].Hp != 0 && enemyCords[i].X == p.X && enemyCords[i].Y == p.Y + 1)
                                     g.FillRectangle(Global.EnemyHighlightBrush, new Rectangle(p.X * Global.BattleCellSize, (p.Y + 1) * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
                         }
                         else
@@ -167,7 +169,7 @@ namespace csheroes.form
                         if (unit.Attack == AttackType.MELEE && !CellIsEmpty(p.X - 1, p.Y))
                         {
                             for (int i = 0; i < 7; i++)
-                                if (enemyArmy.Units[i] != null && enemyCords[i].X == p.X - 1 && enemyCords[i].Y == p.Y)
+                                if (enemyArmy.Units[i] != null && enemyArmy.Units[i].Hp != 0 && enemyCords[i].X == p.X - 1 && enemyCords[i].Y == p.Y)
                                     g.FillRectangle(Global.EnemyHighlightBrush, new Rectangle((p.X - 1) * Global.BattleCellSize, p.Y * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
                         }
                         else
@@ -188,7 +190,7 @@ namespace csheroes.form
                         if (unit.Attack == AttackType.MELEE && !CellIsEmpty(p.X + 1, p.Y))
                         {
                             for (int i = 0; i < 7; i++)
-                                if (enemyArmy.Units[i] != null && enemyCords[i].X == p.X + 1 && enemyCords[i].Y == p.Y)
+                                if (enemyArmy.Units[i] != null && enemyArmy.Units[i].Hp != 0 && enemyCords[i].X == p.X + 1 && enemyCords[i].Y == p.Y)
                                     g.FillRectangle(Global.EnemyHighlightBrush, new Rectangle((p.X + 1) * Global.BattleCellSize, p.Y * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
                         }
                         else
@@ -203,7 +205,7 @@ namespace csheroes.form
 
             if (unit.Attack == AttackType.RANGE)
                 for (int i = 0; i < 7; i++)
-                    if (enemyArmy.Units[i] != null)
+                    if (enemyArmy.Units[i] != null && enemyArmy.Units[i].Hp != 0)
                         g.FillRectangle(Global.EnemyHighlightBrush, new Rectangle(enemyCords[i].X * Global.BattleCellSize, enemyCords[i].Y * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
         }
 
@@ -444,11 +446,12 @@ namespace csheroes.form
 
             if (enemy.Hp <= 0)
             {
+                enemy.Hp = 0;
                 Army enemyArmy = turn ? secondArmy : firstArmy;
 
-                for (int i = 0; i < enemyArmy.Units.Length; i++)
-                    if (action[pos.Y, pos.X] == enemyArmy.Units[i])
-                        enemyArmy.Units[i] = null;
+                //for (int i = 0; i < enemyArmy.Units.Length; i++)
+                //    if (action[pos.Y, pos.X] == enemyArmy.Units[i])
+                //        enemyArmy.Units[i] = null;
 
                 action[pos.Y, pos.X] = null;
 
@@ -503,22 +506,22 @@ namespace csheroes.form
             arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
             Point dest = new Point(e.X / Global.BattleCellSize, e.Y / Global.BattleCellSize);
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords;
+            Army friendArmy = turn ? firstArmy : secondArmy;
 
             if (!CellIsEmpty(dest.X, dest.Y))
-                foreach (Point cords in friendCords)
-                    if (dest == cords) // клик на дружественного юнита
+                for (int i = 0; i < 7; i++)
+                    if (dest == friendCords[i] && friendArmy.Units[i].Hp != 0) // клик на дружественного юнита
                         return;
 
             int index = turn ? firstArmyTurn : secondArmyTurn;
-            Army friendArmy = turn ? firstArmy : secondArmy;
             Unit unit = friendArmy.Units[index];
 
             while (unit == null) // если юнит, который должен был ходить, трагически погиб
             {
                 if (turn)
-                    NextTurn(firstArmy.Units, ref firstArmyTurn);
-                else
                     NextTurn(secondArmy.Units, ref secondArmyTurn);
+                else
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
 
                 if (close) // не осталось юнитов
                     return;
@@ -547,9 +550,9 @@ namespace csheroes.form
             if (unitTurn)
             {
                 if (turn)
-                    NextTurn(firstArmy.Units, ref firstArmyTurn);
-                else
                     NextTurn(secondArmy.Units, ref secondArmyTurn);
+                else
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
 
                 turn = !turn;
 
@@ -582,9 +585,9 @@ namespace csheroes.form
             while (unit == null) // если юнит, который должен был ходить, трагически погиб
             {
                 if (turn)
-                    NextTurn(firstArmy.Units, ref firstArmyTurn);
-                else
                     NextTurn(secondArmy.Units, ref secondArmyTurn);
+                else
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
 
                 if (close) // не осталось юнитов
                     return;
@@ -596,7 +599,7 @@ namespace csheroes.form
             Point dest = new(-1, -1), tmp = new(friendCords[index].X, friendCords[index].Y);
 
             for (int i = 0; i < 7; i++)
-                if (enemyUnits[i] != null && (dest.X == -1 || (VectorLenght(dest, tmp) > VectorLenght(enemyCords[i], tmp))))
+                if (enemyUnits[i] != null && enemyUnits[i].Hp != 0 && (dest.X == -1 || (VectorLenght(dest, tmp) > VectorLenght(enemyCords[i], tmp))))
                     dest = enemyCords[i];
 
             if (unit.Attack == AttackType.MELEE && Math.Abs(dest.X - tmp.X) > unit.Range)
@@ -651,9 +654,9 @@ namespace csheroes.form
                 Console.WriteLine("AI Move error");
 
             if (turn)
-                NextTurn(firstArmy.Units, ref firstArmyTurn);
-            else
                 NextTurn(secondArmy.Units, ref secondArmyTurn);
+            else
+                NextTurn(firstArmy.Units, ref firstArmyTurn);
 
             turn = !turn;
 
@@ -668,14 +671,14 @@ namespace csheroes.form
             hpLabels = new();
 
             for (int i = index + 1; i < 7; i++) // проверяем остаток массива
-                if (units[i] != null)
+                if (units[i] != null && units[i].Hp != 0)
                 {
                     index = i;
                     return;
                 }
 
             for (int i = 0; i < index + 1; i++) // начинаем смотреть сначала
-                if (units[i] != null)
+                if (units[i] != null && units[i].Hp != 0)
                 {
                     index = i;
                     return;
@@ -696,9 +699,9 @@ namespace csheroes.form
 #endif
 
             if (turn)
-                NextTurn(firstArmy.Units, ref firstArmyTurn);
-            else
                 NextTurn(secondArmy.Units, ref secondArmyTurn);
+            else
+                NextTurn(firstArmy.Units, ref firstArmyTurn);
 
             turn = !turn;
 
@@ -742,9 +745,9 @@ namespace csheroes.form
 #endif
 
                 if (turn)
-                    NextTurn(firstArmy.Units, ref firstArmyTurn);
-                else
                     NextTurn(secondArmy.Units, ref secondArmyTurn);
+                else
+                    NextTurn(firstArmy.Units, ref firstArmyTurn);
 
                 turn = !turn;
 
@@ -768,7 +771,8 @@ namespace csheroes.form
 
             for (int i = 0; i < Height && i < 7; i++)
             {
-                action[i*2, column] = army.Units[i];
+                if (army.Units[i] != null && army.Units[i].Hp != 0)
+                    action[i*2, column] = army.Units[i];
                 cordsArr[i] = new Point(column, i * 2);
             }
         }
@@ -790,6 +794,11 @@ namespace csheroes.form
 
         void RestoreSnapshot()
         {
+            if (hpLabels != null) // удаляем старое количество hp
+                foreach (Label label in hpLabels)
+                    Controls.Remove(label);
+            hpLabels = new();
+
             BattleFormSnapshot snapshot = snapshots[lastSnapshotIndex];
             snapshots[lastSnapshotIndex] = null;
 

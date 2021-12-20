@@ -64,7 +64,7 @@ namespace csheroes.src
             get
             {
                 foreach (Unit unit in units)
-                    if (unit != null)
+                    if (unit != null && unit.Hp != 0)
                         return false;
                 return true;
             }

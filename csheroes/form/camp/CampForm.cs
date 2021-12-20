@@ -172,6 +172,8 @@ namespace csheroes.form.camp
 
                             return;
                         }
+
+                    return;
                 }
         }
 
@@ -180,16 +182,21 @@ namespace csheroes.form.camp
             for (int i = 0; i < 7; i++)
                 if (healBtns[i] != null && (sender as Button).Name == healBtns[i].Name)
                 {
-                    BoolDialog dialog = new("Вы слишком зачастили к нам (- 100 респекта)");
+                    int healCost = 10;
+                    for (int j = 0; j < hero.Army.Units[i].MaxHp - hero.Army.Units[i].Hp; j++)
+                        healCost += (int) (10 + healCost * 0.05);
+
+                    //int healCost = (hero.Army.Units[i].MaxHp - hero.Army.Units[i].Hp) * 5 * hero.Army.Units[i].Level;
+                    BoolDialog dialog = new($"Вы слишком зачастили к нам (- {healCost} респекта)");
 
                     dialog.ShowDialog();
 
                     if (dialog.choice)
                     {
-                        if (hero.Respect == 0 || hero.Respect < 100)
+                        if (hero.Respect == 0 || hero.Respect < healCost)
                             return;
 
-                        hero.Respect -= 100;
+                        hero.Respect -= healCost;
                         hero.Army.Units[i].Hp = hero.Army.Units[i].MaxHp;
 
                         Controls.Remove(healBtns[i]);

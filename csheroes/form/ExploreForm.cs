@@ -305,7 +305,7 @@ namespace csheroes.form
             action[23, 17] = new Army(true, new Unit(UnitTemplate.CREEP));
             action[23, 20] = new Army(true, new Unit(UnitTemplate.CREEP));
             action[23, 23] = new Army(true, new Unit(UnitTemplate.CREEP));
-            action[24, 24] = new Army(true, new Unit(UnitTemplate.RONALD), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
+            action[23, 24] = new Army(true, new Unit(UnitTemplate.RONALD), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER), new Unit(UnitTemplate.MAC_WORKER));
         }
 #endif
 
@@ -592,6 +592,7 @@ namespace csheroes.form
             Visible = false;
 
             battleForm.ShowDialog();
+            Location = battleForm.Location;
 
 #if RELEASE
             if (!battleForm.BattleEnd)
@@ -628,6 +629,7 @@ namespace csheroes.form
             Visible = false;
 
             campForm.ShowDialog();
+            Location = campForm.Location;
             campForm.Dispose();
 
             UpdateRespect();
