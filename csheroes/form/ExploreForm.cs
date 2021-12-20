@@ -3,34 +3,26 @@ using csheroes.src;
 using csheroes.src.unit;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace csheroes.form
 {
     public partial class ExploreForm : Form
     {
-        readonly Graphics surface;
-
-        readonly int maxCellWidth;
-        readonly int maxCellHeight;
-
-        Rectangle[,] background = null;
-        Rectangle battleTile;
-        Point winCell;
-        IGameObj[,] action = null;
-        Arrows[,] arrow = null;
-
-        Hero hero = null;
-        Point heroCords;
-        string locationName;
+        private readonly Graphics surface;
+        private readonly int maxCellWidth;
+        private readonly int maxCellHeight;
+        private Rectangle[,] background = null;
+        private Rectangle battleTile;
+        private Point winCell;
+        private IGameObj[,] action = null;
+        private readonly Arrows[,] arrow = null;
+        private Hero hero = null;
+        private Point heroCords;
+        private string locationName;
 
         public ExploreForm(string fileName)
         {
@@ -65,20 +57,28 @@ namespace csheroes.form
             Draw(e.Graphics);
         }
 
-        void DrawGrid(Graphics g)
+        private void DrawGrid(Graphics g)
         {
             for (int i = 0; i < maxCellWidth; i++)
+            {
                 g.DrawLine(Global.GridPen, Global.CellSize * i, 0, Global.CellSize * i, Height);
+            }
 
             for (int i = 0; i < maxCellHeight; i++)
+            {
                 g.DrawLine(Global.GridPen, 0, Global.CellSize * i, Width, Global.CellSize * i);
+            }
         }
 
-        void DrawBackground(Graphics g)
+        private void DrawBackground(Graphics g)
         {
             for (int i = 0; i < maxCellWidth; i++)
+            {
                 for (int j = 0; j < maxCellHeight; j++)
-                    g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i,j], GraphicsUnit.Pixel);
+                {
+                    g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i, j], GraphicsUnit.Pixel);
+                }
+            }
         }
 
 #if TEST_MAP
@@ -309,7 +309,7 @@ namespace csheroes.form
         }
 #endif
 
-        void InitAction(string fileName)
+        private void InitAction(string fileName)
         {
             background = new Rectangle[maxCellWidth, maxCellHeight];
 
@@ -319,13 +319,18 @@ namespace csheroes.form
             {
                 locationName = reader.ReadString();
                 for (int i = 0; i < maxCellWidth; i++)
+                {
                     for (int j = 0; j < maxCellHeight; j++)
+                    {
                         background[i, j] = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
-                
+                    }
+                }
+
                 battleTile = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
                 winCell = new(reader.ReadInt32(), reader.ReadInt32());
 
                 for (int i = 0; i < maxCellWidth; i++)
+                {
                     for (int j = 0; j < maxCellHeight; j++)
                     {
                         string name = reader.ReadString();
@@ -350,8 +355,9 @@ namespace csheroes.form
                                 string unitName = reader.ReadString();
 
                                 if (unitName == "NoUnit")
+                                {
                                     continue;
-
+                                }
 
                                 Unit unit = new(new UnitSnapshot(reader));
                                 units[k] = unit;
@@ -370,8 +376,9 @@ namespace csheroes.form
                                 string unitName = reader.ReadString();
 
                                 if (unitName == "NoUnit")
+                                {
                                     continue;
-
+                                }
 
                                 Unit unit = new(new UnitSnapshot(reader));
                                 units[k] = unit;
@@ -380,31 +387,40 @@ namespace csheroes.form
                             action[i, j] = new Army(ai, units);
                         }
                     }
+                }
             }
         }
 
-        void UpdateRespect()
+        private void UpdateRespect()
         {
             respectLabel.Text = hero.Respect.ToString();
         }
 
-        void DrawAction(Graphics g)
+        private void DrawAction(Graphics g)
         {
             for (int i = 0; i < maxCellWidth; i++)
+            {
                 for (int j = 0; j < maxCellHeight; j++)
+                {
                     if (action[i, j] != null)
+                    {
                         g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
+                    }
+                }
+            }
         }
 
-        bool CellIsEmpty(int x, int y)
+        private bool CellIsEmpty(int x, int y)
         {
             if (x < 0 || x > Width / Global.CellSize - 1 || y < 0 || y > Height / Global.CellSize - 2) // TODO: проверить, что за фигня с -1 и -2
+            {
                 return false;
+            }
 
             return (action[y, x] == null);
         }
 
-        bool MoveHero(Point dest)
+        private bool MoveHero(Point dest)
         {
             Queue<Point> visit = new();
             bool[,] used = new bool[Width / Global.CellSize, Height / Global.CellSize];
@@ -418,28 +434,33 @@ namespace csheroes.form
 
                 if (p == dest)
                 {
-                        MoveHero(dest.X, dest.Y);
-                        
-                        if (dest.X == winCell.X && dest.Y == winCell.Y)
+                    MoveHero(dest.X, dest.Y);
+
+                    if (dest.X == winCell.X && dest.Y == winCell.Y)
+                    {
+                        int score = 0;
+                        foreach (Unit unit in hero.Army.Units)
                         {
-                            int score = 0;
-                            foreach (Unit unit in hero.Army.Units)
-                                if (unit != null)
-                                    score += unit.Damage + unit.Hp + unit.Exp + unit.Range;
-                            score += hero.Respect;
-
-                            WinForm form = new(locationName, score);
-
-                            form.Location = new Point(Location.X, Location.Y);
-
-                            Visible = false;
-
-                            form.ShowDialog();
-                            form.Dispose();
-                            Close();
+                            if (unit != null)
+                            {
+                                score += unit.Damage + unit.Hp + unit.Exp + unit.Range;
+                            }
                         }
 
-                        return true;
+                        score += hero.Respect;
+
+                        WinForm form = new(locationName, score);
+
+                        form.Location = new Point(Location.X, Location.Y);
+
+                        Visible = false;
+
+                        form.ShowDialog();
+                        form.Dispose();
+                        Close();
+                    }
+
+                    return true;
                 }
 
 
@@ -520,9 +541,15 @@ namespace csheroes.form
             SolidBrush pen = new(Color.FromArgb(128, 0, 0, 255));
 
             for (int i = 0; i < Width / Global.CellSize; i++)
+            {
                 for (int j = 0; j < Height / Global.CellSize; j++)
+                {
                     if (used[i, j] == true)
+                    {
                         surface.FillRectangle(pen, j * Global.CellSize, i * Global.CellSize, Global.CellSize, Global.CellSize);
+                    }
+                }
+            }
 #endif
 
             return false;
@@ -533,12 +560,14 @@ namespace csheroes.form
             int destX = e.X / Global.CellSize,
                 destY = e.Y / Global.CellSize;
             if (destY < action.GetLength(0) && action[destY, destX] != null && action[destY, destX].ToString() == "Obstacle")
+            {
                 return;
+            }
 
             MoveHero(new Point(destX, destY));
         }
 
-        void MoveHero(int x, int y)
+        private void MoveHero(int x, int y)
         {
             action[heroCords.Y, heroCords.X] = null;
 
@@ -550,7 +579,7 @@ namespace csheroes.form
             Invalidate();
         }
 
-        void DrawArrow(Arrows direction, int x, int y)
+        private void DrawArrow(Arrows direction, int x, int y)
         {
             Rectangle tile = new Rectangle(0, 128, Global.CellSize, Global.CellSize);
 
@@ -575,15 +604,21 @@ namespace csheroes.form
             surface.DrawImage(Global.Texture, new Rectangle(Global.CellSize * x, Global.CellSize * y, Global.CellSize, Global.CellSize), tile, GraphicsUnit.Pixel);
         }
 
-        void DrawArrows()
+        private void DrawArrows()
         {
             if (arrow != null)
+            {
                 for (int i = 0; i < maxCellWidth; i++)
+                {
                     for (int j = 0; j < maxCellHeight; j++)
+                    {
                         DrawArrow(arrow[i, j], j, i);
+                    }
+                }
+            }
         }
 
-        void StartBattle(Army enemy)
+        private void StartBattle(Army enemy)
         {
             BattleForm battleForm = new(this, hero, enemy, battleTile);
 
@@ -646,17 +681,22 @@ namespace csheroes.form
             if (dialog.save)
             {
                 if (!Directory.Exists("saves"))
+                {
                     Directory.CreateDirectory("saves");
+                }
 
                 using (BinaryWriter writer = new(File.Open($"saves/{dialog.fileName}", FileMode.OpenOrCreate)))
                 {
                     writer.Write(locationName);
                     for (int i = 0; i < maxCellWidth; i++)
+                    {
                         for (int j = 0; j < maxCellHeight; j++)
                         {
                             writer.Write(background[i, j].X);
                             writer.Write(background[i, j].Y);
                         }
+                    }
+
                     writer.Write(battleTile.X);
                     writer.Write(battleTile.Y);
                     writer.Write(winCell.X);
@@ -665,18 +705,28 @@ namespace csheroes.form
                     ISnapshot[,] actionstate = new ISnapshot[maxCellWidth, maxCellHeight];
 
                     for (int i = 0; i < maxCellWidth; i++)
+                    {
                         for (int j = 0; j < maxCellHeight; j++)
+                        {
                             if (action[i, j] != null)
+                            {
                                 action[i, j].MakeSnapshot().Save(writer);
+                            }
                             else
+                            {
                                 writer.Write("NullObj");
+                            }
+                        }
+                    }
                 }
             }
 
             if (dialog.load)
             {
                 if (!File.Exists($"saves/{dialog.fileName}"))
+                {
                     return;
+                }
 
                 InitAction($"saves/{dialog.fileName}");
                 Invalidate();

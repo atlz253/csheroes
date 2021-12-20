@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace csheroes.src.unit
 {
@@ -122,16 +117,15 @@ namespace csheroes.src.unit
 
     public class Unit : IGameObj
     {
-        Point tile;
-        AttackType type = AttackType.MELEE;
-
-        int hp = 10;
-        int exp = 0;
-        int maxHp = 10;
-        int range = 3;
-        int level = 1;
-        int damage = 1;
-        int nextLevelExp = 1;
+        private Point tile;
+        private AttackType type = AttackType.MELEE;
+        private int hp = 10;
+        private int exp = 0;
+        private int maxHp = 10;
+        private int range = 3;
+        private int level = 1;
+        private int damage = 1;
+        private int nextLevelExp = 1;
 
         public Unit(bool hero = false)
         {
@@ -407,15 +401,23 @@ namespace csheroes.src.unit
             nextLevelExp = snapshot.nextLevel;
         }
 
-        Point RandomTile(bool hero)
+        private Point RandomTile(bool hero)
         {
             if (hero)
+            {
                 if (Global.Rand.Next(0, 2) == 1)
+                {
                     return new(256 + Global.CellSize * Global.Rand.Next(0, 4), 0);
+                }
                 else
+                {
                     return new(128, 128);
+                }
+            }
             else
+            {
                 return new(256 + Global.CellSize * Global.Rand.Next(0, 4), 0);
+            }
         }
 
         internal AttackType Attack { get => type; set => type = value; }

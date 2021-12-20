@@ -1,11 +1,6 @@
 ﻿using csheroes.src.unit;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace csheroes.src
 {
@@ -26,17 +21,23 @@ namespace csheroes.src
             writer.Write(ai);
 
             for (int i = 0; i < 7; i++)
+            {
                 if (units[i] != null)
+                {
                     units[i].Save(writer);
+                }
                 else
+                {
                     writer.Write("NoUnit");
+                }
+            }
         }
     }
 
     public class Army : IGameObj
     {
-        Unit[] units;
-        readonly bool ai;
+        private Unit[] units;
+        private readonly bool ai;
 
         public Army(bool ai = true, params Unit[] units)
         {
@@ -44,7 +45,9 @@ namespace csheroes.src
             this.units = new Unit[7];
 
             for (int i = 0; i < units.Length && i < 7; i++)
+            {
                 this.units[i] = units[i];
+            }
         }
 
         public Army(ArmyShapshot snapshot)
@@ -53,8 +56,12 @@ namespace csheroes.src
             units = new Unit[7];
 
             for (int i = 0; i < 7; i++)
+            {
                 if (snapshot.units[i] != null)
-                    units[i] = new Unit((UnitSnapshot) snapshot.units[i]);
+                {
+                    units[i] = new Unit((UnitSnapshot)snapshot.units[i]);
+                }
+            }
         }
 
         public Unit[] Units { get => units; set => units = value; }
@@ -64,8 +71,13 @@ namespace csheroes.src
             get
             {
                 foreach (Unit unit in units)
+                {
                     if (unit != null && unit.Hp != 0)
+                    {
                         return false;
+                    }
+                }
+
                 return true;
             }
         }
@@ -82,8 +94,12 @@ namespace csheroes.src
             ISnapshot[] unitstate = new ISnapshot[7];
 
             for (int i = 0; i < 7; i++)
+            {
                 if (units[i] != null)
+                {
                     unitstate[i] = units[i].MakeSnapshot();
+                }
+            }
 
             return new ArmyShapshot(ai, unitstate);
         }

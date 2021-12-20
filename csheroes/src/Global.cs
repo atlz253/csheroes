@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace csheroes.src
 {
@@ -16,21 +12,19 @@ namespace csheroes.src
         DOWN
     }
 
-    static class Global
+    internal static class Global
     {
-        static readonly int cellSize = 32,
+        private static readonly int cellSize = 32,
                             battleCellSize = 50;
-
-        static readonly Pen gridPen = new(Color.Black, 1),
+        private static readonly Pen gridPen = new(Color.Black, 1),
                             highlightPen = new(Color.Red, 1);
-        static readonly SolidBrush moveHighlightBrush = new(Color.FromArgb(70, 174, 198, 207)),
+        private static readonly SolidBrush moveHighlightBrush = new(Color.FromArgb(70, 174, 198, 207)),
                                    enemyHighlightBrush = new(Color.FromArgb(70, 219, 88, 86));
-
-        static readonly Random rand = new();
+        private static readonly Random rand = new();
 #if RELEASE
         static readonly Image texture = Image.FromFile("textures.png");
 #else
-        static readonly Image texture = Image.FromFile("../../../res/textures.png");
+        private static readonly Image texture = Image.FromFile("../../../res/textures.png");
 #endif
 
         public static int CellSize

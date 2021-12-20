@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace csheroes.form
 {
     public partial class SaveLoadDialog : Form
     {
-        ExploreForm parent;
+        private readonly ExploreForm parent;
 
         public string fileName;
         public bool save, load;

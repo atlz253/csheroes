@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows.Forms;
-using System.IO;
 
 namespace csheroes.form
 {
@@ -19,10 +11,12 @@ namespace csheroes.form
             LoadRecords();
         }
 
-        void LoadRecords()
+        private void LoadRecords()
         {
             if (!File.Exists("records.bin"))
+            {
                 return;
+            }
 
             using (BinaryReader reader = new(File.Open("records.bin", FileMode.Open)))
             {

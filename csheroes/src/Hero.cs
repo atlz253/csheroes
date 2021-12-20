@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace csheroes.src
 {
@@ -31,8 +26,7 @@ namespace csheroes.src
     {
         private static readonly Rectangle tile = new(224, 0, Global.CellSize, Global.CellSize);
         private readonly Army army;
-
-        int respect = 100;
+        private int respect = 100;
 
         public Hero(Army army, int respect = 100)
         {
@@ -42,7 +36,7 @@ namespace csheroes.src
 
         public Hero(HeroSnapshot snapshot)
         {
-            army = new Army((ArmyShapshot) snapshot.army);
+            army = new Army((ArmyShapshot)snapshot.army);
             respect = snapshot.respect;
         }
 

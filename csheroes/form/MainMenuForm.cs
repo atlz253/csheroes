@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace csheroes.form
@@ -41,15 +35,19 @@ namespace csheroes.form
             dialog.ShowDialog();
 
             if (dialog.load)
+            {
                 LoadGame($"saves/{dialog.fileName}");
+            }
 
             dialog.Dispose();
         }
 
-        void LoadGame(string path)
+        private void LoadGame(string path)
         {
             if (!File.Exists(path))
+            {
                 return;
+            }
 
             ExploreForm exploreForm = new(path);
 

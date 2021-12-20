@@ -1,29 +1,21 @@
 ﻿using csheroes.src;
 using csheroes.src.unit;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace csheroes.form.camp
 {
     public partial class CampForm : Form
     {
-        readonly Graphics surface;
-
-        readonly ExploreForm parent;
-        readonly Hero hero;
-
-        Label[] dmgLabels,
+        private readonly Graphics surface;
+        private readonly ExploreForm parent;
+        private readonly Hero hero;
+        private Label[] dmgLabels,
                 hpLabels,
                 rangeLabels;
-        Button[] healBtns,
+        private Button[] healBtns,
                  expBtns,
                  newUnitBtns;
 
@@ -36,14 +28,14 @@ namespace csheroes.form.camp
             surface.InterpolationMode = InterpolationMode.NearestNeighbor;
 
             this.parent = parent;
-            
+
             this.hero = hero;
             UpdateRespect();
 
             InitCards();
         }
 
-        void InitCards()
+        private void InitCards()
         {
             dmgLabels = new Label[7];
             hpLabels = new Label[7];
@@ -53,6 +45,7 @@ namespace csheroes.form.camp
             newUnitBtns = new Button[7];
 
             for (int i = 0; i < 7; i++)
+            {
                 if (hero.Army.Units[i] != null)
                 {
                     Unit unit = hero.Army.Units[i];
@@ -107,30 +100,38 @@ namespace csheroes.form.camp
                     newUnitBtns[i].Click += new EventHandler(AddUnit);
                     Controls.Add(newUnitBtns[i]);
                 }
+            }
         }
 
-        void Draw()
+        private void Draw()
         {
             DrawCards();
             DrawAvatars();
         }
 
-        void DrawCards()
+        private void DrawCards()
         {
             for (int i = 0; i < 7; i++)
-                surface.DrawLines(Global.GridPen, new PointF[] { new PointF((float) 100 / 8 * (i + 1) + i * 100, 600), new PointF((float) 100 / 8 * (i + 1) + i * 100, 750), new PointF((float) 100 / 8 * (i + 1) + (i + 1) * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 600) });
+            {
+                surface.DrawLines(Global.GridPen, new PointF[] { new PointF((float)100 / 8 * (i + 1) + i * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 600) });
+            }
         }
 
-        void DrawAvatars()
+        private void DrawAvatars()
         {
             for (int i = 0; i < 7; i++)
+            {
                 if (hero.Army.Units[i] != null)
+                {
                     surface.DrawImage(Global.Texture, new Rectangle(100 / 8 * (i + 1) + i * 100 + 15, 605, 75, 75), hero.Army.Units[i].GetTile(), GraphicsUnit.Pixel);
+                }
+            }
         }
 
-        void AddUnit(object sender, EventArgs e)
+        private void AddUnit(object sender, EventArgs e)
         {
             for (int i = 0; i < 7; i++)
+            {
                 if (newUnitBtns[i] != null && (sender as Button).Name == newUnitBtns[i].Name)
                 {
                     BoolDialog dialog = new("Завербовать нового абитурента (100 респекта)?");
@@ -138,10 +139,14 @@ namespace csheroes.form.camp
                     dialog.ShowDialog();
 
                     if (dialog.choice)
+                    {
                         if (hero.Army.Units[i] == null)
                         {
                             if (hero.Respect == 0 || hero.Respect < 100)
+                            {
                                 break;
+                            }
+
                             hero.Respect -= 100;
                             UpdateRespect();
 
@@ -172,19 +177,24 @@ namespace csheroes.form.camp
 
                             return;
                         }
+                    }
 
                     return;
                 }
+            }
         }
 
-        void Heal(object sender, EventArgs e)
+        private void Heal(object sender, EventArgs e)
         {
             for (int i = 0; i < 7; i++)
+            {
                 if (healBtns[i] != null && (sender as Button).Name == healBtns[i].Name)
                 {
-                    int healCost = 10;
+                    int healCost = 0;
                     for (int j = 0; j < hero.Army.Units[i].MaxHp - hero.Army.Units[i].Hp; j++)
-                        healCost += (int) (10 + healCost * 0.05);
+                    {
+                        healCost += (int)(10 + healCost * 0.05);
+                    }
 
                     //int healCost = (hero.Army.Units[i].MaxHp - hero.Army.Units[i].Hp) * 5 * hero.Army.Units[i].Level;
                     BoolDialog dialog = new($"Вы слишком зачастили к нам (- {healCost} респекта)");
@@ -194,7 +204,9 @@ namespace csheroes.form.camp
                     if (dialog.choice)
                     {
                         if (hero.Respect == 0 || hero.Respect < healCost)
+                        {
                             return;
+                        }
 
                         hero.Respect -= healCost;
                         hero.Army.Units[i].Hp = hero.Army.Units[i].MaxHp;
@@ -208,11 +220,13 @@ namespace csheroes.form.camp
 
                     return;
                 }
+            }
         }
 
-        void Upgrade(object sender, EventArgs e)
+        private void Upgrade(object sender, EventArgs e)
         {
             for (int i = 0; i < 7; i++)
+            {
                 if (expBtns[i] != null && (sender as Button).Name == expBtns[i].Name)
                 {
                     if (hero.Army.Units[i].Range == 5)
@@ -224,7 +238,9 @@ namespace csheroes.form.camp
                         if (upgradeDialog.choiced)
                         {
                             if (hero.Respect < 500)
+                            {
                                 return;
+                            }
 
                             hero.Respect -= 500;
                             UpdateRespect();
@@ -234,7 +250,7 @@ namespace csheroes.form.camp
 
                             hero.Army.Units[i].Range += 1;
                             rangeLabels[i].Text = "RNG: " + hero.Army.Units[i].Range.ToString();
-                            
+
                             hero.Army.Units[i].NextLevel = hero.Army.Units[i].NextLevel * 2;
 
                             Controls.Remove(expBtns[i]);
@@ -307,7 +323,7 @@ namespace csheroes.form.camp
                                     Controls.Add(expBtns[i]);
                                 }
                             }
-                                
+
 
                             acceptDialog.Dispose();
                         }
@@ -315,6 +331,7 @@ namespace csheroes.form.camp
                         upgradeDialog.Dispose();
                     }
                 }
+            }
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
@@ -322,7 +339,7 @@ namespace csheroes.form.camp
             Draw();
         }
 
-        void UpdateRespect()
+        private void UpdateRespect()
         {
             respectLabel.Text = hero.Respect.ToString();
         }
@@ -335,6 +352,6 @@ namespace csheroes.form.camp
 
             Close();
         }
-        
+
     }
 }

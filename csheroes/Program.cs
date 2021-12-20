@@ -1,23 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using csheroes.form;
-using csheroes.form.camp;
-using csheroes.src;
-using csheroes.src.unit;
+using System;
+using System.Windows.Forms;
 
 namespace csheroes
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();

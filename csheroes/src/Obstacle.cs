@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace csheroes.src
 {
-    enum ObstacleType
+    internal enum ObstacleType
     {
         NEW_KORPUS_WALL,
         MAC_WALL,
@@ -27,7 +22,7 @@ namespace csheroes.src
         MAC_WORK_TABLE
     }
 
-    class ObstacleSnapshot : ISnapshot
+    internal class ObstacleSnapshot : ISnapshot
     {
         public readonly Point tile;
 
@@ -44,7 +39,7 @@ namespace csheroes.src
         }
     }
 
-    class Obstacle : IGameObj
+    internal class Obstacle : IGameObj
     {
         private Rectangle tile;
 
