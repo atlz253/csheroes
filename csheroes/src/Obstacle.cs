@@ -19,7 +19,8 @@ namespace csheroes.src
         MAC_CHAIR_3,
         MAC_CHAIR_4,
         MAC_BARRIER,
-        MAC_WORK_TABLE
+        MAC_WORK_TABLE,
+        OLD_KORPUS_WALL
     }
 
     internal class ObstacleSnapshot : ISnapshot
@@ -91,6 +92,9 @@ namespace csheroes.src
                     break;
                 case ObstacleType.MAC_WORK_TABLE:
                     tile = new(448, 192, Global.CellSize, Global.CellSize);
+                    break;
+                case ObstacleType.OLD_KORPUS_WALL:
+                    tile = new(480, 192, Global.CellSize, Global.CellSize);
                     break;
             }
         }

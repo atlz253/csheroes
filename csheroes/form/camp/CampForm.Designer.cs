@@ -34,6 +34,7 @@ namespace csheroes.form.camp
             this.respectLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
+            this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,6 +45,7 @@ namespace csheroes.form.camp
             this.toolStripStatusLabel2,
             this.respectLabel,
             this.toolStripStatusLabel1,
+            this.toolStripSplitButton1,
             this.toolStripSplitButton3});
             this.statusStrip1.Location = new System.Drawing.Point(0, 802);
             this.statusStrip1.Name = "statusStrip1";
@@ -67,7 +69,7 @@ namespace csheroes.form.camp
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(665, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(675, 17);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // toolStripSplitButton3
@@ -80,6 +82,17 @@ namespace csheroes.form.camp
             this.toolStripSplitButton3.Size = new System.Drawing.Size(21, 20);
             this.toolStripSplitButton3.Text = "toolStripSplitButton3";
             this.toolStripSplitButton3.ButtonClick += new System.EventHandler(this.toolStripSplitButton3_ButtonClick);
+            // 
+            // toolStripSplitButton1
+            // 
+            this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripSplitButton1.DropDownButtonWidth = 0;
+            this.toolStripSplitButton1.Image = global::csheroes.Properties.Resources.question;
+            this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSplitButton1.Name = "toolStripSplitButton1";
+            this.toolStripSplitButton1.Size = new System.Drawing.Size(21, 20);
+            this.toolStripSplitButton1.Text = "toolStripSplitButton1";
+            this.toolStripSplitButton1.ButtonClick += new System.EventHandler(this.toolStripSplitButton1_ButtonClick);
             // 
             // CampForm
             // 
@@ -106,5 +119,6 @@ namespace csheroes.form.camp
         private System.Windows.Forms.ToolStripStatusLabel respectLabel;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton3;
+        private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
     }
 }

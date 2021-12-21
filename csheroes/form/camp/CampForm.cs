@@ -223,6 +223,15 @@ namespace csheroes.form.camp
             }
         }
 
+        private void toolStripSplitButton1_ButtonClick(object sender, EventArgs e)
+        {
+            MessageBox.Show(
+                "Перед вами меню привала. Здесь вы можете посмотреть и улучшить характеристики ваших персонажей, нанять новых юнитов и вылечить раненых.",
+                "Question",
+                MessageBoxButtons.OK
+                );
+        }
+
         private void Upgrade(object sender, EventArgs e)
         {
             for (int i = 0; i < 7; i++)

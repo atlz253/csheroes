@@ -325,52 +325,12 @@ namespace csheroes.form
 
         private bool CellIsEmpty(int x, int y)
         {
-            if (x < 0 || x > Width / Global.BattleCellSize - 1 || y < 0 || y > Height / Global.BattleCellSize - 2) // TODO: проверить, что за фигня с -1 и -2
+            if (x < 0 || x > Width / Global.BattleCellSize - 1 || y < 0 || y > Height / Global.BattleCellSize - 2)
             {
                 return false;
             }
 
             return (action[y, x] == null);
-        }
-
-        private bool RightCellIsEmpty(Point src)
-        {
-            return CellIsEmpty(src.X + 1, src.Y);
-        }
-
-        private bool LeftCellIsEmpty(Point src)
-        {
-            return CellIsEmpty(src.X - 1, src.Y);
-        }
-
-        private bool UpCellIsEmpty(Point src)
-        {
-            return CellIsEmpty(src.X, src.Y - 1);
-        }
-
-        private bool DownCellIsEmpty(Point src)
-        {
-            return CellIsEmpty(src.X, src.Y + 1);
-        }
-
-        private bool RightArrowIsEmpty(Point src)
-        {
-            return arrow[src.Y, src.X + 1] == Direction.NONE;
-        }
-
-        private bool LeftArrowIsEmpty(Point src)
-        {
-            return arrow[src.Y, src.X - 1] == Direction.NONE;
-        }
-
-        private bool UpArrowIsEmpty(Point src)
-        {
-            return arrow[src.Y - 1, src.X] == Direction.NONE;
-        }
-
-        private bool DownArrowIsEmpty(Point src)
-        {
-            return arrow[src.Y + 1, src.X] == Direction.NONE;
         }
 
         private bool MoveUnit(Point src, Point dest, Unit unit, Point[] friendCords, int index)
@@ -890,6 +850,15 @@ namespace csheroes.form
                     AIMove();
                 }
             }
+        }
+
+        private void toolStripSplitButton4_ButtonClick(object sender, EventArgs e)
+        {
+            MessageBox.Show(
+                "Перед вами режим боя. В данном режиме ваши юниты ходят по очереди с противником. Подсветка отображает доступные ходы ваших персонажей.\nДля пропуска хода присутствует кнопка на панели внизу (песочные часы), можно воспользоваться горячей клавишей - W.",
+                "Question",
+                MessageBoxButtons.OK
+                );
         }
 
         private void DrawBackground(Graphics g)

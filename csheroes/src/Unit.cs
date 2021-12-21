@@ -51,7 +51,20 @@ namespace csheroes.src.unit
         SQUID_HARD,
         SQUID_RANGE,
         MAC_WORKER,
-        RONALD
+        RONALD,
+        BOXER_ALI,
+        BOXER_ROCKY,
+        BOXER_STUDENT,
+        COSMONAUT,
+        COSMONAUT_RANGE,
+        SOLDIER_RANGE,
+        JULIA_S,
+        FEDOR,
+        MIGAS,
+        VANYA,
+        DIMA,
+        JULIA_B,
+        MISHA
     }
 
     public class UnitSnapshot : ISnapshot
@@ -374,6 +387,99 @@ namespace csheroes.src.unit
                     damage = 4;
                     level = 7;
                     break;
+                case UnitTemplate.BOXER_ROCKY:
+                    tile = new Point(448, 96);
+                    maxHp = 100;
+                    range = 2;
+                    damage = 10;
+                    level = 10;
+                    break;
+                case UnitTemplate.BOXER_ALI:
+                    tile = new Point(480, 96);
+                    maxHp = 45;
+                    range = 7;
+                    damage = 3;
+                    level = 10;
+                    break;
+                case UnitTemplate.BOXER_STUDENT:
+                    tile = new Point(512, 96);
+                    maxHp = 20;
+                    range = 5;
+                    damage = 5;
+                    level = 7;
+                    break;
+                case UnitTemplate.COSMONAUT:
+                    tile = new Point(512 + Global.Rand.Next(0, 3) * Global.CellSize, 64);
+                    maxHp = 50;
+                    range = 3;
+                    damage = 2;
+                    level = 10;
+                    break;
+                case UnitTemplate.COSMONAUT_RANGE:
+                    tile = new Point(608, 64);
+                    type = AttackType.RANGE;
+                    maxHp = 20;
+                    range = 3;
+                    damage = 2;
+                    level = 10;
+                    break;
+                case UnitTemplate.SOLDIER_RANGE:
+                    tile = new Point(576, 96);
+                    type = AttackType.RANGE;
+                    maxHp = 10;
+                    range = 3;
+                    damage = 2;
+                    level = 10;
+                    break;
+                case UnitTemplate.JULIA_S:
+                    tile = new Point(544, 96);
+                    maxHp = 50;
+                    range = 6;
+                    damage = 2;
+                    level = 10;
+                    break;
+                case UnitTemplate.FEDOR:
+                    tile = new Point(608, 96);
+                    maxHp = 999;
+                    range = 1;
+                    damage = 0;
+                    level = 1;
+                    break;
+                case UnitTemplate.MIGAS:
+                    tile = new Point(160, 128);
+                    maxHp = 50;
+                    range = 3;
+                    damage = 4;
+                    level = 10;
+                    break;
+                case UnitTemplate.VANYA:
+                    tile = new Point(224, 128);
+                    maxHp = 69;
+                    range = 5;
+                    damage = 2;
+                    level = 10;
+                    break;
+                case UnitTemplate.DIMA:
+                    tile = new Point(256, 128);
+                    maxHp = 80;
+                    range = 2;
+                    damage = 10;
+                    level = 10;
+                    break;
+                case UnitTemplate.JULIA_B:
+                    tile = new Point(320, 128);
+                    maxHp = 50;
+                    range = 3;
+                    damage = 2;
+                    level = 10;
+                    break;
+                case UnitTemplate.MISHA:
+                    tile = new Point(384, 128);
+                    maxHp = 50;
+                    range = 3;
+                    damage = 2;
+                    level = 10;
+                    break;
             }
 
             hp = maxHp;
@@ -411,7 +517,7 @@ namespace csheroes.src.unit
                 }
                 else
                 {
-                    return new(128, 128);
+                    return new(128 + 32 * Global.Rand.Next(0, 9), 128);
                 }
             }
             else
