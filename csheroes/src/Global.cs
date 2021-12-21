@@ -22,7 +22,7 @@ namespace csheroes.src
                                    enemyHighlightBrush = new(Color.FromArgb(70, 219, 88, 86));
         private static readonly Random rand = new();
 #if RELEASE
-        static readonly Image texture = Image.FromFile("textures.png");
+        static readonly Image texture = Properties.Resources.textures;
 #else
         private static readonly Image texture = Image.FromFile("../../../res/textures.png");
 #endif

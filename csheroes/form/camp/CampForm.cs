@@ -111,9 +111,12 @@ namespace csheroes.form.camp
 
         private void DrawCards()
         {
+            SolidBrush brush = new(Color.FromArgb(255, 240, 240, 240));
+
             for (int i = 0; i < 7; i++)
             {
                 surface.DrawLines(Global.GridPen, new PointF[] { new PointF((float)100 / 8 * (i + 1) + i * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 600) });
+                surface.FillRectangle(brush, new RectangleF((float)100 / 8 * (i + 1) + i * 100, 600, 100, 150));
             }
         }
 

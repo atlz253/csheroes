@@ -803,20 +803,6 @@ namespace csheroes.form
             close = true;
         }
 
-        private void DrawArrows()
-        {
-            if (arrow != null)
-            {
-                for (int i = 0; i < Width / Global.BattleCellSize; i++)
-                {
-                    for (int j = 0; j < Height / Global.BattleCellSize; j++)
-                    {
-                        DrawArrow(arrow[i, j], new Point(j, i));
-                    }
-                }
-            }
-        }
-
         private void TurnBackBtn(object sender, EventArgs e)
         {
 #if DEBUG

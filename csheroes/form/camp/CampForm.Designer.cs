@@ -33,8 +33,8 @@ namespace csheroes.form.camp
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.respectLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+            this.toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,17 +72,6 @@ namespace csheroes.form.camp
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(675, 17);
             this.toolStripStatusLabel1.Spring = true;
             // 
-            // toolStripSplitButton3
-            // 
-            this.toolStripSplitButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripSplitButton3.DropDownButtonWidth = 0;
-            this.toolStripSplitButton3.Image = global::csheroes.Properties.Resources.exitico;
-            this.toolStripSplitButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripSplitButton3.Name = "toolStripSplitButton3";
-            this.toolStripSplitButton3.Size = new System.Drawing.Size(21, 20);
-            this.toolStripSplitButton3.Text = "toolStripSplitButton3";
-            this.toolStripSplitButton3.ButtonClick += new System.EventHandler(this.toolStripSplitButton3_ButtonClick);
-            // 
             // toolStripSplitButton1
             // 
             this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -94,9 +83,21 @@ namespace csheroes.form.camp
             this.toolStripSplitButton1.Text = "toolStripSplitButton1";
             this.toolStripSplitButton1.ButtonClick += new System.EventHandler(this.toolStripSplitButton1_ButtonClick);
             // 
+            // toolStripSplitButton3
+            // 
+            this.toolStripSplitButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripSplitButton3.DropDownButtonWidth = 0;
+            this.toolStripSplitButton3.Image = global::csheroes.Properties.Resources.exitico;
+            this.toolStripSplitButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSplitButton3.Name = "toolStripSplitButton3";
+            this.toolStripSplitButton3.Size = new System.Drawing.Size(21, 20);
+            this.toolStripSplitButton3.Text = "toolStripSplitButton3";
+            this.toolStripSplitButton3.ButtonClick += new System.EventHandler(this.toolStripSplitButton3_ButtonClick);
+            // 
             // CampForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackgroundImage = global::csheroes.Properties.Resources.camp;
             this.ClientSize = new System.Drawing.Size(802, 824);
             this.Controls.Add(this.statusStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

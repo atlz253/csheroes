@@ -40,6 +40,18 @@ namespace csheroes.form
             surface = CreateGraphics();
         }
 
+        public ExploreForm(byte[] stream)
+        {
+            InitializeComponent();
+
+            maxCellWidth = Width / Global.CellSize;
+            maxCellHeight = (Height - 22) / Global.CellSize;
+
+            InitAction(stream);
+
+            surface = CreateGraphics();
+        }
+
         public void Update(object sender, EventArgs e)
         {
             Invalidate();
@@ -137,6 +149,81 @@ namespace csheroes.form
         }
 #endif
 
+        private void ReadData(BinaryReader reader)
+        {
+            locationName = reader.ReadString();
+            for (int i = 0; i < maxCellWidth; i++)
+            {
+                for (int j = 0; j < maxCellHeight; j++)
+                {
+                    background[i, j] = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
+                }
+            }
+
+            battleTile = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
+            winCell = new(reader.ReadInt32(), reader.ReadInt32());
+
+            for (int i = 0; i < maxCellWidth; i++)
+            {
+                for (int j = 0; j < maxCellHeight; j++)
+                {
+                    string name = reader.ReadString();
+
+                    if (name == "NullObj")
+                    {
+                        continue;
+                    }
+                    else if (name == "Obstacle")
+                    {
+                        action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
+                    }
+                    else if (name == "Hero")
+                    {
+                        int respect = reader.ReadInt32();
+
+                        reader.ReadString(); // считываем строку "Army"
+                        bool ai = reader.ReadBoolean();
+                        Unit[] units = new Unit[7];
+                        for (int k = 0; k < 7; k++)
+                        {
+                            string unitName = reader.ReadString();
+
+                            if (unitName == "NoUnit")
+                            {
+                                continue;
+                            }
+
+                            Unit unit = new(new UnitSnapshot(reader));
+                            units[k] = unit;
+                        }
+
+                        hero = new Hero(new Army(ai, units), respect);
+                        action[i, j] = hero;
+                        heroCords = new Point(j, i);
+                    }
+                    else if (name == "Army")
+                    {
+                        bool ai = reader.ReadBoolean();
+                        Unit[] units = new Unit[7];
+                        for (int k = 0; k < 7; k++)
+                        {
+                            string unitName = reader.ReadString();
+
+                            if (unitName == "NoUnit")
+                            {
+                                continue;
+                            }
+
+                            Unit unit = new(new UnitSnapshot(reader));
+                            units[k] = unit;
+                        }
+
+                        action[i, j] = new Army(ai, units);
+                    }
+                }
+            }
+        }
+
         private void InitAction(string fileName)
         {
             background = new Rectangle[maxCellWidth, maxCellHeight];
@@ -145,77 +232,19 @@ namespace csheroes.form
 
             using (BinaryReader reader = new(File.Open(fileName, FileMode.Open)))
             {
-                locationName = reader.ReadString();
-                for (int i = 0; i < maxCellWidth; i++)
-                {
-                    for (int j = 0; j < maxCellHeight; j++)
-                    {
-                        background[i, j] = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
-                    }
-                }
+                ReadData(reader);
+            }
+        }
 
-                battleTile = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
-                winCell = new(reader.ReadInt32(), reader.ReadInt32());
+        private void InitAction(byte[] stream)
+        {
+            background = new Rectangle[maxCellWidth, maxCellHeight];
 
-                for (int i = 0; i < maxCellWidth; i++)
-                {
-                    for (int j = 0; j < maxCellHeight; j++)
-                    {
-                        string name = reader.ReadString();
+            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
-                        if (name == "NullObj")
-                        {
-                            continue;
-                        }
-                        else if (name == "Obstacle")
-                        {
-                            action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
-                        }
-                        else if (name == "Hero")
-                        {
-                            int respect = reader.ReadInt32();
-
-                            reader.ReadString(); // считываем строку "Army"
-                            bool ai = reader.ReadBoolean();
-                            Unit[] units = new Unit[7];
-                            for (int k = 0; k < 7; k++)
-                            {
-                                string unitName = reader.ReadString();
-
-                                if (unitName == "NoUnit")
-                                {
-                                    continue;
-                                }
-
-                                Unit unit = new(new UnitSnapshot(reader));
-                                units[k] = unit;
-                            }
-
-                            hero = new Hero(new Army(ai, units), respect);
-                            action[i, j] = hero;
-                            heroCords = new Point(j, i);
-                        }
-                        else if (name == "Army")
-                        {
-                            bool ai = reader.ReadBoolean();
-                            Unit[] units = new Unit[7];
-                            for (int k = 0; k < 7; k++)
-                            {
-                                string unitName = reader.ReadString();
-
-                                if (unitName == "NoUnit")
-                                {
-                                    continue;
-                                }
-
-                                Unit unit = new(new UnitSnapshot(reader));
-                                units[k] = unit;
-                            }
-
-                            action[i, j] = new Army(ai, units);
-                        }
-                    }
-                }
+            using (BinaryReader reader = new(new MemoryStream(stream)))
+            {
+                ReadData(reader);
             }
         }
 

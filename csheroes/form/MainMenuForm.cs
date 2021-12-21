@@ -61,6 +61,20 @@ namespace csheroes.form
             Visible = true;
         }
 
+        private void LoadGame(byte[] stream)
+        {
+            ExploreForm exploreForm = new(stream);
+
+            exploreForm.Location = new Point(Location.X, Location.Y);
+
+            Visible = false;
+
+            exploreForm.ShowDialog();
+            exploreForm.Dispose();
+
+            Visible = true;
+        }
+
         private void RecordsMenu(object sender, EventArgs e)
         {
             RecordForm recordForm = new();

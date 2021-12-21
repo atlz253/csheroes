@@ -5,7 +5,7 @@ namespace csheroes.form
 {
     public partial class LevelMenu : Form
     {
-        public string level;
+        public byte[] level;
 
         public LevelMenu()
         {
@@ -14,31 +14,22 @@ namespace csheroes.form
 
         private void button1_Click(object sender, EventArgs e)
         {
-#if RELEASE
-            level = "Maps/FirstMap";
-#else
-            level = "../../../Resources/Maps/FirstMap";
-#endif
+            level = Properties.Resources.FirstMap;
+
             Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-#if RELEASE
-            level = "Maps/SecondMap";
-#else
-            level = "../../../Resources/Maps/SecondMap";
-#endif
+            level = Properties.Resources.SecondMap;
+
             Close();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-#if RELEASE
-            level = "Maps/ThirdMap";
-#else
-            level = "../../../Resources/Maps/ThirdMap";
-#endif
+            level = Properties.Resources.ThirdMap;
+
             Close();
         }
     }

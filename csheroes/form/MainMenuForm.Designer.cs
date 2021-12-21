@@ -34,20 +34,24 @@ namespace csheroes.form
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 800);
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label1.Location = new System.Drawing.Point(12, 785);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(123, 15);
+            this.label1.Size = new System.Drawing.Size(230, 30);
             this.label1.TabIndex = 0;
             this.label1.Text = "И504Б Алексеев Ф. В.";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(262, 99);
+            this.button1.Location = new System.Drawing.Point(272, 194);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(250, 100);
             this.button1.TabIndex = 1;
@@ -57,7 +61,7 @@ namespace csheroes.form
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(262, 219);
+            this.button2.Location = new System.Drawing.Point(272, 314);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(250, 100);
             this.button2.TabIndex = 2;
@@ -67,7 +71,7 @@ namespace csheroes.form
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(262, 339);
+            this.button3.Location = new System.Drawing.Point(272, 434);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(250, 100);
             this.button3.TabIndex = 3;
@@ -77,7 +81,7 @@ namespace csheroes.form
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(262, 460);
+            this.button4.Location = new System.Drawing.Point(272, 555);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(250, 100);
             this.button4.TabIndex = 4;
@@ -85,11 +89,25 @@ namespace csheroes.form
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.Exit);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label2.Location = new System.Drawing.Point(170, 56);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(503, 54);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "ГЕРОИ ЗАЧЕТА И СЕССИИ";
+            // 
             // MainMenuForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImage = global::csheroes.Properties.Resources.Menu;
             this.ClientSize = new System.Drawing.Size(802, 824);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -111,5 +129,6 @@ namespace csheroes.form
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Label label2;
     }
 }

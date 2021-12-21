@@ -1,5 +1,9 @@
 using csheroes.form;
+using csheroes.form.camp;
+using csheroes.src;
+using csheroes.src.unit;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace csheroes
@@ -22,7 +26,7 @@ namespace csheroes
 #elif TEST_BATTLE
             Application.Run(new BattleForm(null, new Hero(new Army(false, new Unit(100, 3, 1, AttackType.RANGE))), new Army(true, new Unit(UnitTemplate.CREEP_RANGE)), new Rectangle(0, 0, Global.CellSize, Global.CellSize)));
 #elif CAMPMENU
-            Application.Run(new CampForm(null, new Hero(new Army(false, new Unit(), new Unit(new UnitSnapshot(5, 10, 1, 3, 1, 1, new(256, 0), AttackType.MELEE))), 1000)));
+            Application.Run(new CampForm(null, new Hero(new Army(false, new Unit(100, 3, 1), new Unit(100, 3, 1), new Unit(100, 3, 1), new Unit(100, 3, 1), new Unit(100, 3, 1), new Unit(100, 3, 1), new Unit(100, 3, 1)))));
 #else
             Application.Run(new MainMenuForm());
 #endif
