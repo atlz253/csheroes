@@ -39,6 +39,11 @@ namespace csheroes.form
         {
             InitializeComponent();
 
+#if RELEASE
+            toolStripSplitButton1.Visible = false;
+            toolStripSplitButton3.Visible = false;
+#endif
+
             this.hero = hero;
             this.parent = parent;
 #if DEBUG

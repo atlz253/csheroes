@@ -103,8 +103,7 @@ namespace csheroes.form
             // 
             // MainMenuForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackgroundImage = global::csheroes.Properties.Resources.Menu;
             this.ClientSize = new System.Drawing.Size(802, 824);
             this.Controls.Add(this.label2);
