@@ -9,7 +9,6 @@ namespace csheroes.form.camp
 {
     public partial class CampForm : Form
     {
-        private readonly Graphics surface;
         private readonly ExploreForm parent;
         private readonly Hero hero;
         private Label[] dmgLabels,
@@ -22,10 +21,6 @@ namespace csheroes.form.camp
         public CampForm(ExploreForm parent, Hero hero)
         {
             InitializeComponent();
-
-
-            surface = CreateGraphics();
-            surface.InterpolationMode = InterpolationMode.NearestNeighbor;
 
             this.parent = parent;
 
@@ -103,30 +98,30 @@ namespace csheroes.form.camp
             }
         }
 
-        private void Draw()
+        private void Draw(Graphics g)
         {
-            DrawCards();
-            DrawAvatars();
+            DrawCards(g);
+            DrawAvatars(g);
         }
 
-        private void DrawCards()
+        private void DrawCards(Graphics g)
         {
             SolidBrush brush = new(Color.FromArgb(255, 240, 240, 240));
 
             for (int i = 0; i < 7; i++)
             {
-                surface.DrawLines(Global.GridPen, new PointF[] { new PointF((float)100 / 8 * (i + 1) + i * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 600) });
-                surface.FillRectangle(brush, new RectangleF((float)100 / 8 * (i + 1) + i * 100, 600, 100, 150));
+                g.DrawLines(Global.GridPen, new PointF[] { new PointF((float)100 / 8 * (i + 1) + i * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 750), new PointF((float)100 / 8 * (i + 1) + (i + 1) * 100, 600), new PointF((float)100 / 8 * (i + 1) + i * 100, 600) });
+                g.FillRectangle(brush, new RectangleF((float)100 / 8 * (i + 1) + i * 100, 600, 100, 150));
             }
         }
 
-        private void DrawAvatars()
+        private void DrawAvatars(Graphics g)
         {
             for (int i = 0; i < 7; i++)
             {
                 if (hero.Army.Units[i] != null)
                 {
-                    surface.DrawImage(Global.Texture, new Rectangle(100 / 8 * (i + 1) + i * 100 + 15, 605, 75, 75), hero.Army.Units[i].GetTile(), GraphicsUnit.Pixel);
+                    g.DrawImage(Global.Texture, new Rectangle(100 / 8 * (i + 1) + i * 100 + 15, 605, 75, 75), hero.Army.Units[i].GetTile(), GraphicsUnit.Pixel);
                 }
             }
         }
@@ -178,6 +173,7 @@ namespace csheroes.form.camp
                             rangeLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 725);
                             Controls.Add(rangeLabels[i]);
 
+                            Invalidate();
                             return;
                         }
                     }
@@ -221,6 +217,7 @@ namespace csheroes.form.camp
                         UpdateRespect();
                     }
 
+                    Invalidate();
                     return;
                 }
             }
@@ -340,6 +337,7 @@ namespace csheroes.form.camp
                             acceptDialog.Dispose();
                         }
 
+                        Invalidate();
                         upgradeDialog.Dispose();
                     }
                 }
@@ -348,7 +346,9 @@ namespace csheroes.form.camp
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            Draw();
+            e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+
+            Draw(e.Graphics);
         }
 
         private void UpdateRespect()

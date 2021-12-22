@@ -100,6 +100,7 @@ namespace csheroes.form.camp
             this.BackgroundImage = global::csheroes.Properties.Resources.camp;
             this.ClientSize = new System.Drawing.Size(802, 824);
             this.Controls.Add(this.statusStrip1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximumSize = new System.Drawing.Size(818, 863);
             this.MinimumSize = new System.Drawing.Size(818, 863);
