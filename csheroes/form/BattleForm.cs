@@ -620,7 +620,11 @@ namespace csheroes.form
             arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords,
                     enemyCords = turn ? secondArmyCords : firstArmyCords;
+
             int index = turn ? firstArmyTurn : secondArmyTurn;
+            if (index == -1) // Если был единственный юнит, который погиб - остановиться
+                return;
+
             Army friendArmy = turn ? firstArmy : secondArmy;
             Unit unit = friendArmy.Units[index];
             Unit[] enemyUnits = turn ? secondArmy.Units : firstArmy.Units;
