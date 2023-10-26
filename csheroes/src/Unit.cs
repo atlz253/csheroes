@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 
 namespace csheroes.src.unit
@@ -532,7 +533,24 @@ namespace csheroes.src.unit
 
         public int Damage { get => damage; set => damage = value; }
 
-        public int Hp { get => hp; set => hp = value; }
+        public int Hp 
+        { 
+            get => hp; 
+            
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("Unit health can't be negative");
+                }
+                else if (value > MaxHp)
+                {
+                    throw new ArgumentOutOfRangeException($"Unit health can't be more then {MaxHp}");
+                }
+
+                hp = value;
+            } 
+        }
 
         public int MaxHp { get => maxHp; set => maxHp = value; }
 

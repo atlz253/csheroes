@@ -24,7 +24,7 @@ namespace csheroes.src
 #if RELEASE
         static readonly Image texture = Properties.Resources.textures;
 #else
-        private static readonly Image texture = Image.FromFile("../../../res/textures.png");
+        private static Image texture;
 #endif
 
         public static int CellSize
@@ -42,6 +42,8 @@ namespace csheroes.src
         {
             get
             {
+                texture ??= Image.FromFile("../../../res/textures.png");
+
                 return texture;
             }
         }
