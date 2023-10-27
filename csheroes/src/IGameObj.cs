@@ -1,9 +1,8 @@
 ﻿using csheroes.src.Textures;
-using System.Drawing;
 
 namespace csheroes.src
 {
-    internal interface IGameObj
+    public interface IGameObj
     {
         Tile Tile { get; }
 

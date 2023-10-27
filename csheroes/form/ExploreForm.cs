@@ -13,43 +13,38 @@ namespace csheroes.form
     public partial class ExploreForm : Form
     {
         private readonly Graphics surface;
-        private readonly int maxCellWidth;
-        private readonly int maxCellHeight;
-        private Rectangle[,] background = null;
-        private Rectangle battleTile;
-        private Point winCell;
-        private IGameObj[,] action = null;
+        private readonly ExploreMap exploreMap;
+        private Rectangle battleMapBackgroundTile; // the background for the battle is the only one on the whole explore map
+        
         private readonly Arrows[,] arrow = null;
-        private Hero hero = null;
-        private Point heroCords;
+        
+        
         private string locationName;
 
-        public ExploreForm(string fileName)
+        public ExploreForm()
         {
             InitializeComponent();
 
-            maxCellWidth = Width / Global.CellSize;
-            maxCellHeight = (Height - 22) / Global.CellSize;
+            int mapWidth = Width / Global.CellSize;
+            int mapHeight = (Height - 22) / Global.CellSize;
 
+            exploreMap = new ExploreMap(mapWidth, mapHeight);
+
+            surface = CreateGraphics();
+        }
+
+        public ExploreForm(string fileName): this()
+        {
 #if TEST_MAP
             InitAction();
 #else
             InitAction(fileName);
 #endif
-
-            surface = CreateGraphics();
         }
 
-        public ExploreForm(byte[] stream)
+        public ExploreForm(byte[] stream): this()
         {
-            InitializeComponent();
-
-            maxCellWidth = Width / Global.CellSize;
-            maxCellHeight = (Height - 22) / Global.CellSize;
-
             InitAction(stream);
-
-            surface = CreateGraphics();
         }
 
         public void Update(object sender, EventArgs e)
@@ -71,12 +66,12 @@ namespace csheroes.form
 
         private void DrawGrid(Graphics g)
         {
-            for (int i = 0; i < maxCellWidth; i++)
+            for (int i = 0; i < exploreMap.Width; i++)
             {
                 g.DrawLine(Global.GridPen, Global.CellSize * i, 0, Global.CellSize * i, Height);
             }
 
-            for (int i = 0; i < maxCellHeight; i++)
+            for (int i = 0; i < exploreMap.Height; i++)
             {
                 g.DrawLine(Global.GridPen, 0, Global.CellSize * i, Width, Global.CellSize * i);
             }
@@ -84,11 +79,11 @@ namespace csheroes.form
 
         private void DrawBackground(Graphics g)
         {
-            for (int i = 0; i < maxCellWidth; i++)
+            for (int i = 0; i < exploreMap.Width; i++)
             {
-                for (int j = 0; j < maxCellHeight; j++)
+                for (int j = 0; j < exploreMap.Height; j++)
                 {
-                    g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), background[i, j], GraphicsUnit.Pixel);
+                    g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), exploreMap.background[i, j], GraphicsUnit.Pixel);
                 }
             }
         }
@@ -133,20 +128,20 @@ namespace csheroes.form
         private void ReadData(BinaryReader reader)
         {
             locationName = reader.ReadString();
-            for (int i = 0; i < maxCellWidth; i++)
+            for (int i = 0; i < exploreMap.Width; i++)
             {
-                for (int j = 0; j < maxCellHeight; j++)
+                for (int j = 0; j < exploreMap.Height; j++)
                 {
-                    background[i, j] = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
+                    exploreMap.background[i, j] = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
                 }
             }
 
-            battleTile = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
-            winCell = new(reader.ReadInt32(), reader.ReadInt32());
+            battleMapBackgroundTile = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
+            exploreMap.winCell = new(reader.ReadInt32(), reader.ReadInt32());
 
-            for (int i = 0; i < maxCellWidth; i++)
+            for (int i = 0; i < exploreMap.Width; i++)
             {
-                for (int j = 0; j < maxCellHeight; j++)
+                for (int j = 0; j < exploreMap.Height; j++)
                 {
                     string name = reader.ReadString();
 
@@ -156,7 +151,7 @@ namespace csheroes.form
                     }
                     else if (name == "Obstacle")
                     {
-                        action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
+                        exploreMap.action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
                     }
                     else if (name == "Hero")
                     {
@@ -178,9 +173,9 @@ namespace csheroes.form
                             units[k] = unit;
                         }
 
-                        hero = new Hero(new Army(ai, units), respect);
-                        action[i, j] = hero;
-                        heroCords = new Point(j, i);
+                        exploreMap.hero = new Hero(new Army(ai, units), respect);
+                        exploreMap.action[i, j] = exploreMap.hero;
+                        exploreMap.heroCords = new Point(j, i);
                     }
                     else if (name == "Army")
                     {
@@ -199,17 +194,15 @@ namespace csheroes.form
                             units[k] = unit;
                         }
 
-                        action[i, j] = new Army(ai, units);
+                        exploreMap.action[i, j] = new Army(ai, units);
                     }
                 }
             }
         }
 
-        private void InitAction(string fileName)
+        public void InitAction(string fileName)
         {
-            background = new Rectangle[maxCellWidth, maxCellHeight];
-
-            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
+            exploreMap.action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
             using (BinaryReader reader = new(File.Open(fileName, FileMode.Open)))
             {
@@ -217,11 +210,9 @@ namespace csheroes.form
             }
         }
 
-        private void InitAction(byte[] stream)
+        public void InitAction(byte[] stream)
         {
-            background = new Rectangle[maxCellWidth, maxCellHeight];
-
-            action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
+            exploreMap.action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
 
             using (BinaryReader reader = new(new MemoryStream(stream)))
             {
@@ -231,18 +222,18 @@ namespace csheroes.form
 
         private void UpdateRespect()
         {
-            respectLabel.Text = hero.Respect.ToString();
+            respectLabel.Text = exploreMap.hero.Respect.ToString();
         }
 
         private void DrawAction(Graphics g)
         {
-            for (int i = 0; i < maxCellWidth; i++)
+            for (int i = 0; i < exploreMap.Width; i++)
             {
-                for (int j = 0; j < maxCellHeight; j++)
+                for (int j = 0; j < exploreMap.Height; j++)
                 {
-                    if (action[i, j] != null)
+                    if (exploreMap.action[i, j] != null)
                     {
-                        g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), action[i, j].Tile.Area, GraphicsUnit.Pixel);
+                        g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), exploreMap.action[i, j].Tile.Area, GraphicsUnit.Pixel);
                     }
                 }
             }
@@ -255,7 +246,7 @@ namespace csheroes.form
                 return false;
             }
 
-            return (action[y, x] == null);
+            return (exploreMap.action[y, x] == null);
         }
 
         private bool MoveHero(Point dest)
@@ -263,8 +254,8 @@ namespace csheroes.form
             Queue<Point> visit = new();
             bool[,] used = new bool[Width / Global.CellSize, Height / Global.CellSize];
 
-            visit.Enqueue(heroCords);
-            used[heroCords.Y, heroCords.X] = true;
+            visit.Enqueue(exploreMap.heroCords);
+            used[exploreMap.heroCords.Y, exploreMap.heroCords.X] = true;
 
             while (visit.Any())
             {
@@ -274,10 +265,10 @@ namespace csheroes.form
                 {
                     MoveHero(dest.X, dest.Y);
 
-                    if (dest.X == winCell.X && dest.Y == winCell.Y)
+                    if (dest.X == exploreMap.winCell.X && dest.Y == exploreMap.winCell.Y)
                     {
                         int score = 0;
-                        foreach (Unit unit in hero.Army.Units)
+                        foreach (Unit unit in exploreMap.hero.Army.Units)
                         {
                             if (unit != null)
                             {
@@ -285,7 +276,7 @@ namespace csheroes.form
                             }
                         }
 
-                        score += hero.Respect;
+                        score += exploreMap.hero.Respect;
 
                         WinForm form = new(locationName, score);
 
@@ -309,10 +300,10 @@ namespace csheroes.form
                 }
                 else if (!CellIsEmpty(dest.X, dest.Y) && p.X == dest.X && p.Y - 1 == dest.Y)
                 {
-                    switch (action[dest.Y, dest.X].ToString())
+                    switch (exploreMap.action[dest.Y, dest.X].ToString())
                     {
                         case "Army":
-                            StartBattle((Army)action[dest.Y, dest.X]);
+                            StartBattle((Army)exploreMap.action[dest.Y, dest.X]);
                             MoveHero(dest.X, dest.Y);
                             break;
                     }
@@ -327,10 +318,10 @@ namespace csheroes.form
                 }
                 else if (!CellIsEmpty(dest.X, dest.Y) && p.X == dest.X && p.Y + 1 == dest.Y)
                 {
-                    switch (action[dest.Y, dest.X].ToString())
+                    switch (exploreMap.action[dest.Y, dest.X].ToString())
                     {
                         case "Army":
-                            StartBattle((Army)action[dest.Y, dest.X]);
+                            StartBattle((Army)exploreMap.action[dest.Y, dest.X]);
                             MoveHero(dest.X, dest.Y);
                             break;
                     }
@@ -345,10 +336,10 @@ namespace csheroes.form
                 }
                 else if (!CellIsEmpty(dest.X, dest.Y) && p.X - 1 == dest.X && p.Y == dest.Y)
                 {
-                    switch (action[dest.Y, dest.X].ToString())
+                    switch (exploreMap.action[dest.Y, dest.X].ToString())
                     {
                         case "Army":
-                            StartBattle((Army)action[dest.Y, dest.X]);
+                            StartBattle((Army)exploreMap.action[dest.Y, dest.X]);
                             MoveHero(dest.X, dest.Y);
                             break;
                     }
@@ -363,10 +354,10 @@ namespace csheroes.form
                 }
                 else if (!CellIsEmpty(dest.X, dest.Y) && p.X + 1 == dest.X && p.Y == dest.Y)
                 {
-                    switch (action[dest.Y, dest.X].ToString())
+                    switch (exploreMap.action[dest.Y, dest.X].ToString())
                     {
                         case "Army":
-                            StartBattle((Army)action[dest.Y, dest.X]);
+                            StartBattle((Army)exploreMap.action[dest.Y, dest.X]);
                             MoveHero(dest.X, dest.Y);
                             break;
                     }
@@ -397,7 +388,7 @@ namespace csheroes.form
         {
             int destX = e.X / Global.CellSize,
                 destY = e.Y / Global.CellSize;
-            if (destY < action.GetLength(0) && action[destY, destX] != null && action[destY, destX].ToString() == "Obstacle")
+            if (destY < exploreMap.action.GetLength(0) && exploreMap.action[destY, destX] != null && exploreMap.action[destY, destX].ToString() == "Obstacle")
             {
                 return;
             }
@@ -407,12 +398,12 @@ namespace csheroes.form
 
         private void MoveHero(int x, int y)
         {
-            action[heroCords.Y, heroCords.X] = null;
+            exploreMap.action[exploreMap.heroCords.Y, exploreMap.heroCords.X] = null;
 
-            heroCords.X = x;
-            heroCords.Y = y;
+            exploreMap.heroCords.X = x;
+            exploreMap.heroCords.Y = y;
 
-            action[heroCords.Y, heroCords.X] = hero;
+            exploreMap.action[exploreMap.heroCords.Y, exploreMap.heroCords.X] = exploreMap.hero;
 
             Invalidate();
         }
@@ -446,9 +437,9 @@ namespace csheroes.form
         {
             if (arrow != null)
             {
-                for (int i = 0; i < maxCellWidth; i++)
+                for (int i = 0; i < exploreMap.Width; i++)
                 {
-                    for (int j = 0; j < maxCellHeight; j++)
+                    for (int j = 0; j < exploreMap.Height; j++)
                     {
                         DrawArrow(arrow[i, j], j, i);
                     }
@@ -458,7 +449,7 @@ namespace csheroes.form
 
         private void StartBattle(Army enemy)
         {
-            BattleForm battleForm = new(this, hero, enemy, battleTile);
+            BattleForm battleForm = new(this, exploreMap.hero, enemy, battleMapBackgroundTile);
 
             battleForm.Location = new Point(Location.X, Location.Y);
 
@@ -477,7 +468,7 @@ namespace csheroes.form
             Visible = true;
             UpdateRespect();
 
-            if (hero.Army.Empty)
+            if (exploreMap.hero.Army.Empty)
             {
                 DefeatForm form = new();
 
@@ -495,7 +486,7 @@ namespace csheroes.form
 
         private void CampMenu(object sender, EventArgs e)
         {
-            CampForm campForm = new(this, hero);
+            CampForm campForm = new(this, exploreMap.hero);
 
             campForm.Location = new Point(Location.X, Location.Y);
 
@@ -510,7 +501,7 @@ namespace csheroes.form
             Visible = true;
         }
 
-        private void Save(object sender, EventArgs e)
+        public void Save(object sender, EventArgs e)
         {
             SaveLoadDialog dialog = new(this);
 
@@ -526,29 +517,29 @@ namespace csheroes.form
                 using (BinaryWriter writer = new(File.Open($"saves/{dialog.fileName}", FileMode.OpenOrCreate)))
                 {
                     writer.Write(locationName);
-                    for (int i = 0; i < maxCellWidth; i++)
+                    for (int i = 0; i < exploreMap.Width; i++)
                     {
-                        for (int j = 0; j < maxCellHeight; j++)
+                        for (int j = 0; j < exploreMap.Height; j++)
                         {
-                            writer.Write(background[i, j].X);
-                            writer.Write(background[i, j].Y);
+                            writer.Write(exploreMap.background[i, j].X);
+                            writer.Write(exploreMap.background[i, j].Y);
                         }
                     }
 
-                    writer.Write(battleTile.X);
-                    writer.Write(battleTile.Y);
-                    writer.Write(winCell.X);
-                    writer.Write(winCell.Y);
+                    writer.Write(battleMapBackgroundTile.X);
+                    writer.Write(battleMapBackgroundTile.Y);
+                    writer.Write(exploreMap.winCell.X);
+                    writer.Write(exploreMap.winCell.Y);
 
-                    ISnapshot[,] actionstate = new ISnapshot[maxCellWidth, maxCellHeight];
+                    ISnapshot[,] actionstate = new ISnapshot[exploreMap.Width, exploreMap.Height];
 
-                    for (int i = 0; i < maxCellWidth; i++)
+                    for (int i = 0; i < exploreMap.Width; i++)
                     {
-                        for (int j = 0; j < maxCellHeight; j++)
+                        for (int j = 0; j < exploreMap.Height; j++)
                         {
-                            if (action[i, j] != null)
+                            if (exploreMap.action[i, j] != null)
                             {
-                                action[i, j].MakeSnapshot().Save(writer);
+                                exploreMap.action[i, j].MakeSnapshot().Save(writer);
                             }
                             else
                             {
