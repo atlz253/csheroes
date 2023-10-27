@@ -8,13 +8,13 @@ namespace CSHeroesTests
         [TestMethod]
         public void UnitTemplateWithoutImplementationThrowException()
         {
-            Assert.ThrowsException<UnitTemplateNotFoundException>(() => UnitFactory.GetUnitByTemplate("unit test without implementation"));
+            Assert.ThrowsException<UnitTemplateNotFoundException>(() => UnitFactory.GetUnitTemplateByName("unit test without implementation"));
         }
 
         [TestMethod]
         public void ShouldReturnUnitWithCorrectPropertiesFromTemplate()
         {
-            Unit unit = UnitFactory.GetUnitByTemplate("test unit");
+            Unit unit = UnitFactory.GetUnitTemplateByName("test unit");
 
             Assert.AreEqual(123, unit.MaxHp);
             Assert.AreEqual(100, unit.Hp);

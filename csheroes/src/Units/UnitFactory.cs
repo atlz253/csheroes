@@ -4,9 +4,9 @@ namespace csheroes.src.Units
 {
     public class UnitFactory
     {
-        public static Unit GetUnitByTemplate(string template)
+        public static Unit GetUnitTemplateByName(string name)
         {
-            return template switch
+            return name switch
             {
                 "creep" => new()
                 {
@@ -442,7 +442,7 @@ namespace csheroes.src.Units
                     Damage = 50,
                     Level = 12
                 },
-                _ => throw new UnitTemplateNotFoundException($"failed to create a unit from {template} template"),
+                _ => throw new UnitTemplateNotFoundException($"failed to create a unit from {name} template"),
             };
         }
     }
