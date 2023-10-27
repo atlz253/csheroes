@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using csheroes.src.Textures;
+using System.Drawing;
 using System.IO;
 
 namespace csheroes.src
@@ -25,9 +26,9 @@ namespace csheroes.src
 
     internal class ObstacleSnapshot : ISnapshot
     {
-        public readonly Point tile;
+        public readonly Tile tile;
 
-        public ObstacleSnapshot(Rectangle tile)
+        public ObstacleSnapshot(Tile tile)
         {
             this.tile = new(tile.X, tile.Y);
         }
@@ -42,72 +43,69 @@ namespace csheroes.src
 
     internal class Obstacle : IGameObj
     {
-        private Rectangle tile;
+        private Tile tile;
 
         public Obstacle(ObstacleType type)
         {
             switch (type)
             {
                 case ObstacleType.NEW_KORPUS_WALL:
-                    tile = new(0, 192, Global.CellSize, Global.CellSize);
+                    tile = new(0, 192);
                     break;
                 case ObstacleType.MAC_WALL:
-                    tile = new(32, 192, Global.CellSize, Global.CellSize);
+                    tile = new(32, 192);
                     break;
                 case ObstacleType.MAC_TABLE_1:
-                    tile = new(64, 192, Global.CellSize, Global.CellSize);
+                    tile = new(64, 192);
                     break;
                 case ObstacleType.MAC_TABLE_2:
-                    tile = new(96, 192, Global.CellSize, Global.CellSize);
+                    tile = new(96, 192);
                     break;
                 case ObstacleType.MAC_TABLE_3:
-                    tile = new(128, 192, Global.CellSize, Global.CellSize);
+                    tile = new(128, 192);
                     break;
                 case ObstacleType.MAC_TABLE_4:
-                    tile = new(160, 192, Global.CellSize, Global.CellSize);
+                    tile = new(160, 192);
                     break;
                 case ObstacleType.MAC_SOFA:
-                    tile = new(192, 192, Global.CellSize, Global.CellSize);
+                    tile = new(192, 192);
                     break;
                 case ObstacleType.MAC_CHAIR_1:
-                    tile = new(224, 192, Global.CellSize, Global.CellSize);
+                    tile = new(224, 192);
                     break;
                 case ObstacleType.MAC_CHAIR_2:
-                    tile = new(256, 192, Global.CellSize, Global.CellSize);
+                    tile = new(256, 192);
                     break;
                 case ObstacleType.MAC_CHAIR_3:
-                    tile = new(288, 192, Global.CellSize, Global.CellSize);
+                    tile = new(288, 192);
                     break;
                 case ObstacleType.MAC_CHAIR_4:
-                    tile = new(320, 192, Global.CellSize, Global.CellSize);
+                    tile = new(320, 192);
                     break;
                 case ObstacleType.MAC_TABLE_5:
-                    tile = new(352, 192, Global.CellSize, Global.CellSize);
+                    tile = new(352, 192);
                     break;
                 case ObstacleType.MAC_TABLE_6:
-                    tile = new(384, 192, Global.CellSize, Global.CellSize);
+                    tile = new(384, 192);
                     break;
                 case ObstacleType.MAC_BARRIER:
-                    tile = new(416, 192, Global.CellSize, Global.CellSize);
+                    tile = new(416, 192);
                     break;
                 case ObstacleType.MAC_WORK_TABLE:
-                    tile = new(448, 192, Global.CellSize, Global.CellSize);
+                    tile = new(448, 192);
                     break;
                 case ObstacleType.OLD_KORPUS_WALL:
-                    tile = new(480, 192, Global.CellSize, Global.CellSize);
+                    tile = new(480, 192);
                     break;
             }
         }
 
         public Obstacle(int tileX, int tileY)
         {
-            tile = new Rectangle(tileX, tileY, Global.CellSize, Global.CellSize);
+            tile = new Tile(tileX, tileY);
         }
 
-        public Rectangle GetTile()
-        {
-            return tile;
-        }
+        public Tile Tile => tile;
 
         public ISnapshot MakeSnapshot()
         {

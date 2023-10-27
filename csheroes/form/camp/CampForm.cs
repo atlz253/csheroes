@@ -121,7 +121,7 @@ namespace csheroes.form.camp
             {
                 if (hero.Army.Units[i] != null)
                 {
-                    g.DrawImage(Global.Texture, new Rectangle(100 / 8 * (i + 1) + i * 100 + 15, 605, 75, 75), hero.Army.Units[i].GetTile(), GraphicsUnit.Pixel);
+                    g.DrawImage(Global.Texture, new Rectangle(100 / 8 * (i + 1) + i * 100 + 15, 605, 75, 75), hero.Army.Units[i].Tile.Area, GraphicsUnit.Pixel);
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using csheroes.src.unit;
+﻿using csheroes.src.Textures;
+using csheroes.src.unit;
 using System.Drawing;
 using System.IO;
 
@@ -84,10 +85,7 @@ namespace csheroes.src
 
         public bool Ai => ai;
 
-        public Rectangle GetTile()
-        {
-            return Units[0].GetTile();
-        }
+        public Tile Tile => Units[0].Tile;
 
         public ISnapshot MakeSnapshot()
         {

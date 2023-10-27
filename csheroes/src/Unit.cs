@@ -1,4 +1,5 @@
-﻿using System;
+﻿using csheroes.src.Textures;
+using System;
 using System.Drawing;
 using System.IO;
 
@@ -70,12 +71,12 @@ namespace csheroes.src.unit
 
     public class UnitSnapshot : ISnapshot
     {
-        public readonly Point tile;
+        public readonly Tile tile;
         public readonly AttackType type;
 
         public readonly int hp, exp, maxHp, range, damage, level, nextLevel;
 
-        public UnitSnapshot(int hp, int maxHp, int exp, int range, int damage, int level, int nextLevel, Point tile, AttackType type)
+        public UnitSnapshot(int hp, int maxHp, int exp, int range, int damage, int level, int nextLevel, Tile tile, AttackType type)
         {
             this.tile = tile;
             this.type = type;
@@ -92,7 +93,7 @@ namespace csheroes.src.unit
 
         public UnitSnapshot(BinaryReader reader)
         {
-            tile = new Point(reader.ReadInt32(), reader.ReadInt32());
+            tile = new Tile(reader.ReadInt32(), reader.ReadInt32());
 
             switch (reader.ReadString())
             {
@@ -131,7 +132,7 @@ namespace csheroes.src.unit
 
     public class Unit : IGameObj
     {
-        private Point tile;
+        private Tile tile;
         private AttackType type = AttackType.MELEE;
         private int hp = 10;
         private int exp = 0;
@@ -143,7 +144,7 @@ namespace csheroes.src.unit
 
         public Unit(bool hero = false)
         {
-            tile = RandomTile(hero);
+            tile = Tile.GetRandomTile(hero);
         }
 
         public Unit(UnitTemplate template) : this()
@@ -157,7 +158,7 @@ namespace csheroes.src.unit
                     level = 1;
                     break;
                 case UnitTemplate.CREEP_RANGE:
-                    tile = new Point(256 + Global.Rand.Next(0, 2) * Global.CellSize, 32);
+                    tile = new Tile(256 + Global.Rand.Next(0, 2) * Global.CellSize, 32);
                     type = AttackType.RANGE;
                     maxHp = 3;
                     range = 3;
@@ -183,14 +184,14 @@ namespace csheroes.src.unit
                     level = 2;
                     break;
                 case UnitTemplate.PHYSIC_MELEE:
-                    tile = new Point(224, 64);
+                    tile = new Tile(224, 64);
                     maxHp = 10;
                     range = 5;
                     damage = 1;
                     level = 3;
                     break;
                 case UnitTemplate.PHYSIC_RANGE:
-                    tile = new Point(256, 64);
+                    tile = new Tile(256, 64);
                     type = AttackType.RANGE;
                     maxHp = 3;
                     range = 3;
@@ -198,42 +199,42 @@ namespace csheroes.src.unit
                     level = 3;
                     break;
                 case UnitTemplate.ECONOMIST:
-                    tile = new Point(288 + Global.Rand.Next(0, 3) * Global.CellSize, 64);
+                    tile = new Tile(288 + Global.Rand.Next(0, 3) * Global.CellSize, 64);
                     maxHp = 10;
                     range = 3;
                     damage = 2;
                     level = 3;
                     break;
                 case UnitTemplate.STALKER_1:
-                    tile = new Point(384, 64);
+                    tile = new Tile(384, 64);
                     maxHp = 5;
                     range = 3;
                     damage = 2;
                     level = 2;
                     break;
                 case UnitTemplate.STALKER_2:
-                    tile = new Point(416, 64);
+                    tile = new Tile(416, 64);
                     maxHp = 5;
                     range = 3;
                     damage = 2;
                     level = 2;
                     break;
                 case UnitTemplate.PHILOSOPH_BALANCED:
-                    tile = new Point(704, 64);
+                    tile = new Tile(704, 64);
                     maxHp = 10;
                     range = 3;
                     damage = 2;
                     level = 3;
                     break;
                 case UnitTemplate.PHILOSOPH_FAST:
-                    tile = new Point(672, 64);
+                    tile = new Tile(672, 64);
                     maxHp = 3;
                     range = 6;
                     damage = 1;
                     level = 1;
                     break;
                 case UnitTemplate.PHILOSOPH_RANGE:
-                    tile = new Point(768, 64);
+                    tile = new Tile(768, 64);
                     type = AttackType.RANGE;
                     maxHp = 6;
                     range = 3;
@@ -241,133 +242,133 @@ namespace csheroes.src.unit
                     level = 2;
                     break;
                 case UnitTemplate.PHILOSOPH_STRONG:
-                    tile = new Point(736, 64);
+                    tile = new Tile(736, 64);
                     maxHp = 10;
                     range = 1;
                     damage = 4;
                     level = 5;
                     break;
                 case UnitTemplate.PHILOSOPH_TENACIOUS:
-                    tile = new Point(640, 64);
+                    tile = new Tile(640, 64);
                     maxHp = 30;
                     range = 2;
                     damage = 1;
                     level = 4;
                     break;
                 case UnitTemplate.MATRIX_FAST:
-                    tile = new Point(128, 64);
+                    tile = new Tile(128, 64);
                     maxHp = 20;
                     range = 6;
                     damage = 2;
                     level = 4;
                     break;
                 case UnitTemplate.MATRIX_STRONG:
-                    tile = new Point(160, 64);
+                    tile = new Tile(160, 64);
                     maxHp = 20;
                     range = 2;
                     damage = 4;
                     level = 4;
                     break;
                 case UnitTemplate.MATRIX_BALANCED:
-                    tile = new Point(192, 64);
+                    tile = new Tile(192, 64);
                     maxHp = 15;
                     range = 3;
                     damage = 3;
                     level = 4;
                     break;
                 case UnitTemplate.ANONIMUS:
-                    tile = new Point(448, 64);
+                    tile = new Tile(448, 64);
                     maxHp = 50;
                     range = 3;
                     damage = 3;
                     level = 6;
                     break;
                 case UnitTemplate.BITARD:
-                    tile = new Point(480, 64);
+                    tile = new Tile(480, 64);
                     maxHp = 5;
                     range = 6;
                     damage = 1;
                     level = 4;
                     break;
                 case UnitTemplate.SUSLOV:
-                    tile = new Point(800, 64);
+                    tile = new Tile(800, 64);
                     maxHp = 100;
                     range = 1;
                     damage = 2;
                     level = 10;
                     break;
                 case UnitTemplate.KERNEL_PANIC:
-                    tile = new Point(832, 64);
+                    tile = new Tile(832, 64);
                     maxHp = 10;
                     range = 7;
                     damage = 1;
                     level = 3;
                     break;
                 case UnitTemplate.ERROR:
-                    tile = new Point(864, 64);
+                    tile = new Tile(864, 64);
                     maxHp = 10;
                     range = 5;
                     damage = 1;
                     level = 3;
                     break;
                 case UnitTemplate.BUG:
-                    tile = new Point(896, 64);
+                    tile = new Tile(896, 64);
                     maxHp = 10;
                     range = 5;
                     damage = 2;
                     level = 3;
                     break;
                 case UnitTemplate.HACKER_JUNIOR:
-                    tile = new Point(128, 96);
+                    tile = new Tile(128, 96);
                     maxHp = 8;
                     range = 3;
                     damage = 2;
                     level = 3;
                     break;
                 case UnitTemplate.HACKER_MIDDLE:
-                    tile = new Point(160, 96);
+                    tile = new Tile(160, 96);
                     maxHp = 12;
                     range = 2;
                     damage = 2;
                     level = 4;
                     break;
                 case UnitTemplate.HACKER_SENIOR:
-                    tile = new Point(192, 96);
+                    tile = new Tile(192, 96);
                     maxHp = 15;
                     range = 2;
                     damage = 3;
                     level = 5;
                     break;
                 case UnitTemplate.HACKER_FAST:
-                    tile = new Point(224, 96);
+                    tile = new Tile(224, 96);
                     maxHp = 10;
                     range = 5;
                     damage = 2;
                     level = 5;
                     break;
                 case UnitTemplate.SQUID_EASY:
-                    tile = new Point(256, 96);
+                    tile = new Tile(256, 96);
                     maxHp = 30;
                     range = 3;
                     damage = 2;
                     level = 5;
                     break;
                 case UnitTemplate.SQUID_MEDIUM:
-                    tile = new Point(288, 96);
+                    tile = new Tile(288, 96);
                     maxHp = 50;
                     range = 3;
                     damage = 2;
                     level = 5;
                     break;
                 case UnitTemplate.SQUID_HARD:
-                    tile = new Point(320, 96);
+                    tile = new Tile(320, 96);
                     maxHp = 50;
                     range = 3;
                     damage = 3;
                     level = 5;
                     break;
                 case UnitTemplate.SQUID_RANGE:
-                    tile = new Point(352, 96);
+                    tile = new Tile(352, 96);
                     type = AttackType.RANGE;
                     maxHp = 20;
                     range = 3;
@@ -375,49 +376,49 @@ namespace csheroes.src.unit
                     level = 5;
                     break;
                 case UnitTemplate.MAC_WORKER:
-                    tile = new Point(384, 96);
+                    tile = new Tile(384, 96);
                     maxHp = 20;
                     range = 3;
                     damage = 2;
                     level = 5;
                     break;
                 case UnitTemplate.RONALD:
-                    tile = new Point(416, 96);
+                    tile = new Tile(416, 96);
                     maxHp = 100;
                     range = 2;
                     damage = 4;
                     level = 7;
                     break;
                 case UnitTemplate.BOXER_ROCKY:
-                    tile = new Point(448, 96);
+                    tile = new Tile(448, 96);
                     maxHp = 100;
                     range = 2;
                     damage = 10;
                     level = 10;
                     break;
                 case UnitTemplate.BOXER_ALI:
-                    tile = new Point(480, 96);
+                    tile = new Tile(480, 96);
                     maxHp = 45;
                     range = 7;
                     damage = 3;
                     level = 10;
                     break;
                 case UnitTemplate.BOXER_STUDENT:
-                    tile = new Point(512, 96);
+                    tile = new Tile(512, 96);
                     maxHp = 20;
                     range = 5;
                     damage = 5;
                     level = 7;
                     break;
                 case UnitTemplate.COSMONAUT:
-                    tile = new Point(512 + Global.Rand.Next(0, 3) * Global.CellSize, 64);
+                    tile = new Tile(512 + Global.Rand.Next(0, 3) * Global.CellSize, 64);
                     maxHp = 50;
                     range = 3;
                     damage = 2;
                     level = 10;
                     break;
                 case UnitTemplate.COSMONAUT_RANGE:
-                    tile = new Point(608, 64);
+                    tile = new Tile(608, 64);
                     type = AttackType.RANGE;
                     maxHp = 20;
                     range = 3;
@@ -425,7 +426,7 @@ namespace csheroes.src.unit
                     level = 10;
                     break;
                 case UnitTemplate.SOLDIER_RANGE:
-                    tile = new Point(576, 96);
+                    tile = new Tile(576, 96);
                     type = AttackType.RANGE;
                     maxHp = 10;
                     range = 3;
@@ -433,49 +434,49 @@ namespace csheroes.src.unit
                     level = 10;
                     break;
                 case UnitTemplate.JULIA_S:
-                    tile = new Point(544, 96);
+                    tile = new Tile(544, 96);
                     maxHp = 50;
                     range = 6;
                     damage = 2;
                     level = 10;
                     break;
                 case UnitTemplate.FEDOR:
-                    tile = new Point(608, 96);
+                    tile = new Tile(608, 96);
                     maxHp = 999;
                     range = 1;
                     damage = 0;
                     level = 1;
                     break;
                 case UnitTemplate.MIGAS:
-                    tile = new Point(160, 128);
+                    tile = new Tile(160, 128);
                     maxHp = 50;
                     range = 3;
                     damage = 4;
                     level = 10;
                     break;
                 case UnitTemplate.VANYA:
-                    tile = new Point(224, 128);
+                    tile = new Tile(224, 128);
                     maxHp = 69;
                     range = 5;
                     damage = 2;
                     level = 10;
                     break;
                 case UnitTemplate.DIMA:
-                    tile = new Point(256, 128);
+                    tile = new Tile(256, 128);
                     maxHp = 80;
                     range = 2;
                     damage = 10;
                     level = 10;
                     break;
                 case UnitTemplate.JULIA_B:
-                    tile = new Point(320, 128);
+                    tile = new Tile(320, 128);
                     maxHp = 50;
                     range = 3;
                     damage = 2;
                     level = 10;
                     break;
                 case UnitTemplate.MISHA:
-                    tile = new Point(384, 128);
+                    tile = new Tile(384, 128);
                     maxHp = 50;
                     range = 3;
                     damage = 2;
@@ -506,25 +507,6 @@ namespace csheroes.src.unit
             exp = snapshot.exp;
             level = snapshot.level;
             nextLevelExp = snapshot.nextLevel;
-        }
-
-        private Point RandomTile(bool hero)
-        {
-            if (hero)
-            {
-                if (Global.Rand.Next(0, 2) == 1)
-                {
-                    return new(256 + Global.CellSize * Global.Rand.Next(0, 4), 0);
-                }
-                else
-                {
-                    return new(128 + 32 * Global.Rand.Next(0, 9), 128);
-                }
-            }
-            else
-            {
-                return new(256 + Global.CellSize * Global.Rand.Next(0, 4), 0);
-            }
         }
 
         internal AttackType Attack { get => type; set => type = value; }
@@ -560,10 +542,7 @@ namespace csheroes.src.unit
 
         public int Level { get => level; set => level = value; }
 
-        public Rectangle GetTile()
-        {
-            return new(tile.X, tile.Y, Global.CellSize, Global.CellSize);
-        }
+        public Tile Tile => tile;
 
         public ISnapshot MakeSnapshot()
         {

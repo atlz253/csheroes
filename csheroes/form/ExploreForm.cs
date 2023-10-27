@@ -261,7 +261,7 @@ namespace csheroes.form
                 {
                     if (action[i, j] != null)
                     {
-                        g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
+                        g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), action[i, j].Tile.Area, GraphicsUnit.Pixel);
                     }
                 }
             }

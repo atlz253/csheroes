@@ -1,10 +1,11 @@
-﻿using System.Drawing;
+﻿using csheroes.src.Textures;
+using System.Drawing;
 
 namespace csheroes.src
 {
     internal interface IGameObj
     {
-        Rectangle GetTile(); // TODO: свойство
+        Tile Tile { get; }
 
         ISnapshot MakeSnapshot();
     }

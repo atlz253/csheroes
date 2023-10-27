@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using csheroes.src.Textures;
+using System.Drawing;
 using System.IO;
 
 namespace csheroes.src
@@ -24,7 +25,7 @@ namespace csheroes.src
 
     public class Hero : IGameObj
     {
-        private static readonly Rectangle tile = new(224, 0, Global.CellSize, Global.CellSize);
+        private static readonly Tile tile = new(224, 0);
         private readonly Army army;
         private int respect = 100;
 
@@ -44,10 +45,7 @@ namespace csheroes.src
 
         internal Army Army => army;
 
-        public Rectangle GetTile()
-        {
-            return tile;
-        }
+        public Tile Tile => tile;
 
         public override string ToString()
         {

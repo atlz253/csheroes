@@ -261,7 +261,7 @@ namespace csheroes.form
                 {
                     if (action[i, j] != null && action[i, j].ToString() == "Unit")
                     {
-                        g.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), action[i, j].GetTile(), GraphicsUnit.Pixel);
+                        g.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), action[i, j].Tile.Area, GraphicsUnit.Pixel);
 
                         Label hp = new();
                         hp.Text = ((Unit)action[i, j]).Hp.ToString();
