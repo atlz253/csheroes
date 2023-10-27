@@ -1,5 +1,5 @@
 ﻿using csheroes.src.Textures;
-using csheroes.src.unit;
+using csheroes.src.Units;
 using System.Drawing;
 using System.IO;
 

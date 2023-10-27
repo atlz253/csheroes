@@ -21,11 +21,8 @@ namespace csheroes.src
         private static readonly SolidBrush moveHighlightBrush = new(Color.FromArgb(70, 174, 198, 207)),
                                    enemyHighlightBrush = new(Color.FromArgb(70, 219, 88, 86));
         private static readonly Random rand = new();
-#if RELEASE
-        static readonly Image texture = Properties.Resources.textures;
-#else
-        private static Image texture;
-#endif
+
+        static Image texture;
 
         public static int CellSize
         {
@@ -42,7 +39,7 @@ namespace csheroes.src
         {
             get
             {
-                texture ??= Image.FromFile("../../../res/textures.png");
+                texture ??= Properties.Resources.textures;
 
                 return texture;
             }

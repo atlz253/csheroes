@@ -1,4 +1,4 @@
-using csheroes.src.unit;
+using csheroes.src.Units;
 
 namespace CSHeroesTests
 {
