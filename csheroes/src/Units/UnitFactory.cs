@@ -4,11 +4,11 @@ namespace csheroes.src.Units
 {
     public class UnitFactory
     {
-        public static Unit GetUnitByTemplate(UnitTemplate template)
+        public static Unit GetUnitByTemplate(string template)
         {
             return template switch
             {
-                UnitTemplate.CREEP => new()
+                "creep" => new()
                 {
                     MaxHp = 3,
                     Hp = 3,
@@ -16,7 +16,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 1,
                 },
-                UnitTemplate.CREEP_RANGE => new()
+                "creep range" => new()
                 {
                     Tile = new Tile(256 + Global.Rand.Next(0, 2) * Global.CellSize, 32),
                     Attack = AttackType.RANGE,
@@ -26,7 +26,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 1,
                 },
-                UnitTemplate.WEAK => new()
+                "weak" => new()
                 {
                     MaxHp = 5,
                     Hp = 5,
@@ -34,7 +34,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 1,
                 },
-                UnitTemplate.NORMAL => new()
+                "normal" => new()
                 {
                     MaxHp = 7,
                     Hp = 7,
@@ -42,7 +42,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 1,
                 },
-                UnitTemplate.HARD => new()
+                "hard" => new()
                 {
                     MaxHp = 10,
                     Hp = 10,
@@ -50,7 +50,7 @@ namespace csheroes.src.Units
                     Damage = 3,
                     Level = 2,
                 },
-                UnitTemplate.PHYSIC_MELEE => new()
+                "physic" => new()
                 {
                     Tile = new Tile(224, 64),
                     MaxHp = 10,
@@ -59,7 +59,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 3,
                 },
-                UnitTemplate.PHYSIC_RANGE => new()
+                "physic range" => new()
                 {
                     Tile = new Tile(256, 64),
                     Attack = AttackType.RANGE,
@@ -69,7 +69,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 3,
                 },
-                UnitTemplate.ECONOMIST => new()
+                "economist" => new()
                 {
                     Tile = new Tile(288 + Global.Rand.Next(0, 3) * Global.CellSize, 64),
                     MaxHp = 10,
@@ -78,7 +78,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 3,
                 },
-                UnitTemplate.STALKER_1 => new()
+                "stalker 1" => new()
                 {
                     Tile = new Tile(384, 64),
                     MaxHp = 5,
@@ -87,7 +87,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 2,
                 },
-                UnitTemplate.STALKER_2 => new()
+                "stalker 2" => new()
                 {
                     Tile = new Tile(416, 64),
                     MaxHp = 5,
@@ -96,7 +96,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 2,
                 },
-                UnitTemplate.PHILOSOPH_BALANCED => new()
+                "balanced philosoph" => new()
                 {
                     Tile = new Tile(704, 64),
                     MaxHp = 10,
@@ -105,7 +105,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 3,
                 },
-                UnitTemplate.PHILOSOPH_FAST => new()
+                "fast philosoph" => new()
                 {
                     Tile = new Tile(672, 64),
                     MaxHp = 3,
@@ -114,7 +114,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 1,
                 },
-                UnitTemplate.PHILOSOPH_RANGE => new()
+                "philosoph range" => new()
                 {
                     Tile = new Tile(768, 64),
                     Attack = AttackType.RANGE,
@@ -124,7 +124,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 2,
                 },
-                UnitTemplate.PHILOSOPH_STRONG => new()
+                "stron philosoph" => new()
                 {
                     Tile = new Tile(736, 64),
                     MaxHp = 10,
@@ -133,7 +133,7 @@ namespace csheroes.src.Units
                     Damage = 4,
                     Level = 5,
                 },
-                UnitTemplate.PHILOSOPH_TENACIOUS => new()
+                "tenactious philosoph" => new()
                 {
                     Tile = new Tile(640, 64),
                     MaxHp = 30,
@@ -142,7 +142,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 4,
                 },
-                UnitTemplate.MATRIX_FAST => new()
+                "fast matrix" => new()
                 {
                     Tile = new Tile(128, 64),
                     MaxHp = 20,
@@ -151,7 +151,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 4,
                 },
-                UnitTemplate.MATRIX_STRONG => new()
+                "strong matrix" => new()
                 {
                     Tile = new Tile(160, 64),
                     MaxHp = 20,
@@ -160,7 +160,7 @@ namespace csheroes.src.Units
                     Damage = 4,
                     Level = 4,
                 },
-                UnitTemplate.MATRIX_BALANCED => new()
+                "balanced matrix" => new()
                 {
                     Tile = new Tile(192, 64),
                     MaxHp = 15,
@@ -169,7 +169,7 @@ namespace csheroes.src.Units
                     Damage = 3,
                     Level = 4,
                 },
-                UnitTemplate.ANONIMUS => new()
+                "anonimus" => new()
                 {
                     Tile = new Tile(448, 64),
                     MaxHp = 50,
@@ -178,7 +178,7 @@ namespace csheroes.src.Units
                     Damage = 3,
                     Level = 6,
                 },
-                UnitTemplate.BITARD => new()
+                "bitard" => new()
                 {
                     Tile = new Tile(480, 64),
                     MaxHp = 5,
@@ -187,7 +187,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 4,
                 },
-                UnitTemplate.SUSLOV => new()
+                "suslov" => new()
                 {
                     Tile = new Tile(800, 64),
                     MaxHp = 100,
@@ -196,7 +196,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 10,
                 },
-                UnitTemplate.KERNEL_PANIC => new()
+                "kernel panic" => new()
                 {
                     Tile = new Tile(832, 64),
                     MaxHp = 10,
@@ -205,7 +205,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 3,
                 },
-                UnitTemplate.ERROR => new()
+                "error" => new()
                 {
                     Tile = new Tile(864, 64),
                     MaxHp = 10,
@@ -214,7 +214,7 @@ namespace csheroes.src.Units
                     Damage = 1,
                     Level = 3,
                 },
-                UnitTemplate.BUG => new()
+                "bug" => new()
                 {
                     Tile = new Tile(896, 64),
                     MaxHp = 10,
@@ -223,7 +223,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 3,
                 },
-                UnitTemplate.HACKER_JUNIOR => new()
+                "hacker junior" => new()
                 {
                     Tile = new Tile(128, 96),
                     MaxHp = 8,
@@ -232,7 +232,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 3,
                 },
-                UnitTemplate.HACKER_MIDDLE => new()
+                "hacker middle" => new()
                 {
                     Tile = new Tile(160, 96),
                     MaxHp = 12,
@@ -241,7 +241,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 4,
                 },
-                UnitTemplate.HACKER_SENIOR => new()
+                "hacker senior" => new()
                 {
                     Tile = new Tile(192, 96),
                     MaxHp = 15,
@@ -250,7 +250,7 @@ namespace csheroes.src.Units
                     Damage = 3,
                     Level = 5,
                 },
-                UnitTemplate.HACKER_FAST => new()
+                "hacker fast" => new()
                 {
                     Tile = new Tile(224, 96),
                     MaxHp = 10,
@@ -259,7 +259,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 5,
                 },
-                UnitTemplate.SQUID_EASY => new()
+                "squid easy" => new()
                 {
                     Tile = new Tile(256, 96),
                     MaxHp = 30,
@@ -268,7 +268,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 5,
                 },
-                UnitTemplate.SQUID_MEDIUM => new()
+                "squid medium" => new()
                 {
                     Tile = new Tile(288, 96),
                     MaxHp = 50,
@@ -277,7 +277,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 5,
                 },
-                UnitTemplate.SQUID_HARD => new()
+                "squid hard" => new()
                 {
                     Tile = new Tile(320, 96),
                     MaxHp = 50,
@@ -286,7 +286,7 @@ namespace csheroes.src.Units
                     Damage = 3,
                     Level = 5,
                 },
-                UnitTemplate.SQUID_RANGE => new()
+                "squid range" => new()
                 {
                     Tile = new Tile(352, 96),
                     Attack = AttackType.RANGE,
@@ -296,7 +296,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 5,
                 },
-                UnitTemplate.MAC_WORKER => new()
+                "mac worker" => new()
                 {
                     Tile = new Tile(384, 96),
                     MaxHp = 20,
@@ -305,7 +305,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 5,
                 },
-                UnitTemplate.RONALD => new()
+                "ronald" => new()
                 {
                     Tile = new Tile(416, 96),
                     MaxHp = 100,
@@ -314,7 +314,7 @@ namespace csheroes.src.Units
                     Damage = 4,
                     Level = 7,
                 },
-                UnitTemplate.BOXER_ROCKY => new()
+                "boxer Rocky" => new()
                 {
                     Tile = new Tile(448, 96),
                     MaxHp = 100,
@@ -323,7 +323,7 @@ namespace csheroes.src.Units
                     Damage = 10,
                     Level = 10,
                 },
-                UnitTemplate.BOXER_ALI => new()
+                "boxer Ali" => new()
                 {
                     Tile = new Tile(480, 96),
                     MaxHp = 45,
@@ -332,7 +332,7 @@ namespace csheroes.src.Units
                     Damage = 3,
                     Level = 10,
                 },
-                UnitTemplate.BOXER_STUDENT => new()
+                "boxer student" => new()
                 {
                     Tile = new Tile(512, 96),
                     MaxHp = 20,
@@ -341,7 +341,7 @@ namespace csheroes.src.Units
                     Damage = 5,
                     Level = 7,
                 },
-                UnitTemplate.COSMONAUT => new()
+                "cosmonaut" => new()
                 {
                     Tile = new Tile(512 + Global.Rand.Next(0, 3) * Global.CellSize, 64),
                     MaxHp = 50,
@@ -350,7 +350,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 10,
                 },
-                UnitTemplate.COSMONAUT_RANGE => new()
+                "cosmonaut range" => new()
                 {
                     Tile = new Tile(608, 64),
                     Attack = AttackType.RANGE,
@@ -360,7 +360,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 10,
                 },
-                UnitTemplate.SOLDIER_RANGE => new()
+                "soldier range" => new()
                 {
                     Tile = new Tile(576, 96),
                     Attack = AttackType.RANGE,
@@ -370,7 +370,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 10,
                 },
-                UnitTemplate.JULIA_S => new()
+                "Julia S" => new()
                 {
                     Tile = new Tile(544, 96),
                     MaxHp = 50,
@@ -379,7 +379,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 10,
                 },
-                UnitTemplate.FEDOR => new()
+                "Fedor" => new()
                 {
                     Tile = new Tile(608, 96),
                     MaxHp = 999,
@@ -388,7 +388,7 @@ namespace csheroes.src.Units
                     Damage = 0,
                     Level = 1,
                 },
-                UnitTemplate.MIGAS => new()
+                "Migas" => new()
                 {
                     Tile = new Tile(160, 128),
                     MaxHp = 50,
@@ -397,7 +397,7 @@ namespace csheroes.src.Units
                     Damage = 4,
                     Level = 10,
                 },
-                UnitTemplate.VANYA => new()
+                "Vanya" => new()
                 {
                     Tile = new Tile(224, 128),
                     MaxHp = 69,
@@ -406,7 +406,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 10,
                 },
-                UnitTemplate.DIMA => new()
+                "Dima" => new()
                 {
                     Tile = new Tile(256, 128),
                     MaxHp = 80,
@@ -415,7 +415,7 @@ namespace csheroes.src.Units
                     Damage = 10,
                     Level = 10,
                 },
-                UnitTemplate.JULIA_B => new()
+                "Julia B" => new()
                 {
                     Tile = new Tile(320, 128),
                     MaxHp = 50,
@@ -424,7 +424,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 10,
                 },
-                UnitTemplate.MISHA => new()
+                "Misha" => new()
                 {
                     Tile = new Tile(384, 128),
                     MaxHp = 50,
@@ -433,7 +433,7 @@ namespace csheroes.src.Units
                     Damage = 2,
                     Level = 10,
                 },
-                UnitTemplate.TEST_UNIT => new()
+                "test unit" => new()
                 {
                     Tile = new Tile(12, 12),
                     MaxHp = 123,
