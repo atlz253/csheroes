@@ -1,5 +1,6 @@
 ﻿using csheroes.form.camp;
 using csheroes.src;
+using csheroes.src.Saves;
 using csheroes.src.Units;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,9 @@ namespace csheroes.form
     {
         private readonly Graphics surface;
         private readonly ExploreMap exploreMap;
-        private Rectangle battleMapBackgroundTile; // the background for the battle is the only one on the whole explore map
-        
+
+
         private readonly Arrows[,] arrow = null;
-        
-        
-        private string locationName;
 
         public ExploreForm()
         {
@@ -33,7 +31,7 @@ namespace csheroes.form
             surface = CreateGraphics();
         }
 
-        public ExploreForm(string fileName): this()
+        public ExploreForm(string fileName) : this()
         {
 #if TEST_MAP
             InitAction();
@@ -42,7 +40,7 @@ namespace csheroes.form
 #endif
         }
 
-        public ExploreForm(byte[] stream): this()
+        public ExploreForm(byte[] stream) : this()
         {
             InitAction(stream);
         }
@@ -85,138 +83,6 @@ namespace csheroes.form
                 {
                     g.DrawImage(Global.Texture, new Rectangle(Global.CellSize * j, Global.CellSize * i, Global.CellSize, Global.CellSize), exploreMap.background[i, j], GraphicsUnit.Pixel);
                 }
-            }
-        }
-
-#if TEST_MAP
-        void InitAction()
-        {
-            locationName = "Великие испытания в старом корпусе";
-            background = new Rectangle[maxCellWidth, maxCellHeight];
-            battleTile = new Rectangle(64, 0, Global.CellSize, Global.CellSize);
-            winCell = new Point(24, 11);
-
-            for (int i = 0; i < maxCellWidth; i++)
-                for (int j = 0; j < maxCellHeight; j++)
-                    background[i, j] = new Rectangle(0, 32, Global.CellSize, Global.CellSize);
-            background[11, 24] = new Rectangle(0, 64, Global.CellSize, Global.CellSize);
-
-            action = new IGameObj[maxCellWidth, maxCellHeight];
-
-            for (int i = 0; i < action.GetLength(0); i++)
-            {
-                action[8, i] = new Obstacle(ObstacleType.OLD_KORPUS_WALL);
-                action[14, i] = new Obstacle(ObstacleType.OLD_KORPUS_WALL);
-            }
-            for (int i = 0; i < 8; i++)
-                action[i, 12] = new Obstacle(ObstacleType.OLD_KORPUS_WALL);
-            for (int i = 0; i < 10; i++)
-                action[15+ i, 12] = new Obstacle(ObstacleType.OLD_KORPUS_WALL);
-            action[8, 6] = null;
-            action[8, 19] = null;
-            action[14, 6] = null;
-            action[14, 19] = null;
-
-
-            hero = new Hero(new Army(false, new Unit[] { new Unit(true), new Unit(true) }));
-            heroCords = new Point(0, 12);
-            action[heroCords.Y, heroCords.X] = hero;
-            UpdateRespect();
-        }
-#endif
-
-        private void ReadData(BinaryReader reader)
-        {
-            locationName = reader.ReadString();
-            for (int i = 0; i < exploreMap.Width; i++)
-            {
-                for (int j = 0; j < exploreMap.Height; j++)
-                {
-                    exploreMap.background[i, j] = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
-                }
-            }
-
-            battleMapBackgroundTile = new(reader.ReadInt32(), reader.ReadInt32(), Global.CellSize, Global.CellSize);
-            exploreMap.winCell = new(reader.ReadInt32(), reader.ReadInt32());
-
-            for (int i = 0; i < exploreMap.Width; i++)
-            {
-                for (int j = 0; j < exploreMap.Height; j++)
-                {
-                    string name = reader.ReadString();
-
-                    if (name == "NullObj")
-                    {
-                        continue;
-                    }
-                    else if (name == "Obstacle")
-                    {
-                        exploreMap.action[i, j] = new Obstacle(reader.ReadInt32(), reader.ReadInt32());
-                    }
-                    else if (name == "Hero")
-                    {
-                        int respect = reader.ReadInt32();
-
-                        reader.ReadString(); // считываем строку "Army"
-                        bool ai = reader.ReadBoolean();
-                        Unit[] units = new Unit[7];
-                        for (int k = 0; k < 7; k++)
-                        {
-                            string unitName = reader.ReadString();
-
-                            if (unitName == "NoUnit")
-                            {
-                                continue;
-                            }
-
-                            Unit unit = new(new UnitSnapshot(reader));
-                            units[k] = unit;
-                        }
-
-                        exploreMap.hero = new Hero(new Army(ai, units), respect);
-                        exploreMap.action[i, j] = exploreMap.hero;
-                        exploreMap.heroCords = new Point(j, i);
-                    }
-                    else if (name == "Army")
-                    {
-                        bool ai = reader.ReadBoolean();
-                        Unit[] units = new Unit[7];
-                        for (int k = 0; k < 7; k++)
-                        {
-                            string unitName = reader.ReadString();
-
-                            if (unitName == "NoUnit")
-                            {
-                                continue;
-                            }
-
-                            Unit unit = new(new UnitSnapshot(reader));
-                            units[k] = unit;
-                        }
-
-                        exploreMap.action[i, j] = new Army(ai, units);
-                    }
-                }
-            }
-        }
-
-        public void InitAction(string fileName)
-        {
-            exploreMap.action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
-
-            using (BinaryReader reader = new(File.Open(fileName, FileMode.Open)))
-            {
-                ReadData(reader);
-            }
-        }
-
-        public void InitAction(byte[] stream)
-        {
-            exploreMap.action = new IGameObj[Width / Global.CellSize, Height / Global.CellSize];
-
-            using (BinaryReader reader = new(new MemoryStream(stream)))
-            {
-                ReadData(reader);
             }
         }
 
@@ -278,7 +144,7 @@ namespace csheroes.form
 
                         score += exploreMap.hero.Respect;
 
-                        WinForm form = new(locationName, score);
+                        WinForm form = new(exploreMap.locationName, score);
 
                         form.Location = new Point(Location.X, Location.Y);
 
@@ -449,7 +315,7 @@ namespace csheroes.form
 
         private void StartBattle(Army enemy)
         {
-            BattleForm battleForm = new(this, exploreMap.hero, enemy, battleMapBackgroundTile);
+            BattleForm battleForm = new(this, exploreMap.hero, enemy, exploreMap.battleMapBackgroundTile);
 
             battleForm.Location = new Point(Location.X, Location.Y);
 
@@ -501,7 +367,7 @@ namespace csheroes.form
             Visible = true;
         }
 
-        public void Save(object sender, EventArgs e)
+        public void OpenSaveLoadDialog(object sender, EventArgs e)
         {
             SaveLoadDialog dialog = new(this);
 
@@ -509,58 +375,73 @@ namespace csheroes.form
 
             if (dialog.save)
             {
-                if (!Directory.Exists("saves"))
-                {
-                    Directory.CreateDirectory("saves");
-                }
-
-                using (BinaryWriter writer = new(File.Open($"saves/{dialog.fileName}", FileMode.OpenOrCreate)))
-                {
-                    writer.Write(locationName);
-                    for (int i = 0; i < exploreMap.Width; i++)
-                    {
-                        for (int j = 0; j < exploreMap.Height; j++)
-                        {
-                            writer.Write(exploreMap.background[i, j].X);
-                            writer.Write(exploreMap.background[i, j].Y);
-                        }
-                    }
-
-                    writer.Write(battleMapBackgroundTile.X);
-                    writer.Write(battleMapBackgroundTile.Y);
-                    writer.Write(exploreMap.winCell.X);
-                    writer.Write(exploreMap.winCell.Y);
-
-                    ISnapshot[,] actionstate = new ISnapshot[exploreMap.Width, exploreMap.Height];
-
-                    for (int i = 0; i < exploreMap.Width; i++)
-                    {
-                        for (int j = 0; j < exploreMap.Height; j++)
-                        {
-                            if (exploreMap.action[i, j] != null)
-                            {
-                                exploreMap.action[i, j].MakeSnapshot().Save(writer);
-                            }
-                            else
-                            {
-                                writer.Write("NullObj");
-                            }
-                        }
-                    }
-                }
+                SaveFile.WriteSaveableObjectToFileWithName(exploreMap, dialog.fileName);
             }
-
-            if (dialog.load)
+            else if (dialog.load)
             {
-                if (!File.Exists($"saves/{dialog.fileName}"))
-                {
-                    return;
-                }
-
-                InitAction($"saves/{dialog.fileName}");
-                Invalidate();
+                InitAction(dialog.fileName);
             }
         }
+
+        public void InitAction(string fileName)
+        {
+            try
+            {
+                SaveFile.RestoreSaveableObjectStateFromFileWithName(exploreMap, fileName);
+                Invalidate();
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show(
+                $"Сохранения {fileName} не существует",
+                "Сохранение не найдено",
+                MessageBoxButtons.OK
+                );
+            }
+        }
+
+        public void InitAction(byte[] stream)
+        {
+            using BinaryReader reader = new(new MemoryStream(stream));
+            exploreMap.ReadSave(reader);
+        }
+
+#if TEST_MAP
+        void InitAction()
+        {
+            locationName = "Великие испытания в старом корпусе";
+            background = new Rectangle[maxCellWidth, maxCellHeight];
+            battleTile = new Rectangle(64, 0, Global.CellSize, Global.CellSize);
+            winCell = new Point(24, 11);
+
+            for (int i = 0; i < maxCellWidth; i++)
+                for (int j = 0; j < maxCellHeight; j++)
+                    background[i, j] = new Rectangle(0, 32, Global.CellSize, Global.CellSize);
+            background[11, 24] = new Rectangle(0, 64, Global.CellSize, Global.CellSize);
+
+            action = new IGameObj[maxCellWidth, maxCellHeight];
+
+            for (int i = 0; i < action.GetLength(0); i++)
+            {
+                action[8, i] = new Obstacle(ObstacleType.OLD_KORPUS_WALL);
+                action[14, i] = new Obstacle(ObstacleType.OLD_KORPUS_WALL);
+            }
+            for (int i = 0; i < 8; i++)
+                action[i, 12] = new Obstacle(ObstacleType.OLD_KORPUS_WALL);
+            for (int i = 0; i < 10; i++)
+                action[15+ i, 12] = new Obstacle(ObstacleType.OLD_KORPUS_WALL);
+            action[8, 6] = null;
+            action[8, 19] = null;
+            action[14, 6] = null;
+            action[14, 19] = null;
+
+
+            hero = new Hero(new Army(false, new Unit[] { new Unit(true), new Unit(true) }));
+            heroCords = new Point(0, 12);
+            action[heroCords.Y, heroCords.X] = hero;
+            UpdateRespect();
+        }
+#endif
 
         private void toolStripSplitButton3_ButtonClick(object sender, EventArgs e)
         {
