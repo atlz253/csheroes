@@ -420,13 +420,6 @@ namespace csheroes.src.GameStates
             GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
             GameWindow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
 
-#if RELEASE
-            if (!battleForm.BattleEnd)
-            {
-                Close(); // не разрешаем считерить и сбежать из битвы
-                return;
-            }
-#endif
             UpdateRespect();
 
             if (exploreMap.hero.Army.Empty)

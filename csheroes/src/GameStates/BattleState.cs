@@ -44,7 +44,7 @@ namespace csheroes.src.GameStates
         {
             Container components = new System.ComponentModel.Container();
             StatusStrip statusStrip1 = new System.Windows.Forms.StatusStrip();
-            ToolStripStatusLabel toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             ToolStripSplitButton toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             ToolStripSplitButton toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
             ToolStripSplitButton toolStripSplitButton2 = new System.Windows.Forms.ToolStripSplitButton();
@@ -52,6 +52,11 @@ namespace csheroes.src.GameStates
             ToolStripSplitButton toolStripSplitButton4 = new System.Windows.Forms.ToolStripSplitButton();
             statusStrip1.SuspendLayout();
             GameWindow.SuspendLayout();
+
+#if RELEASE
+            toolStripSplitButton1.Visible = false;
+            toolStripSplitButton3.Visible = false;
+#endif
             // 
             // statusStrip1
             // 
@@ -132,11 +137,6 @@ namespace csheroes.src.GameStates
 
         public BattleState(GameState parent, Hero hero, Army enemy, Rectangle tile): this()
         {
-#if RELEASE
-            toolStripSplitButton1.Visible = false;
-            toolStripSplitButton3.Visible = false;
-#endif
-
             this.hero = hero;
             this.parent = parent;
 #if DEBUG
