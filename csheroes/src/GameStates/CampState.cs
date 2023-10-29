@@ -1,15 +1,15 @@
-﻿using csheroes.src;
+﻿using csheroes.form.camp;
 using csheroes.src.Units;
-using System;
-using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing;
+using System;
 using System.Windows.Forms;
 
-namespace csheroes.form.camp
+namespace csheroes.src.GameStates
 {
-    public partial class CampForm : Form
+    public class CampState: GameState
     {
-        private readonly ExploreForm parent;
+        private readonly GameState parent;
         private readonly Hero hero;
         private Label[] dmgLabels,
                 hpLabels,
@@ -18,10 +18,87 @@ namespace csheroes.form.camp
                  expBtns,
                  newUnitBtns;
 
-        public CampForm(ExploreForm parent, Hero hero)
-        {
-            InitializeComponent();
+        private ToolStripStatusLabel respectLabel;
 
+        public CampState() 
+        {
+            StatusStrip statusStrip1 = new System.Windows.Forms.StatusStrip();
+            ToolStripStatusLabel toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            respectLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            ToolStripStatusLabel toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            ToolStripSplitButton toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+            ToolStripSplitButton toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
+            statusStrip1.SuspendLayout();
+            GameWindow.SuspendLayout();
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            toolStripStatusLabel2,
+            respectLabel,
+            toolStripStatusLabel1,
+            toolStripSplitButton1,
+            toolStripSplitButton3});
+            statusStrip1.Location = new System.Drawing.Point(0, 802);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new System.Drawing.Size(802, 22);
+            statusStrip1.SizingGrip = false;
+            statusStrip1.TabIndex = 4;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel2
+            // 
+            toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            toolStripStatusLabel2.Size = new System.Drawing.Size(57, 17);
+            toolStripStatusLabel2.Text = "Влияние:";
+            // 
+            // respectLabel
+            // 
+            respectLabel.Name = "respectLabel";
+            respectLabel.Size = new System.Drawing.Size(13, 17);
+            respectLabel.Text = "0";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new System.Drawing.Size(675, 17);
+            toolStripStatusLabel1.Spring = true;
+            // 
+            // toolStripSplitButton1
+            // 
+            toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton1.DropDownButtonWidth = 0;
+            toolStripSplitButton1.Image = global::csheroes.Properties.Resources.question;
+            toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton1.Name = "toolStripSplitButton1";
+            toolStripSplitButton1.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton1.Text = "toolStripSplitButton1";
+            toolStripSplitButton1.ButtonClick += new System.EventHandler(toolStripSplitButton1_ButtonClick);
+            // 
+            // toolStripSplitButton3
+            // 
+            toolStripSplitButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton3.DropDownButtonWidth = 0;
+            toolStripSplitButton3.Image = global::csheroes.Properties.Resources.exitico;
+            toolStripSplitButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton3.Name = "toolStripSplitButton3";
+            toolStripSplitButton3.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton3.Text = "toolStripSplitButton3";
+            toolStripSplitButton3.ButtonClick += new System.EventHandler(toolStripSplitButton3_ButtonClick);
+            // 
+            // CampForm
+            // 
+            GameWindow.SetBackgroundImage(Properties.Resources.camp);
+            controls.Add(statusStrip1);
+            GameWindow.SetName("Camp");
+            GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            statusStrip1.ResumeLayout();
+            GameWindow.ResumeLayout();
+        }
+
+        public CampState(GameState parent, Hero hero): this()
+        {
             this.parent = parent;
 
             this.hero = hero;
@@ -49,19 +126,22 @@ namespace csheroes.form.camp
                     hpLabels[i].Text = "HP: " + unit.Hp.ToString();
                     hpLabels[i].Width = 60;
                     hpLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 685);
-                    Controls.Add(hpLabels[i]);
+                    controls.Add(hpLabels[i]);
+                    GameWindow.AddControl(hpLabels[i]);
 
                     dmgLabels[i] = new();
                     dmgLabels[i].Text = "DMG: " + unit.Damage.ToString();
                     dmgLabels[i].Width = 60;
                     dmgLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 705);
-                    Controls.Add(dmgLabels[i]);
+                    controls.Add(dmgLabels[i]);
+                    GameWindow.AddControl(dmgLabels[i]);
 
                     rangeLabels[i] = new();
                     rangeLabels[i].Text = "RNG: " + unit.Range.ToString();
                     rangeLabels[i].Width = 60;
                     rangeLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 725);
-                    Controls.Add(rangeLabels[i]);
+                    controls.Add(rangeLabels[i]);
+                    GameWindow.AddControl(rangeLabels[i]);
 
                     if (unit.Hp != unit.MaxHp)
                     {
@@ -71,7 +151,8 @@ namespace csheroes.form.camp
                         healBtns[i].Size = new Size(25, 25);
                         healBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 685);
                         healBtns[i].Click += new EventHandler(Heal);
-                        Controls.Add(healBtns[i]);
+                        controls.Add(healBtns[i]);
+                        GameWindow.AddControl(healBtns[i]);
                     }
 
                     if (unit.Exp >= unit.NextLevel)
@@ -82,7 +163,8 @@ namespace csheroes.form.camp
                         expBtns[i].Size = new Size(25, 25);
                         expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715);
                         expBtns[i].Click += new EventHandler(Upgrade);
-                        Controls.Add(expBtns[i]);
+                        controls.Add(expBtns[i]);
+                        GameWindow.AddControl(expBtns[i]);
                     }
                 }
                 else
@@ -93,7 +175,8 @@ namespace csheroes.form.camp
                     newUnitBtns[i].Size = new Size(25, 25);
                     newUnitBtns[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 10, 610);
                     newUnitBtns[i].Click += new EventHandler(AddUnit);
-                    Controls.Add(newUnitBtns[i]);
+                    controls.Add(newUnitBtns[i]);
+                    GameWindow.AddControl(newUnitBtns[i]);
                 }
             }
         }
@@ -150,7 +233,8 @@ namespace csheroes.form.camp
 
                             hero.Army.Units[i] = new(true);
 
-                            Controls.Remove(newUnitBtns[i]);
+                            controls.Remove(newUnitBtns[i]);
+                            GameWindow.RemoveControl(newUnitBtns[i]);
                             newUnitBtns[i] = null;
 
                             Unit unit = hero.Army.Units[i];
@@ -159,21 +243,24 @@ namespace csheroes.form.camp
                             hpLabels[i].Text = "HP: " + unit.Hp.ToString();
                             hpLabels[i].Width = 60;
                             hpLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 685);
-                            Controls.Add(hpLabels[i]);
+                            controls.Add(hpLabels[i]);
+                            GameWindow.RemoveControl(hpLabels[i]);
 
                             dmgLabels[i] = new();
                             dmgLabels[i].Text = "DMG: " + unit.Damage.ToString();
                             dmgLabels[i].Width = 60;
                             dmgLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 705);
-                            Controls.Add(dmgLabels[i]);
+                            controls.Add(dmgLabels[i]);
+                            GameWindow.RemoveControl(dmgLabels[i]);
 
                             rangeLabels[i] = new();
                             rangeLabels[i].Text = "RNG: " + unit.Range.ToString();
                             rangeLabels[i].Width = 60;
                             rangeLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 725);
-                            Controls.Add(rangeLabels[i]);
+                            controls.Add(rangeLabels[i]);
+                            GameWindow.RemoveControl(rangeLabels[i]);
 
-                            Invalidate();
+                            GameWindow.Invalidate();
                             return;
                         }
                     }
@@ -210,14 +297,15 @@ namespace csheroes.form.camp
                         hero.Respect -= healCost;
                         hero.Army.Units[i].Hp = hero.Army.Units[i].MaxHp;
 
-                        Controls.Remove(healBtns[i]);
+                        controls.Remove(healBtns[i]);
+                        GameWindow.RemoveControl(healBtns[i]);
                         healBtns[i] = null;
 
                         hpLabels[i].Text = "HP:   " + hero.Army.Units[i].Hp.ToString();
                         UpdateRespect();
                     }
 
-                    Invalidate();
+                    GameWindow.Invalidate();
                     return;
                 }
             }
@@ -262,7 +350,8 @@ namespace csheroes.form.camp
 
                             hero.Army.Units[i].NextLevel = hero.Army.Units[i].NextLevel * 2;
 
-                            Controls.Remove(expBtns[i]);
+                            controls.Remove(expBtns[i]);
+                            GameWindow.RemoveControl(expBtns[i]);
                             expBtns[i] = null;
 
                             if (hero.Army.Units[i].Exp >= hero.Army.Units[i].NextLevel)
@@ -273,7 +362,8 @@ namespace csheroes.form.camp
                                 expBtns[i].Size = new Size(25, 25);
                                 expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715);
                                 expBtns[i].Click += new EventHandler(Upgrade);
-                                Controls.Add(expBtns[i]);
+                                controls.Add(expBtns[i]);
+                                GameWindow.AddControl(expBtns[i]);
                             }
                         }
 
@@ -299,8 +389,8 @@ namespace csheroes.form.camp
                                 switch (upgradeDialog.choice)
                                 {
                                     case UnitStats.HP:
-                                        hero.Army.Units[i].Hp += 3;
                                         hero.Army.Units[i].MaxHp += 3;
+                                        hero.Army.Units[i].Hp += 3;
                                         hpLabels[i].Text = "HP: " + hero.Army.Units[i].Hp.ToString();
                                         break;
                                     case UnitStats.DAMAGE:
@@ -318,7 +408,8 @@ namespace csheroes.form.camp
                                 UpdateRespect();
                                 hero.Army.Units[i].NextLevel = hero.Army.Units[i].NextLevel * 2;
 
-                                Controls.Remove(expBtns[i]);
+                                controls.Remove(expBtns[i]);
+                                GameWindow.RemoveControl(expBtns[i]);
                                 expBtns[i] = null;
 
                                 if (hero.Army.Units[i].Exp >= hero.Army.Units[i].NextLevel)
@@ -329,7 +420,8 @@ namespace csheroes.form.camp
                                     expBtns[i].Size = new Size(25, 25);
                                     expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715);
                                     expBtns[i].Click += new EventHandler(Upgrade);
-                                    Controls.Add(expBtns[i]);
+                                    controls.Add(expBtns[i]);
+                                    GameWindow.AddControl(expBtns[i]);
                                 }
                             }
 
@@ -337,7 +429,7 @@ namespace csheroes.form.camp
                             acceptDialog.Dispose();
                         }
 
-                        Invalidate();
+                        GameWindow.Invalidate();
                         upgradeDialog.Dispose();
                     }
                 }
@@ -358,12 +450,9 @@ namespace csheroes.form.camp
 
         private void toolStripSplitButton3_ButtonClick(object sender, EventArgs e)
         {
-#if !CAMPMENU
-            parent.Location = new Point(Location.X, Location.Y);
-#endif
-
-            Close();
+            GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            Game.ChangeGameState(parent);
+            StateChange();
         }
-
     }
 }

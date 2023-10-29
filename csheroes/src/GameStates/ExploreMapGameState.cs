@@ -1,5 +1,5 @@
-﻿using csheroes.form.camp;
-using csheroes.src;
+﻿using csheroes.form;
+using csheroes.form.camp;
 using csheroes.src.Saves;
 using csheroes.src.Units;
 using System;
@@ -9,9 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace csheroes.form
+namespace csheroes.src.GameStates
 {
-    public partial class ExploreForm : Form
+    internal class ExploreMapGameState : GameState
     {
         private readonly Graphics surface;
         private readonly ExploreMap exploreMap;
@@ -19,19 +19,119 @@ namespace csheroes.form
 
         private readonly Arrows[,] arrow = null;
 
-        public ExploreForm()
-        {
-            InitializeComponent();
+        ToolStripStatusLabel respectLabel;
 
-            int mapWidth = Width / Global.CellSize;
-            int mapHeight = (Height - 22) / Global.CellSize;
+        public ExploreMapGameState() 
+        {
+            StatusStrip statusStrip1 = new System.Windows.Forms.StatusStrip();
+            ToolStripStatusLabel toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            respectLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            ToolStripStatusLabel toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            ToolStripSplitButton toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+            ToolStripSplitButton toolStripSplitButton2 = new System.Windows.Forms.ToolStripSplitButton();
+            ToolStripSplitButton toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
+            ToolStripSplitButton toolStripSplitButton4 = new System.Windows.Forms.ToolStripSplitButton();
+            GameWindow.SuspendLayout();
+            statusStrip1.SuspendLayout();
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            toolStripStatusLabel2,
+            respectLabel,
+            toolStripStatusLabel1,
+            toolStripSplitButton1,
+            toolStripSplitButton2,
+            toolStripSplitButton4,
+            toolStripSplitButton3});
+            statusStrip1.Location = new System.Drawing.Point(0, 802);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new System.Drawing.Size(802, 22);
+            statusStrip1.SizingGrip = false;
+            statusStrip1.TabIndex = 0;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel2
+            // 
+            toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            toolStripStatusLabel2.Size = new System.Drawing.Size(57, 17);
+            toolStripStatusLabel2.Text = "Влияние:";
+            // 
+            // respectLabel
+            // 
+            respectLabel.Name = "respectLabel";
+            respectLabel.Size = new System.Drawing.Size(13, 17);
+            respectLabel.Text = "0";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new System.Drawing.Size(602, 17);
+            toolStripStatusLabel1.Spring = true;
+            // 
+            // toolStripSplitButton1
+            // 
+            toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton1.DropDownButtonWidth = 0;
+            toolStripSplitButton1.Image = global::csheroes.Properties.Resources.campico;
+            toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton1.Name = "toolStripSplitButton1";
+            toolStripSplitButton1.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton1.Text = "toolStripSplitButton1";
+            toolStripSplitButton1.ButtonClick += new System.EventHandler(CampMenu);
+            // 
+            // toolStripSplitButton2
+            // 
+            toolStripSplitButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton2.DropDownButtonWidth = 0;
+            toolStripSplitButton2.Image = global::csheroes.Properties.Resources.saveico;
+            toolStripSplitButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton2.Name = "toolStripSplitButton2";
+            toolStripSplitButton2.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton2.Text = "toolStripSplitButton2";
+            toolStripSplitButton2.ButtonClick += new System.EventHandler(OpenSaveLoadDialog);
+            // 
+            // toolStripSplitButton3
+            // 
+            toolStripSplitButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton3.DropDownButtonWidth = 0;
+            toolStripSplitButton3.Image = global::csheroes.Properties.Resources.exitico;
+            toolStripSplitButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton3.Name = "toolStripSplitButton3";
+            toolStripSplitButton3.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton3.Text = "toolStripSplitButton3";
+            toolStripSplitButton3.ButtonClick += new System.EventHandler(toolStripSplitButton3_ButtonClick);
+            // 
+            // toolStripSplitButton4
+            // 
+            toolStripSplitButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton4.DropDownButtonWidth = 0;
+            toolStripSplitButton4.Image = global::csheroes.Properties.Resources.question;
+            toolStripSplitButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton4.Name = "toolStripSplitButton4";
+            toolStripSplitButton4.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton4.Text = "toolStripSplitButton4";
+            toolStripSplitButton4.ButtonClick += new System.EventHandler(toolStripSplitButton4_ButtonClick);
+            // 
+            // ExploreForm
+            // 
+            controls.Add(statusStrip1);
+            GameWindow.SetName("Exploring");
+            GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            GameWindow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            statusStrip1.ResumeLayout();
+            GameWindow.ResumeLayout();
+
+            int mapWidth = GameWindow.Width / Global.CellSize;
+            int mapHeight = (GameWindow.Height - 22) / Global.CellSize;
 
             exploreMap = new ExploreMap(mapWidth, mapHeight);
 
-            surface = CreateGraphics();
+            surface = GameWindow.CreateGraphics();
         }
 
-        public ExploreForm(string fileName) : this()
+        public ExploreMapGameState(string fileName) : this()
         {
 #if TEST_MAP
             InitAction();
@@ -40,14 +140,9 @@ namespace csheroes.form
 #endif
         }
 
-        public ExploreForm(byte[] stream) : this()
+        public ExploreMapGameState(byte[] stream) : this()
         {
             InitAction(stream);
-        }
-
-        public void Update(object sender, EventArgs e)
-        {
-            Invalidate();
         }
 
         public void Draw(Graphics g)
@@ -66,12 +161,12 @@ namespace csheroes.form
         {
             for (int i = 0; i < exploreMap.Width; i++)
             {
-                g.DrawLine(Global.GridPen, Global.CellSize * i, 0, Global.CellSize * i, Height);
+                g.DrawLine(Global.GridPen, Global.CellSize * i, 0, Global.CellSize * i, GameWindow.Height);
             }
 
             for (int i = 0; i < exploreMap.Height; i++)
             {
-                g.DrawLine(Global.GridPen, 0, Global.CellSize * i, Width, Global.CellSize * i);
+                g.DrawLine(Global.GridPen, 0, Global.CellSize * i, GameWindow.Width, Global.CellSize * i);
             }
         }
 
@@ -107,7 +202,7 @@ namespace csheroes.form
 
         private bool CellIsEmpty(int x, int y)
         {
-            if (x < 0 || x > Width / Global.CellSize - 1 || y < 0 || y > Height / Global.CellSize - 2) // TODO: проверить, что за фигня с -1 и -2
+            if (x < 0 || x > GameWindow.Width / Global.CellSize - 1 || y < 0 || y > GameWindow.Height / Global.CellSize - 2) // TODO: проверить, что за фигня с -1 и -2
             {
                 return false;
             }
@@ -118,7 +213,7 @@ namespace csheroes.form
         private bool MoveHero(Point dest)
         {
             Queue<Point> visit = new();
-            bool[,] used = new bool[Width / Global.CellSize, Height / Global.CellSize];
+            bool[,] used = new bool[GameWindow.Width / Global.CellSize, GameWindow.Height / Global.CellSize];
 
             visit.Enqueue(exploreMap.heroCords);
             used[exploreMap.heroCords.Y, exploreMap.heroCords.X] = true;
@@ -144,15 +239,8 @@ namespace csheroes.form
 
                         score += exploreMap.hero.Respect;
 
-                        WinForm form = new(exploreMap.locationName, score);
-
-                        form.Location = new Point(Location.X, Location.Y);
-
-                        Visible = false;
-
-                        form.ShowDialog();
-                        form.Dispose();
-                        Close();
+                        GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+                        Game.ChangeGameState(new WinState(exploreMap.locationName, score));
                     }
 
                     return true;
@@ -235,9 +323,9 @@ namespace csheroes.form
 #if DEBUG
             SolidBrush pen = new(Color.FromArgb(128, 0, 0, 255));
 
-            for (int i = 0; i < Width / Global.CellSize; i++)
+            for (int i = 0; i < GameWindow.Width / Global.CellSize; i++)
             {
-                for (int j = 0; j < Height / Global.CellSize; j++)
+                for (int j = 0; j < GameWindow.Height / Global.CellSize; j++)
                 {
                     if (used[i, j] == true)
                     {
@@ -271,7 +359,7 @@ namespace csheroes.form
 
             exploreMap.action[exploreMap.heroCords.Y, exploreMap.heroCords.X] = exploreMap.hero;
 
-            Invalidate();
+            GameWindow.Invalidate();
         }
 
         private void DrawArrow(Arrows direction, int x, int y)
@@ -315,14 +403,22 @@ namespace csheroes.form
 
         private void StartBattle(Army enemy)
         {
-            BattleForm battleForm = new(this, exploreMap.hero, enemy, exploreMap.battleMapBackgroundTile);
+            BattleState battleState = new(this, exploreMap.hero, enemy, exploreMap.battleMapBackgroundTile);
 
-            battleForm.Location = new Point(Location.X, Location.Y);
+            GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            GameWindow.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
 
-            Visible = false;
+            battleState.OnStateChange += OnBattleEnd;
 
-            battleForm.ShowDialog();
-            Location = battleForm.Location;
+            Game.ChangeGameState(battleState);
+
+        }
+
+        private void OnBattleEnd()
+        {
+
+            GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            GameWindow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
 
 #if RELEASE
             if (!battleForm.BattleEnd)
@@ -331,45 +427,38 @@ namespace csheroes.form
                 return;
             }
 #endif
-            Visible = true;
             UpdateRespect();
 
             if (exploreMap.hero.Army.Empty)
             {
-                DefeatForm form = new();
-
-                form.Location = new Point(Location.X, Location.Y);
-
-                Visible = false;
-
-                form.ShowDialog();
-                form.Dispose();
-                Close();
+                GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+                Game.ChangeGameState(new DefeatState());
             }
-
-            battleForm.Dispose();
         }
 
         private void CampMenu(object sender, EventArgs e)
         {
-            CampForm campForm = new(this, exploreMap.hero);
+            CampState campState = new CampState(this, exploreMap.hero);
 
-            campForm.Location = new Point(Location.X, Location.Y);
+            GameWindow.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
 
-            Visible = false;
+            campState.OnStateChange += AfterCampMenuExit;
 
-            campForm.ShowDialog();
-            Location = campForm.Location;
-            campForm.Dispose();
+            Game.ChangeGameState(campState);
+        }
 
+        private void AfterCampMenuExit()
+        {
             UpdateRespect();
 
-            Visible = true;
+            GameWindow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
         }
 
         public void OpenSaveLoadDialog(object sender, EventArgs e)
         {
-            SaveLoadDialog dialog = new(this);
+            SaveLoadDialog dialog = new();
 
             dialog.ShowDialog();
 
@@ -388,7 +477,7 @@ namespace csheroes.form
             try
             {
                 SaveFile.RestoreSaveableObjectStateFromFileWithName(exploreMap, fileName);
-                Invalidate();
+                GameWindow.Invalidate();
             }
             catch (FileNotFoundException)
             {
@@ -445,7 +534,9 @@ namespace csheroes.form
 
         private void toolStripSplitButton3_ButtonClick(object sender, EventArgs e)
         {
-            Close();
+            GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            GameWindow.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.ChangeGameState(new MainMenuState());
         }
 
         private void ExploreForm_Load(object sender, EventArgs e)

@@ -1,18 +1,21 @@
-﻿using csheroes.src;
+﻿using csheroes.form;
 using csheroes.src.Units;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace csheroes.form
+namespace csheroes.src.GameStates
 {
-    public partial class BattleForm : Form
+    public class BattleState: GameState
     {
         private readonly Graphics surface;
-        private readonly ExploreForm parent;
+        private readonly GameState parent;
         private Rectangle background;
         private IGameObj[,] action = null;
         private Direction[,] arrow = null;
@@ -35,10 +38,100 @@ namespace csheroes.form
         private int lastSnapshotIndex = -1;
 #endif
 
-        public BattleForm(ExploreForm parent, Hero hero, Army enemy, Rectangle tile)
-        {
-            InitializeComponent();
+        private ToolStripStatusLabel toolStripStatusLabel1;
 
+        public BattleState() 
+        {
+            Container components = new System.ComponentModel.Container();
+            StatusStrip statusStrip1 = new System.Windows.Forms.StatusStrip();
+            ToolStripStatusLabel toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            ToolStripSplitButton toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+            ToolStripSplitButton toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
+            ToolStripSplitButton toolStripSplitButton2 = new System.Windows.Forms.ToolStripSplitButton();
+            Timer timer1 = new System.Windows.Forms.Timer(components);
+            ToolStripSplitButton toolStripSplitButton4 = new System.Windows.Forms.ToolStripSplitButton();
+            statusStrip1.SuspendLayout();
+            GameWindow.SuspendLayout();
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            toolStripStatusLabel1,
+            toolStripSplitButton1,
+            toolStripSplitButton3,
+            toolStripSplitButton2,
+            toolStripSplitButton4});
+            statusStrip1.Location = new System.Drawing.Point(0, 802);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new System.Drawing.Size(802, 22);
+            statusStrip1.SizingGrip = false;
+            statusStrip1.TabIndex = 0;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new System.Drawing.Size(661, 17);
+            toolStripStatusLabel1.Spring = true;
+            // 
+            // toolStripSplitButton1
+            // 
+            toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton1.DropDownButtonWidth = 0;
+            toolStripSplitButton1.Image = global::csheroes.Properties.Resources.aiicon;
+            toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton1.Name = "toolStripSplitButton1";
+            toolStripSplitButton1.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton1.Text = "toolStripSplitButton1";
+            toolStripSplitButton1.ButtonClick += new System.EventHandler(SwitchAIBtn);
+            // 
+            // toolStripSplitButton3
+            // 
+            toolStripSplitButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton3.DropDownButtonWidth = 0;
+            toolStripSplitButton3.Image = global::csheroes.Properties.Resources.turnbackico;
+            toolStripSplitButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton3.Name = "toolStripSplitButton3";
+            toolStripSplitButton3.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton3.Text = "toolStripSplitButton3";
+            toolStripSplitButton3.ButtonClick += new System.EventHandler(TurnBackBtn);
+            // 
+            // toolStripSplitButton2
+            // 
+            toolStripSplitButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton2.DropDownButtonWidth = 0;
+            toolStripSplitButton2.Image = global::csheroes.Properties.Resources.waitico;
+            toolStripSplitButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton2.Name = "toolStripSplitButton2";
+            toolStripSplitButton2.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton2.Text = "toolStripSplitButton2";
+            toolStripSplitButton2.ButtonClick += new System.EventHandler(WaitBtnClick);
+            // 
+            // toolStripSplitButton4
+            // 
+            toolStripSplitButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            toolStripSplitButton4.DropDownButtonWidth = 0;
+            toolStripSplitButton4.Image = global::csheroes.Properties.Resources.question;
+            toolStripSplitButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripSplitButton4.Name = "toolStripSplitButton4";
+            toolStripSplitButton4.Size = new System.Drawing.Size(21, 20);
+            toolStripSplitButton4.Text = "toolStripSplitButton4";
+            toolStripSplitButton4.ButtonClick += new System.EventHandler(toolStripSplitButton4_ButtonClick);
+            // 
+            // BattleForm
+            // 
+            controls.Add(statusStrip1);
+            GameWindow.SetName("BattleForm");
+            GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            GameWindow.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BattleForm_KeyDown);
+            GameWindow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            statusStrip1.ResumeLayout();
+            GameWindow.ResumeLayout();
+        }
+
+        public BattleState(GameState parent, Hero hero, Army enemy, Rectangle tile): this()
+        {
 #if RELEASE
             toolStripSplitButton1.Visible = false;
             toolStripSplitButton3.Visible = false;
@@ -53,15 +146,15 @@ namespace csheroes.form
             background = tile;
             //InitBackground(tile);
 
-            action = new IGameObj[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            action = new IGameObj[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
 
             firstArmy = hero.Army;
             LinedArmy(firstArmy, out firstArmyCords, 0);
 
             secondArmy = enemy;
-            LinedArmy(secondArmy, out secondArmyCords, Width / Global.BattleCellSize - 1);
+            LinedArmy(secondArmy, out secondArmyCords, GameWindow.Width / Global.BattleCellSize - 1);
 
-            surface = CreateGraphics();
+            surface = GameWindow.CreateGraphics();
 
             NextTurn(firstArmy.Units, ref firstArmyTurn);
         }
@@ -113,7 +206,7 @@ namespace csheroes.form
             g.DrawRectangle(Global.HighlightPen, new Rectangle(tmp.X * Global.BattleCellSize, tmp.Y * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
 
             Queue<Point> visit = new();
-            bool[,] used = new bool[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            bool[,] used = new bool[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
 
             visit.Enqueue(tmp);
             used[tmp.Y, tmp.X] = true;
@@ -240,14 +333,14 @@ namespace csheroes.form
 
         private void DrawGrid(Graphics g)
         {
-            for (int i = 0; i < Width / Global.BattleCellSize; i++)
+            for (int i = 0; i < GameWindow.Width / Global.BattleCellSize; i++)
             {
-                g.DrawLine(Global.GridPen, Global.BattleCellSize * i, 0, Global.BattleCellSize * i, Height);
+                g.DrawLine(Global.GridPen, Global.BattleCellSize * i, 0, Global.BattleCellSize * i, GameWindow.Height);
             }
 
-            for (int i = 0; i < Height / Global.BattleCellSize; i++)
+            for (int i = 0; i < GameWindow.Height / Global.BattleCellSize; i++)
             {
-                g.DrawLine(Global.GridPen, 0, Global.BattleCellSize * i, Width, Global.BattleCellSize * i);
+                g.DrawLine(Global.GridPen, 0, Global.BattleCellSize * i, GameWindow.Width, Global.BattleCellSize * i);
             }
         }
 
@@ -255,9 +348,9 @@ namespace csheroes.form
 
         private void DrawAction(Graphics g)
         {
-            for (int i = 0; i < Width / Global.BattleCellSize; i++)
+            for (int i = 0; i < GameWindow.Width / Global.BattleCellSize; i++)
             {
-                for (int j = 0; j < Height / Global.BattleCellSize; j++)
+                for (int j = 0; j < GameWindow.Height / Global.BattleCellSize; j++)
                 {
                     if (action[i, j] != null && action[i, j].ToString() == "Unit")
                     {
@@ -272,7 +365,8 @@ namespace csheroes.form
                         hp.Height = 13;
                         hp.TextAlign = ContentAlignment.MiddleCenter;
                         hp.Font = new(FontFamily.GenericSerif, 8);
-                        Controls.Add(hp);
+                        controls.Add(hp);
+                        GameWindow.AddControl(hp);
                         hpLabels.Add(hp);
                     }
                 }
@@ -330,7 +424,7 @@ namespace csheroes.form
 
         private bool CellIsEmpty(int x, int y)
         {
-            if (x < 0 || x > Width / Global.BattleCellSize - 1 || y < 0 || y > Height / Global.BattleCellSize - 2)
+            if (x < 0 || x > GameWindow.Width / Global.BattleCellSize - 1 || y < 0 || y > GameWindow.Height / Global.BattleCellSize - 2)
             {
                 return false;
             }
@@ -346,7 +440,7 @@ namespace csheroes.form
             }
 
             Queue<Point> visit = new();
-            bool[,] used = new bool[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            bool[,] used = new bool[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
 
             visit.Enqueue(src);
             used[src.Y, src.X] = true;
@@ -441,9 +535,9 @@ namespace csheroes.form
 #if DEBUG
             SolidBrush pen = new(Color.FromArgb(128, 0, 0, 255));
 
-            for (int i = 0; i < Width / Global.BattleCellSize; i++)
+            for (int i = 0; i < GameWindow.Width / Global.BattleCellSize; i++)
             {
-                for (int j = 0; j < Height / Global.BattleCellSize; j++)
+                for (int j = 0; j < GameWindow.Height / Global.BattleCellSize; j++)
                 {
                     if (used[i, j] == true)
                     {
@@ -482,7 +576,7 @@ namespace csheroes.form
 
         private bool UnitNearby(Point cords, Unit unit)
         {
-            if (cords.Y < action.GetLength(0) && cords.X != Width / Global.BattleCellSize && action[cords.Y, cords.X] != null &&
+            if (cords.Y < action.GetLength(0) && cords.X != GameWindow.Width / Global.BattleCellSize && action[cords.Y, cords.X] != null &&
                 ((cords.X != 0 && action[cords.Y, cords.X - 1] == unit) ||
                 (action[cords.Y, cords.X + 1] == unit) ||
                 (cords.Y != 0 && action[cords.Y - 1, cords.X] == unit) ||
@@ -529,7 +623,7 @@ namespace csheroes.form
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
-            arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            arrow = new Direction[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
             Point dest = new Point(e.X / Global.BattleCellSize, e.Y / Global.BattleCellSize);
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords;
             Army friendArmy = turn ? firstArmy : secondArmy;
@@ -607,7 +701,7 @@ namespace csheroes.form
                     AIMove();
                 }
             }
-            Invalidate();
+            GameWindow.Invalidate();
         }
 
         private double VectorLenght(Point begin, Point end)
@@ -617,7 +711,7 @@ namespace csheroes.form
 
         private void AIMove()
         {
-            arrow = new Direction[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            arrow = new Direction[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords,
                     enemyCords = turn ? secondArmyCords : firstArmyCords;
 
@@ -677,9 +771,9 @@ namespace csheroes.form
                 {
                     dest.X = tmp.X + unit.Range;
 
-                    if (dest.X > Width / Global.BattleCellSize - 1)
+                    if (dest.X > GameWindow.Width / Global.BattleCellSize - 1)
                     {
-                        dest.X = Width / Global.BattleCellSize - 1;
+                        dest.X = GameWindow.Width / Global.BattleCellSize - 1;
                     }
                 }
             }
@@ -699,9 +793,9 @@ namespace csheroes.form
                 {
                     dest.Y = tmp.Y + unit.Range;
 
-                    if (dest.Y > Height / Global.BattleCellSize - 1)
+                    if (dest.Y > GameWindow.Height / Global.BattleCellSize - 1)
                     {
-                        dest.Y = Height / Global.BattleCellSize - 1;
+                        dest.Y = GameWindow.Height / Global.BattleCellSize - 1;
                     }
                 }
             }
@@ -736,7 +830,7 @@ namespace csheroes.form
 
             turn = !turn;
 
-            Invalidate();
+            GameWindow.Invalidate();
         }
 
         private void NextTurn(Unit[] units, ref int index)
@@ -745,7 +839,8 @@ namespace csheroes.form
             {
                 foreach (Label label in hpLabels)
                 {
-                    Controls.Remove(label);
+                    controls.Remove(label);
+                    GameWindow.RemoveControl(label);
                 }
             }
 
@@ -804,11 +899,12 @@ namespace csheroes.form
 
         private void EndBattle()
         {
-#if !TEST_BATTLE
-            parent.Location = new Point(Location.X, Location.Y);
-#endif
+            GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            GameWindow.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.BattleForm_KeyDown);
+            GameWindow.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.ChangeGameState(parent);
+            StateChange();
             battleEnd = true;
-            Close();
             close = true;
         }
 
@@ -858,9 +954,9 @@ namespace csheroes.form
 
         private void DrawBackground(Graphics g)
         {
-            for (int i = 0; i < Width / Global.BattleCellSize; i++)
+            for (int i = 0; i < GameWindow.Width / Global.BattleCellSize; i++)
             {
-                for (int j = 0; j < Height / Global.BattleCellSize; j++)
+                for (int j = 0; j < GameWindow.Height / Global.BattleCellSize; j++)
                 {
                     g.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), background, GraphicsUnit.Pixel);
                 }
@@ -871,7 +967,7 @@ namespace csheroes.form
         {
             cordsArr = new Point[7];
 
-            for (int i = 0; i < Height && i < 7; i++)
+            for (int i = 0; i < GameWindow.Height && i < 7; i++)
             {
                 if (army.Units[i] != null && army.Units[i].Hp != 0)
                 {
@@ -908,7 +1004,8 @@ namespace csheroes.form
             {
                 foreach (Label label in hpLabels)
                 {
-                    Controls.Remove(label);
+                    controls.Remove(label);
+                    GameWindow.RemoveControl(label);
                 }
             }
 
@@ -934,7 +1031,7 @@ namespace csheroes.form
             hero = new Hero(snapshot.hero);
             firstArmy = hero.Army;
             secondArmy = new Army(snapshot.secondArmy);
-            action = new IGameObj[Width / Global.BattleCellSize, Height / Global.BattleCellSize];
+            action = new IGameObj[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
             arrow = null;
 
             for (int i = 0; i < 7; i++)
@@ -957,7 +1054,7 @@ namespace csheroes.form
             turn = snapshot.turn;
             ai = snapshot.ai;
 
-            Invalidate();
+            GameWindow.Invalidate();
         }
 #endif
     }

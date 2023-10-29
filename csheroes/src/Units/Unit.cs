@@ -129,15 +129,6 @@ namespace csheroes.src.Units
 
             set
             {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("Unit health can't be negative");
-                }
-                else if (value > MaxHp)
-                {
-                    throw new ArgumentOutOfRangeException($"Unit health can't be more then {MaxHp}");
-                }
-
                 hp = value;
             }
         }

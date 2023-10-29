@@ -5,16 +5,12 @@ namespace csheroes.form
 {
     public partial class SaveLoadDialog : Form
     {
-        private readonly ExploreForm parent;
-
         public string fileName;
         public bool save, load;
 
-        public SaveLoadDialog(ExploreForm parent)
+        public SaveLoadDialog()
         {
             InitializeComponent();
-
-            this.parent = parent;
         }
 
         private void button2_Click(object sender, EventArgs e)
