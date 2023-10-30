@@ -9,7 +9,6 @@ namespace csheroes.src.GameStates
 
         public NewGameState()
         {
-            Label label1 = new Label();
             Button button1 = new Button();
             Button button2 = new Button();
             Button button3 = new Button();
@@ -17,13 +16,12 @@ namespace csheroes.src.GameStates
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(111, 9);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(141, 15);
-            label1.TabIndex = 0;
-            label1.Text = "Выберите приключение";
-            controls.Add(label1);
+            UI.Label label1 = new()
+            {
+                Location = new System.Drawing.Point(111, 9),
+                Text = "Выберите приключение"
+            };
+            controls.Add(label1.Control);
             // 
             // button1
             // 

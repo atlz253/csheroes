@@ -344,7 +344,7 @@ namespace csheroes.src.GameStates
             }
         }
 
-        private List<Label> hpLabels = new();
+        private List<UI.Label> hpLabels = new();
 
         private void DrawAction(Graphics g)
         {
@@ -356,17 +356,19 @@ namespace csheroes.src.GameStates
                     {
                         g.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), action[i, j].Tile.Area, GraphicsUnit.Pixel);
 
-                        Label hp = new();
-                        hp.Text = ((Unit)action[i, j]).Hp.ToString();
-                        hp.Location = new(Global.BattleCellSize * j + 25, Global.BattleCellSize * i + 37);
-                        hp.BackColor = Color.Green;
-                        hp.ForeColor = Color.White;
-                        hp.Width = 25;
-                        hp.Height = 13;
-                        hp.TextAlign = ContentAlignment.MiddleCenter;
-                        hp.Font = new(FontFamily.GenericSerif, 8);
-                        controls.Add(hp);
-                        GameWindow.AddControl(hp);
+                        UI.Label hp = new()
+                        {
+                            Text = ((Unit)action[i, j]).Hp.ToString(),
+                            Location = new(Global.BattleCellSize * j + 25, Global.BattleCellSize * i + 37),
+                            BackColor = Color.Green,
+                            FontColor = Color.White,
+                            Width = 25,
+                            Height = 13,
+                            TextAlign = ContentAlignment.MiddleCenter,
+                            FontSize = 8F
+                        };
+                        controls.Add(hp.Control);
+                        GameWindow.AddControl(hp.Control);
                         hpLabels.Add(hp);
                     }
                 }
@@ -837,10 +839,10 @@ namespace csheroes.src.GameStates
         {
             if (hpLabels != null) // удаляем старое количество hp
             {
-                foreach (Label label in hpLabels)
+                foreach (UI.Label label in hpLabels)
                 {
-                    controls.Remove(label);
-                    GameWindow.RemoveControl(label);
+                    controls.Remove(label.Control);
+                    GameWindow.RemoveControl(label.Control);
                 }
             }
 
@@ -1002,10 +1004,10 @@ namespace csheroes.src.GameStates
         {
             if (hpLabels != null) // удаляем старое количество hp
             {
-                foreach (Label label in hpLabels)
+                foreach (UI.Label label in hpLabels)
                 {
-                    controls.Remove(label);
-                    GameWindow.RemoveControl(label);
+                    controls.Remove(label.Control);
+                    GameWindow.RemoveControl(label.Control);
                 }
             }
 

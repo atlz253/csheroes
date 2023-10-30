@@ -1,18 +1,15 @@
 ﻿using System;
-using System.IO;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace csheroes.src.GameStates
 {
-    public class LoadGameState: GameState
+    public class LoadGameState : GameState
     {
         private TextBox textBox1;
 
-        public LoadGameState() 
+        public LoadGameState()
         {
             textBox1 = new System.Windows.Forms.TextBox();
-            Label label1 = new System.Windows.Forms.Label();
             Button button1 = new System.Windows.Forms.Button();
             Button button2 = new System.Windows.Forms.Button();
             GameWindow.SuspendLayout();
@@ -26,12 +23,11 @@ namespace csheroes.src.GameStates
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(37, 9);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(143, 15);
-            label1.TabIndex = 1;
-            label1.Text = "Введите имя сохранения";
+            UI.Label label1 = new()
+            {
+                Location = new System.Drawing.Point(37, 9),
+                Text = "Введите имя сохранения"
+            };
             // 
             // button1
             // 
@@ -57,7 +53,7 @@ namespace csheroes.src.GameStates
             // 
             controls.Add(button2);
             controls.Add(button1);
-            controls.Add(label1);
+            controls.Add(label1.Control);
             controls.Add(textBox1);
             GameWindow.SetName("Load");
             GameWindow.ResumeLayout();

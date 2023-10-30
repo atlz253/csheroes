@@ -13,35 +13,31 @@ namespace csheroes.src.GameStates
 
         public WinState()
         {
-            Label label1 = new System.Windows.Forms.Label();
-            Label label2 = new System.Windows.Forms.Label();
             Button button1 = new System.Windows.Forms.Button();
             textBox1 = new System.Windows.Forms.TextBox();
             GameWindow.SuspendLayout();
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.BackColor = System.Drawing.Color.Transparent;
-            label1.Font = new System.Drawing.Font("Segoe UI", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            label1.Location = new System.Drawing.Point(308, 9);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(151, 47);
-            label1.TabIndex = 0;
-            label1.Text = "Победа!";
+            UI.Label label1 = new()
+            {
+                BackColor = System.Drawing.Color.Transparent,
+                FontSize = 26F,
+                FontColor = System.Drawing.SystemColors.ButtonHighlight,
+                Location = new System.Drawing.Point(308, 9),
+                Text = "Победа!"
+            };
             // 
             // label2
             // 
-            label2.AutoSize = true;
-            label2.BackColor = System.Drawing.Color.Transparent;
-            label2.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            label2.Location = new System.Drawing.Point(58, 56);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(683, 37);
-            label2.TabIndex = 1;
-            label2.Text = "Вашей группе без лишних вопросов закрыли сессию!";
+            UI.Label label2 = new()
+            {
+                BackColor = System.Drawing.Color.Transparent,
+                FontSize = 20F,
+                Location = new System.Drawing.Point(58, 56),
+                FontColor = System.Drawing.SystemColors.ButtonHighlight,
+                Text = "Вашей группе без лишних вопросов закрыли сессию!"
+            };
             // 
             // button1
             // 
@@ -67,8 +63,8 @@ namespace csheroes.src.GameStates
             GameWindow.SetBackgroundImage(Properties.Resources.win);
             controls.Add(textBox1);
             controls.Add(button1);
-            controls.Add(label2);
-            controls.Add(label1);
+            controls.Add(label2.Control);
+            controls.Add(label1.Control);
             GameWindow.SetName("WinForm");
             GameWindow.ResumeLayout();
         }

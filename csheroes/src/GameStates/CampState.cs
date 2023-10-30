@@ -11,7 +11,7 @@ namespace csheroes.src.GameStates
     {
         private readonly GameState parent;
         private readonly Hero hero;
-        private Label[] dmgLabels,
+        private UI.Label[] dmgLabels,
                 hpLabels,
                 rangeLabels;
         private Button[] healBtns,
@@ -109,9 +109,9 @@ namespace csheroes.src.GameStates
 
         private void InitCards()
         {
-            dmgLabels = new Label[7];
-            hpLabels = new Label[7];
-            rangeLabels = new Label[7];
+            dmgLabels = new UI.Label[7];
+            hpLabels = new UI.Label[7];
+            rangeLabels = new UI.Label[7];
             healBtns = new Button[7];
             expBtns = new Button[7];
             newUnitBtns = new Button[7];
@@ -122,26 +122,32 @@ namespace csheroes.src.GameStates
                 {
                     Unit unit = hero.Army.Units[i];
 
-                    hpLabels[i] = new();
-                    hpLabels[i].Text = "HP: " + unit.Hp.ToString();
-                    hpLabels[i].Width = 60;
-                    hpLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 685);
-                    controls.Add(hpLabels[i]);
-                    GameWindow.AddControl(hpLabels[i]);
+                    hpLabels[i] = new UI.Label
+                    {
+                        Text = "HP: " + unit.Hp.ToString(),
+                        Width = 60,
+                        Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 685)
+                    };
+                    controls.Add(hpLabels[i].Control);
+                    GameWindow.AddControl(hpLabels[i].Control);
 
-                    dmgLabels[i] = new();
-                    dmgLabels[i].Text = "DMG: " + unit.Damage.ToString();
-                    dmgLabels[i].Width = 60;
-                    dmgLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 705);
-                    controls.Add(dmgLabels[i]);
-                    GameWindow.AddControl(dmgLabels[i]);
+                    dmgLabels[i] = new()
+                    {
+                        Text = "DMG: " + unit.Damage.ToString(),
+                        Width = 60,
+                        Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 705)
+                    };
+                    controls.Add(dmgLabels[i].Control);
+                    GameWindow.AddControl(dmgLabels[i].Control);
 
-                    rangeLabels[i] = new();
-                    rangeLabels[i].Text = "RNG: " + unit.Range.ToString();
-                    rangeLabels[i].Width = 60;
-                    rangeLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 725);
-                    controls.Add(rangeLabels[i]);
-                    GameWindow.AddControl(rangeLabels[i]);
+                    rangeLabels[i] = new()
+                    {
+                        Text = "RNG: " + unit.Range.ToString(),
+                        Width = 60,
+                        Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 725)
+                    };
+                    controls.Add(rangeLabels[i].Control);
+                    GameWindow.AddControl(rangeLabels[i].Control);
 
                     if (unit.Hp != unit.MaxHp)
                     {
@@ -239,26 +245,32 @@ namespace csheroes.src.GameStates
 
                             Unit unit = hero.Army.Units[i];
 
-                            hpLabels[i] = new();
-                            hpLabels[i].Text = "HP: " + unit.Hp.ToString();
-                            hpLabels[i].Width = 60;
-                            hpLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 685);
-                            controls.Add(hpLabels[i]);
-                            GameWindow.RemoveControl(hpLabels[i]);
+                            hpLabels[i] = new()
+                            {
+                                Text = "HP: " + unit.Hp.ToString(),
+                                Width = 60,
+                                Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 685)
+                            };
+                            controls.Add(hpLabels[i].Control);
+                            GameWindow.RemoveControl(hpLabels[i].Control);
 
-                            dmgLabels[i] = new();
-                            dmgLabels[i].Text = "DMG: " + unit.Damage.ToString();
-                            dmgLabels[i].Width = 60;
-                            dmgLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 705);
-                            controls.Add(dmgLabels[i]);
-                            GameWindow.RemoveControl(dmgLabels[i]);
+                            dmgLabels[i] = new()
+                            {
+                                Text = "DMG: " + unit.Damage.ToString(),
+                                Width = 60,
+                                Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 705)
+                            };
+                            controls.Add(dmgLabels[i].Control);
+                            GameWindow.RemoveControl(dmgLabels[i].Control);
 
-                            rangeLabels[i] = new();
-                            rangeLabels[i].Text = "RNG: " + unit.Range.ToString();
-                            rangeLabels[i].Width = 60;
-                            rangeLabels[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 725);
-                            controls.Add(rangeLabels[i]);
-                            GameWindow.RemoveControl(rangeLabels[i]);
+                            rangeLabels[i] = new()
+                            {
+                                Text = "RNG: " + unit.Range.ToString(),
+                                Width = 60,
+                                Location = new Point(100 / 8 * (i + 1) + i * 100 + 5, 725)
+                            };
+                            controls.Add(rangeLabels[i].Control);
+                            GameWindow.RemoveControl(rangeLabels[i].Control);
 
                             GameWindow.Invalidate();
                             return;

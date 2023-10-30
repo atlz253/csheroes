@@ -7,34 +7,28 @@ namespace csheroes.src.GameStates
     {
         public DefeatState() 
         {
-            Label label1 = new System.Windows.Forms.Label();
-            Label label2 = new System.Windows.Forms.Label();
             Button button1 = new System.Windows.Forms.Button();
             GameWindow.SuspendLayout();
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.BackColor = System.Drawing.Color.Transparent;
-            label1.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            label1.Location = new System.Drawing.Point(259, 9);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(243, 45);
-            label1.TabIndex = 0;
-            label1.Text = "Вас отчислили!";
+            UI.Label label1 = new()
+            {
+                FontSize = 24F,
+                FontColor = System.Drawing.SystemColors.ButtonHighlight,
+                Location = new System.Drawing.Point(259, 9),
+                Text = "Вас отчислили!"
+            };
             // 
             // label2
             // 
-            label2.AutoSize = true;
-            label2.BackColor = System.Drawing.Color.Transparent;
-            label2.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            label2.Location = new System.Drawing.Point(100, 54);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(612, 37);
-            label2.TabIndex = 1;
-            label2.Text = "Ваша дальнейшая судьба туманна и неизвестна";
+            UI.Label label2 = new()
+            {
+                FontSize = 20F,
+                FontColor = System.Drawing.SystemColors.ButtonHighlight,
+                Location = new System.Drawing.Point(100, 54),
+                Text = "Ваша дальнейшая судьба туманна и неизвестна"
+            };
             // 
             // button1
             // 
@@ -49,8 +43,8 @@ namespace csheroes.src.GameStates
             // DefeatForm
             // 
             controls.Add(button1);
-            controls.Add(label2);
-            controls.Add(label1);
+            controls.Add(label2.Control);
+            controls.Add(label1.Control);
             GameWindow.SetBackgroundImage(Properties.Resources.defeat);
             GameWindow.SetName("Defeat");
             GameWindow.ResumeLayout();
