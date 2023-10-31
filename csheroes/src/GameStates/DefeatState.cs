@@ -7,7 +7,6 @@ namespace csheroes.src.GameStates
     {
         public DefeatState() 
         {
-            Button button1 = new System.Windows.Forms.Button();
             GameWindow.SuspendLayout();
             // 
             // label1
@@ -32,17 +31,18 @@ namespace csheroes.src.GameStates
             // 
             // button1
             // 
-            button1.Location = new System.Drawing.Point(319, 742);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(163, 23);
-            button1.TabIndex = 2;
-            button1.Text = "Стойте! Еще один шанс...";
-            button1.UseVisualStyleBackColor = true;
+            UI.Button button1 = new()
+            {
+                Location = new System.Drawing.Point(319, 742),
+                Name = "button1",
+                Size = new System.Drawing.Size(163, 23),
+                Text = "Стойте! Еще один шанс...",
+            };
             button1.Click += new System.EventHandler(button1_Click);
             // 
             // DefeatForm
             // 
-            controls.Add(button1);
+            controls.Add(button1.Control);
             controls.Add(label2.Control);
             controls.Add(label1.Control);
             GameWindow.SetBackgroundImage(Properties.Resources.defeat);

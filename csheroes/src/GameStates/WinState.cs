@@ -13,7 +13,6 @@ namespace csheroes.src.GameStates
 
         public WinState()
         {
-            Button button1 = new System.Windows.Forms.Button();
             textBox1 = new System.Windows.Forms.TextBox();
             GameWindow.SuspendLayout();
             // 
@@ -41,12 +40,13 @@ namespace csheroes.src.GameStates
             // 
             // button1
             // 
-            button1.Location = new System.Drawing.Point(506, 757);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(75, 23);
-            button1.TabIndex = 2;
-            button1.Text = "ok";
-            button1.UseVisualStyleBackColor = true;
+            UI.Button button1 = new()
+            {
+                Location = new System.Drawing.Point(506, 757),
+                Name = "button1",
+                Size = new System.Drawing.Size(75, 23),
+                Text = "ok",
+            };
             button1.Click += new System.EventHandler(button1_Click);
             // 
             // textBox1
@@ -62,7 +62,7 @@ namespace csheroes.src.GameStates
             
             GameWindow.SetBackgroundImage(Properties.Resources.win);
             controls.Add(textBox1);
-            controls.Add(button1);
+            controls.Add(button1.Control);
             controls.Add(label2.Control);
             controls.Add(label1.Control);
             GameWindow.SetName("WinForm");

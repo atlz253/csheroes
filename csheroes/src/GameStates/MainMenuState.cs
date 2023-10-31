@@ -9,10 +9,6 @@ namespace csheroes.src.GameStates
     {
         public MainMenuState()
         {
-            Button button1 = new Button();
-            Button button2 = new Button();
-            Button button3 = new Button();
-            Button button4 = new Button();
             GameWindow.SuspendLayout();
             // 
             // label1
@@ -28,47 +24,47 @@ namespace csheroes.src.GameStates
             // 
             // button1
             // 
-            button1.Location = new System.Drawing.Point(272, 194);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(250, 100);
-            button1.TabIndex = 1;
-            button1.Text = "Новая игра";
-            button1.UseVisualStyleBackColor = true;
+            UI.Button button1 = new()
+            {
+                Location = new System.Drawing.Point(272, 194),
+                Size = new System.Drawing.Size(250, 100),
+                Text = "Новая игра"
+            };
             button1.Click += ChangeGameStateToNewGame;
-            controls.Add(button1);
+            controls.Add(button1.Control);
             // 
             // button2
             // 
-            button2.Location = new System.Drawing.Point(272, 314);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(250, 100);
-            button2.TabIndex = 2;
-            button2.Text = "Загрузить игру";
-            button2.UseVisualStyleBackColor = true;
+            UI.Button button2 = new()
+            {
+                Location = new System.Drawing.Point(272, 314),
+                Size = new System.Drawing.Size(250, 100),
+                Text = "Загрузить игру",
+            };
             button2.Click += new System.EventHandler(LoadGameDialog);
-            controls.Add(button2);
+            controls.Add(button2.Control);
             // 
             // button3
             // 
-            button3.Location = new System.Drawing.Point(272, 434);
-            button3.Name = "button3";
-            button3.Size = new System.Drawing.Size(250, 100);
-            button3.TabIndex = 3;
-            button3.Text = "Рекорды";
-            button3.UseVisualStyleBackColor = true;
+            UI.Button button3 = new()
+            {
+                Location = new System.Drawing.Point(272, 434),
+                Size = new System.Drawing.Size(250, 100),
+                Text = "Рекорды",
+            };
             button3.Click += new System.EventHandler(this.RecordsMenu);
-            controls.Add(button3);
+            controls.Add(button3.Control);
             // 
             // button4
             // 
-            button4.Location = new System.Drawing.Point(272, 555);
-            button4.Name = "button4";
-            button4.Size = new System.Drawing.Size(250, 100);
-            button4.TabIndex = 4;
-            button4.Text = "Выход";
-            button4.UseVisualStyleBackColor = true;
+            UI.Button button4 = new()
+            {
+                Location = new System.Drawing.Point(272, 555),
+                Size = new System.Drawing.Size(250, 100),
+                Text = "Выход",
+            };
             button4.Click += Exit;
-            controls.Add(button4);
+            controls.Add(button4.Control);
             // 
             // label2
             //

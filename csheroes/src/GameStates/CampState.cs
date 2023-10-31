@@ -14,7 +14,7 @@ namespace csheroes.src.GameStates
         private UI.Label[] dmgLabels,
                 hpLabels,
                 rangeLabels;
-        private Button[] healBtns,
+        private UI.Button[] healBtns,
                  expBtns,
                  newUnitBtns;
 
@@ -112,9 +112,9 @@ namespace csheroes.src.GameStates
             dmgLabels = new UI.Label[7];
             hpLabels = new UI.Label[7];
             rangeLabels = new UI.Label[7];
-            healBtns = new Button[7];
-            expBtns = new Button[7];
-            newUnitBtns = new Button[7];
+            healBtns = new UI.Button[7];
+            expBtns = new UI.Button[7];
+            newUnitBtns = new UI.Button[7];
 
             for (int i = 0; i < 7; i++)
             {
@@ -151,38 +151,44 @@ namespace csheroes.src.GameStates
 
                     if (unit.Hp != unit.MaxHp)
                     {
-                        healBtns[i] = new();
-                        healBtns[i].Text = "HP";
-                        healBtns[i].Name = $"healBtn{i}";
-                        healBtns[i].Size = new Size(25, 25);
-                        healBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 685);
+                        healBtns[i] = new()
+                        {
+                            Text = "HP",
+                            Name = $"healBtn{i}",
+                            Size = new Size(25, 25),
+                            Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 685)
+                        };
                         healBtns[i].Click += new EventHandler(Heal);
-                        controls.Add(healBtns[i]);
-                        GameWindow.AddControl(healBtns[i]);
+                        controls.Add(healBtns[i].Control);
+                        GameWindow.AddControl(healBtns[i].Control);
                     }
 
                     if (unit.Exp >= unit.NextLevel)
                     {
-                        expBtns[i] = new();
-                        expBtns[i].Text = "EXP";
-                        expBtns[i].Name = $"expBtn{i}";
-                        expBtns[i].Size = new Size(25, 25);
-                        expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715);
+                        expBtns[i] = new()
+                        {
+                            Text = "EXP",
+                            Name = $"expBtn{i}",
+                            Size = new Size(25, 25),
+                            Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715)
+                        };
                         expBtns[i].Click += new EventHandler(Upgrade);
-                        controls.Add(expBtns[i]);
-                        GameWindow.AddControl(expBtns[i]);
+                        controls.Add(expBtns[i].Control);
+                        GameWindow.AddControl(expBtns[i].Control);
                     }
                 }
                 else
                 {
-                    newUnitBtns[i] = new();
-                    newUnitBtns[i].Text = "+";
-                    newUnitBtns[i].Name = $"newUnitBtns{1}";
-                    newUnitBtns[i].Size = new Size(25, 25);
-                    newUnitBtns[i].Location = new Point(100 / 8 * (i + 1) + i * 100 + 10, 610);
+                    newUnitBtns[i] = new()
+                    {
+                        Text = "+",
+                        Name = $"newUnitBtns{1}",
+                        Size = new Size(25, 25),
+                        Location = new Point(100 / 8 * (i + 1) + i * 100 + 10, 610)
+                    };
                     newUnitBtns[i].Click += new EventHandler(AddUnit);
-                    controls.Add(newUnitBtns[i]);
-                    GameWindow.AddControl(newUnitBtns[i]);
+                    controls.Add(newUnitBtns[i].Control);
+                    GameWindow.AddControl(newUnitBtns[i].Control);
                 }
             }
         }
@@ -239,8 +245,8 @@ namespace csheroes.src.GameStates
 
                             hero.Army.Units[i] = new(true);
 
-                            controls.Remove(newUnitBtns[i]);
-                            GameWindow.RemoveControl(newUnitBtns[i]);
+                            controls.Remove(newUnitBtns[i].Control);
+                            GameWindow.RemoveControl(newUnitBtns[i].Control);
                             newUnitBtns[i] = null;
 
                             Unit unit = hero.Army.Units[i];
@@ -309,8 +315,8 @@ namespace csheroes.src.GameStates
                         hero.Respect -= healCost;
                         hero.Army.Units[i].Hp = hero.Army.Units[i].MaxHp;
 
-                        controls.Remove(healBtns[i]);
-                        GameWindow.RemoveControl(healBtns[i]);
+                        controls.Remove(healBtns[i].Control);
+                        GameWindow.RemoveControl(healBtns[i].Control);
                         healBtns[i] = null;
 
                         hpLabels[i].Text = "HP:   " + hero.Army.Units[i].Hp.ToString();
@@ -362,20 +368,22 @@ namespace csheroes.src.GameStates
 
                             hero.Army.Units[i].NextLevel = hero.Army.Units[i].NextLevel * 2;
 
-                            controls.Remove(expBtns[i]);
-                            GameWindow.RemoveControl(expBtns[i]);
+                            controls.Remove(expBtns[i].Control);
+                            GameWindow.RemoveControl(expBtns[i].Control);
                             expBtns[i] = null;
 
                             if (hero.Army.Units[i].Exp >= hero.Army.Units[i].NextLevel)
                             {
-                                expBtns[i] = new();
-                                expBtns[i].Text = "EXP";
-                                expBtns[i].Name = $"expBtn{i}";
-                                expBtns[i].Size = new Size(25, 25);
-                                expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715);
+                                expBtns[i] = new()
+                                {
+                                    Text = "EXP",
+                                    Name = $"expBtn{i}",
+                                    Size = new Size(25, 25),
+                                    Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715)
+                                };
                                 expBtns[i].Click += new EventHandler(Upgrade);
-                                controls.Add(expBtns[i]);
-                                GameWindow.AddControl(expBtns[i]);
+                                controls.Add(expBtns[i].Control);
+                                GameWindow.AddControl(expBtns[i].Control);
                             }
                         }
 
@@ -420,20 +428,22 @@ namespace csheroes.src.GameStates
                                 UpdateRespect();
                                 hero.Army.Units[i].NextLevel = hero.Army.Units[i].NextLevel * 2;
 
-                                controls.Remove(expBtns[i]);
-                                GameWindow.RemoveControl(expBtns[i]);
+                                controls.Remove(expBtns[i].Control);
+                                GameWindow.RemoveControl(expBtns[i].Control);
                                 expBtns[i] = null;
 
                                 if (hero.Army.Units[i].Exp >= hero.Army.Units[i].NextLevel)
                                 {
-                                    expBtns[i] = new();
-                                    expBtns[i].Text = "EXP";
-                                    expBtns[i].Name = $"expBtn{i}";
-                                    expBtns[i].Size = new Size(25, 25);
-                                    expBtns[i].Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715);
+                                    expBtns[i] = new()
+                                    {
+                                        Text = "EXP",
+                                        Name = $"expBtn{i}",
+                                        Size = new Size(25, 25),
+                                        Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715)
+                                    };
                                     expBtns[i].Click += new EventHandler(Upgrade);
-                                    controls.Add(expBtns[i]);
-                                    GameWindow.AddControl(expBtns[i]);
+                                    controls.Add(expBtns[i].Control);
+                                    GameWindow.AddControl(expBtns[i].Control);
                                 }
                             }
 

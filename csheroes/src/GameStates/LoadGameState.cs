@@ -10,8 +10,6 @@ namespace csheroes.src.GameStates
         public LoadGameState()
         {
             textBox1 = new System.Windows.Forms.TextBox();
-            Button button1 = new System.Windows.Forms.Button();
-            Button button2 = new System.Windows.Forms.Button();
             GameWindow.SuspendLayout();
             // 
             // textBox1
@@ -31,28 +29,30 @@ namespace csheroes.src.GameStates
             // 
             // button1
             // 
-            button1.Location = new System.Drawing.Point(12, 56);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(75, 23);
-            button1.TabIndex = 2;
-            button1.Text = "Загрузить";
-            button1.UseVisualStyleBackColor = true;
+            UI.Button button1 = new()
+            {
+                Location = new System.Drawing.Point(12, 56),
+                Name = "button1",
+                Size = new System.Drawing.Size(75, 23),
+                Text = "Загрузить",
+            };
             button1.Click += new System.EventHandler(button1_Click);
             // 
             // button2
             // 
-            button2.Location = new System.Drawing.Point(131, 56);
-            button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(75, 23);
-            button2.TabIndex = 3;
-            button2.Text = "Отмена";
-            button2.UseVisualStyleBackColor = true;
+            UI.Button button2 = new()
+            {
+                Location = new System.Drawing.Point(131, 56),
+                Name = "button2",
+                Size = new System.Drawing.Size(75, 23),
+                Text = "Отмена",
+            };
             button2.Click += new System.EventHandler(button2_Click);
             // 
             // LoadDialog
             // 
-            controls.Add(button2);
-            controls.Add(button1);
+            controls.Add(button2.Control);
+            controls.Add(button1.Control);
             controls.Add(label1.Control);
             controls.Add(textBox1);
             GameWindow.SetName("Load");
