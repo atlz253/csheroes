@@ -1,7 +1,6 @@
-﻿using csheroes.form;
+﻿using csheroes.src.UI;
 using System;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace csheroes.src.GameStates
 {
@@ -24,47 +23,35 @@ namespace csheroes.src.GameStates
             // 
             // button1
             // 
-            UI.Button button1 = new()
-            {
-                Location = new System.Drawing.Point(272, 194),
-                Size = new System.Drawing.Size(250, 100),
-                Text = "Новая игра"
-            };
-            button1.Click += ChangeGameStateToNewGame;
-            controls.Add(button1.Control);
+            Button newGameButton = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            newGameButton.Text = "Новая игра";
+            newGameButton.SetPosition(272, 194);
+            newGameButton.Click += ChangeGameStateToNewGame;
+            controls.Add(newGameButton.Control);
             // 
             // button2
             // 
-            UI.Button button2 = new()
-            {
-                Location = new System.Drawing.Point(272, 314),
-                Size = new System.Drawing.Size(250, 100),
-                Text = "Загрузить игру",
-            };
-            button2.Click += new System.EventHandler(LoadGameDialog);
-            controls.Add(button2.Control);
+            Button loadGameButton = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            loadGameButton.Text = "Загрузить игру";
+            loadGameButton.SetPosition(272, 314);
+            loadGameButton.Click += LoadGameDialog;
+            controls.Add(loadGameButton.Control);
             // 
             // button3
             // 
-            UI.Button button3 = new()
-            {
-                Location = new System.Drawing.Point(272, 434),
-                Size = new System.Drawing.Size(250, 100),
-                Text = "Рекорды",
-            };
-            button3.Click += new System.EventHandler(this.RecordsMenu);
-            controls.Add(button3.Control);
+            Button recordsButton = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            recordsButton.SetPosition(272, 434);
+            recordsButton.Text = "Рекорды";
+            recordsButton.Click += new System.EventHandler(this.RecordsMenu);
+            controls.Add(recordsButton.Control);
             // 
             // button4
             // 
-            UI.Button button4 = new()
-            {
-                Location = new System.Drawing.Point(272, 555),
-                Size = new System.Drawing.Size(250, 100),
-                Text = "Выход",
-            };
-            button4.Click += Exit;
-            controls.Add(button4.Control);
+            Button exitButton = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            exitButton.SetPosition(272, 555);
+            exitButton.Text = "Выход";
+            exitButton.Click += Exit;
+            controls.Add(exitButton.Control);
             // 
             // label2
             //

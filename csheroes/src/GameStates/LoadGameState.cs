@@ -1,4 +1,5 @@
-﻿using System;
+﻿using csheroes.src.UI;
+using System;
 using System.Windows.Forms;
 
 namespace csheroes.src.GameStates
@@ -29,24 +30,16 @@ namespace csheroes.src.GameStates
             // 
             // button1
             // 
-            UI.Button button1 = new()
-            {
-                Location = new System.Drawing.Point(12, 56),
-                Name = "button1",
-                Size = new System.Drawing.Size(75, 23),
-                Text = "Загрузить",
-            };
+            UI.Button button1 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            button1.Text = "Загрузить";
+            button1.SetPosition(12, 56);
             button1.Click += new System.EventHandler(button1_Click);
             // 
             // button2
             // 
-            UI.Button button2 = new()
-            {
-                Location = new System.Drawing.Point(131, 56),
-                Name = "button2",
-                Size = new System.Drawing.Size(75, 23),
-                Text = "Отмена",
-            };
+            UI.Button button2 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            button2.Text = "Отмена";
+            button2.SetPosition(300, 56);
             button2.Click += new System.EventHandler(button2_Click);
             // 
             // LoadDialog

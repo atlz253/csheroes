@@ -2,7 +2,7 @@
 
 namespace csheroes.src.UI
 {
-    public class Label
+    public class Label: UIObject
     {
         private readonly System.Windows.Forms.Label label = new System.Windows.Forms.Label();
 

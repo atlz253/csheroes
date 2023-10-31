@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System;
 using System.Windows.Forms;
+using csheroes.src.UI;
 
 namespace csheroes.src.GameStates
 {
@@ -40,13 +41,9 @@ namespace csheroes.src.GameStates
             // 
             // button1
             // 
-            UI.Button button1 = new()
-            {
-                Location = new System.Drawing.Point(506, 757),
-                Name = "button1",
-                Size = new System.Drawing.Size(75, 23),
-                Text = "ok",
-            };
+            UI.Button button1 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            button1.Text = "ok";
+            button1.SetPosition(506, 757);
             button1.Click += new System.EventHandler(button1_Click);
             // 
             // textBox1

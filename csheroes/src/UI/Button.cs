@@ -3,11 +3,16 @@ using System.Drawing;
 
 namespace csheroes.src.UI
 {
-    public class Button
+    public class Button: UIObject
     {
         System.Windows.Forms.Button button = new();
         
         public event EventHandler Click;
+
+        public void SetPosition(int x, int y)
+        {
+            button.Location = new(x, y);
+        }
 
         public Point Location
         {

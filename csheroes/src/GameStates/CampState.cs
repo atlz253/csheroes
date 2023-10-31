@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing;
 using System;
 using System.Windows.Forms;
+using csheroes.src.UI;
 
 namespace csheroes.src.GameStates
 {
@@ -151,13 +152,10 @@ namespace csheroes.src.GameStates
 
                     if (unit.Hp != unit.MaxHp)
                     {
-                        healBtns[i] = new()
-                        {
-                            Text = "HP",
-                            Name = $"healBtn{i}",
-                            Size = new Size(25, 25),
-                            Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 685)
-                        };
+                        healBtns[i] = ButtonFactory.InstantiateButton(ButtonTemplate.CampMenuButton);
+                        healBtns[i].Text = "HP";
+                        healBtns[i].Name = $"healBtn{i}";
+                        healBtns[i].SetPosition(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 685);
                         healBtns[i].Click += new EventHandler(Heal);
                         controls.Add(healBtns[i].Control);
                         GameWindow.AddControl(healBtns[i].Control);
@@ -165,13 +163,10 @@ namespace csheroes.src.GameStates
 
                     if (unit.Exp >= unit.NextLevel)
                     {
-                        expBtns[i] = new()
-                        {
-                            Text = "EXP",
-                            Name = $"expBtn{i}",
-                            Size = new Size(25, 25),
-                            Location = new Point(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715)
-                        };
+                        expBtns[i] = ButtonFactory.InstantiateButton(ButtonTemplate.CampMenuButton);
+                        expBtns[i].Text = "EXP";
+                        expBtns[i].Name = $"expBtn{i}";
+                        expBtns[i].SetPosition(100 / 8 * (i + 1) + (i + 1) * 100 - 30, 715);
                         expBtns[i].Click += new EventHandler(Upgrade);
                         controls.Add(expBtns[i].Control);
                         GameWindow.AddControl(expBtns[i].Control);
@@ -179,13 +174,10 @@ namespace csheroes.src.GameStates
                 }
                 else
                 {
-                    newUnitBtns[i] = new()
-                    {
-                        Text = "+",
-                        Name = $"newUnitBtns{1}",
-                        Size = new Size(25, 25),
-                        Location = new Point(100 / 8 * (i + 1) + i * 100 + 10, 610)
-                    };
+                    newUnitBtns[i] = ButtonFactory.InstantiateButton(ButtonTemplate.CampMenuButton);
+                    newUnitBtns[i].Text = "+";
+                    newUnitBtns[i].Name = $"newUnitBtns{1}";
+                    newUnitBtns[i].SetPosition(100 / 8 * (i + 1) + i * 100 + 10, 610);
                     newUnitBtns[i].Click += new EventHandler(AddUnit);
                     controls.Add(newUnitBtns[i].Control);
                     GameWindow.AddControl(newUnitBtns[i].Control);
@@ -225,7 +217,7 @@ namespace csheroes.src.GameStates
         {
             for (int i = 0; i < 7; i++)
             {
-                if (newUnitBtns[i] != null && (sender as Button).Name == newUnitBtns[i].Name)
+                if (newUnitBtns[i] != null && (sender as System.Windows.Forms.Button).Name == newUnitBtns[i].Name)
                 {
                     BoolDialog dialog = new("Завербовать нового абитурента (100 респекта)?");
 
@@ -292,7 +284,7 @@ namespace csheroes.src.GameStates
         {
             for (int i = 0; i < 7; i++)
             {
-                if (healBtns[i] != null && (sender as Button).Name == healBtns[i].Name)
+                if (healBtns[i] != null && (sender as System.Windows.Forms.Button).Name == healBtns[i].Name)
                 {
                     int healCost = 0;
                     for (int j = 0; j < hero.Army.Units[i].MaxHp - hero.Army.Units[i].Hp; j++)
@@ -342,7 +334,7 @@ namespace csheroes.src.GameStates
         {
             for (int i = 0; i < 7; i++)
             {
-                if (expBtns[i] != null && (sender as Button).Name == expBtns[i].Name)
+                if (expBtns[i] != null && (sender as System.Windows.Forms.Button).Name == expBtns[i].Name)
                 {
                     if (hero.Army.Units[i].Range == 5)
                     {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using csheroes.src.UI;
+using System;
 using System.Windows.Forms;
 
 namespace csheroes.src.GameStates
@@ -22,37 +23,25 @@ namespace csheroes.src.GameStates
             // 
             // button1
             // 
-            UI.Button button1 = new()
-            {
-                Location = new System.Drawing.Point(5, 46),
-                Name = "button1",
-                Size = new System.Drawing.Size(112, 66),
-                Text = "Переполох в новом корпусе",
-            };
-            button1.Click += new System.EventHandler(button1_Click);
+            UI.Button button1 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            button1.Text = "Переполох в новом корпусе";
+            button1.SetPosition(5, 46);
+            button1.Click += button1_Click;
             controls.Add(button1.Control);
             // 
             // button2
             // 
-            UI.Button button2 = new()
-            {
-                Location = new System.Drawing.Point(123, 46),
-                Name = "button2",
-                Size = new System.Drawing.Size(120, 66),
-                Text = "Коварные очереди мака",
-            };
+            UI.Button button2 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            button2.Text = "Коварные очереди мака";
+            button2.SetPosition(5, 146);
             button2.Click += new System.EventHandler(button2_Click);
             controls.Add(button2.Control);
             // 
             // button3
             // 
-            UI.Button button3 = new()
-            {
-                Location = new System.Drawing.Point(249, 46),
-                Name = "button3",
-                Size = new System.Drawing.Size(131, 66),
-                Text = "Великие испытания в старом корпусе",
-            };
+            UI.Button button3 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
+            button3.Text = "Великие испытания в старом корпусе";
+            button3.SetPosition(5, 246);
             button3.Click += new System.EventHandler(this.button3_Click);
             controls.Add(button3.Control);
             // 
