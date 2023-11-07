@@ -4,7 +4,7 @@ namespace csheroes.src
 {
     public class GameObject
     {
-        private readonly List<Script> scripts = new();
+        private readonly List<Script> scripts = new(); // TODO: HashTable?
 
         public T AddScript<T>() where T : Script, new()
         {
