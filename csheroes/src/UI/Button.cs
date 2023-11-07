@@ -9,16 +9,6 @@ namespace csheroes.src.UI
         
         public event EventHandler Click;
 
-        public void SetPosition(int x, int y)
-        {
-            button.Location = new(x, y);
-        }
-
-        public Point Location
-        {
-            set => button.Location = value;
-        }
-
         public Size Size
         {
             set => button.Size = value;
@@ -42,6 +32,14 @@ namespace csheroes.src.UI
         {
             button.UseVisualStyleBackColor = true;
             button.Click += OnButtonClick;
+
+            ScenePosition position = AddScript<ScenePosition>();
+            position.OnPositionChange += OnGameObjectPositionChange;
+        }
+
+        private void OnGameObjectPositionChange(IReadOnlyVector vector)
+        {
+            button.Location = new(vector.X, vector.Y);
         }
 
         private void OnButtonClick(object sender, EventArgs e)

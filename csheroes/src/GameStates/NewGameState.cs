@@ -25,7 +25,7 @@ namespace csheroes.src.GameStates
             // 
             UI.Button button1 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
             button1.Text = "Переполох в новом корпусе";
-            button1.SetPosition(5, 46);
+            button1.GetScript<ScenePosition>().Position = new(5, 46);
             button1.Click += button1_Click;
             controls.Add(button1.Control);
             // 
@@ -33,7 +33,7 @@ namespace csheroes.src.GameStates
             // 
             UI.Button button2 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
             button2.Text = "Коварные очереди мака";
-            button2.SetPosition(5, 146);
+            button2.GetScript<ScenePosition>().Position = new(5, 146);
             button2.Click += new System.EventHandler(button2_Click);
             controls.Add(button2.Control);
             // 
@@ -41,7 +41,7 @@ namespace csheroes.src.GameStates
             // 
             UI.Button button3 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
             button3.Text = "Великие испытания в старом корпусе";
-            button3.SetPosition(5, 246);
+            button3.GetScript<ScenePosition>().Position = new(5, 246);
             button3.Click += new System.EventHandler(this.button3_Click);
             controls.Add(button3.Control);
             // 

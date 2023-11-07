@@ -25,7 +25,7 @@ namespace csheroes.src.GameStates
             // 
             Button newGameButton = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
             newGameButton.Text = "Новая игра";
-            newGameButton.SetPosition(272, 194);
+            newGameButton.GetScript<ScenePosition>().Position = new(272, 194);
             newGameButton.Click += ChangeGameStateToNewGame;
             controls.Add(newGameButton.Control);
             // 
@@ -33,14 +33,14 @@ namespace csheroes.src.GameStates
             // 
             Button loadGameButton = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
             loadGameButton.Text = "Загрузить игру";
-            loadGameButton.SetPosition(272, 314);
+            loadGameButton.GetScript<ScenePosition>().Position = new(272, 314);
             loadGameButton.Click += LoadGameDialog;
             controls.Add(loadGameButton.Control);
             // 
             // button3
             // 
             Button recordsButton = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
-            recordsButton.SetPosition(272, 434);
+            recordsButton.GetScript<ScenePosition>().Position = new(272, 434);
             recordsButton.Text = "Рекорды";
             recordsButton.Click += new System.EventHandler(this.RecordsMenu);
             controls.Add(recordsButton.Control);
@@ -48,7 +48,7 @@ namespace csheroes.src.GameStates
             // button4
             // 
             Button exitButton = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
-            exitButton.SetPosition(272, 555);
+            exitButton.GetScript<ScenePosition>().Position = new(272, 555);
             exitButton.Text = "Выход";
             exitButton.Click += Exit;
             controls.Add(exitButton.Control);

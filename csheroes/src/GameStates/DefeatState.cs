@@ -34,7 +34,7 @@ namespace csheroes.src.GameStates
             //
             UI.Button button1 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
             button1.Text = "Стойте! Еще один шанс...";
-            button1.SetPosition(319, 742);
+            button1.GetScript<ScenePosition>().Position = new(319, 742);
             button1.Click += new System.EventHandler(button1_Click);
             // 
             // DefeatForm

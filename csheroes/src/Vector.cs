@@ -10,11 +10,17 @@
 
         }
 
-        public Vector(Vector vector)
+        public Vector(IReadOnlyVector vector)
         {
-            x = vector.x;
+            x = vector.X;
 
-            y = vector.y;
+            y = vector.Y;
+        }
+
+        public Vector(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
         }
 
         public int X

@@ -43,7 +43,7 @@ namespace csheroes.src.GameStates
             // 
             UI.Button button1 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
             button1.Text = "ok";
-            button1.SetPosition(506, 757);
+            button1.GetScript<ScenePosition>().Position = new(506, 757);
             button1.Click += new System.EventHandler(button1_Click);
             // 
             // textBox1

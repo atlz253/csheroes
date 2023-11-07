@@ -32,14 +32,14 @@ namespace csheroes.src.GameStates
             // 
             UI.Button button1 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
             button1.Text = "Загрузить";
-            button1.SetPosition(12, 56);
+            button1.GetScript<ScenePosition>().Position = new(12, 56);
             button1.Click += new System.EventHandler(button1_Click);
             // 
             // button2
             // 
             UI.Button button2 = ButtonFactory.InstantiateButton(ButtonTemplate.MainMenuButton);
             button2.Text = "Отмена";
-            button2.SetPosition(300, 56);
+            button2.GetScript<ScenePosition>().Position = new(300, 56);
             button2.Click += new System.EventHandler(button2_Click);
             // 
             // LoadDialog
