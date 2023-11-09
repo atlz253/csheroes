@@ -8,7 +8,7 @@ namespace csheroes.src
 
         public event Action<Vector> OnPositionChange;
 
-        public IReadOnlyVector Position
+        public Vector Position
         {
             get => new(position);
             

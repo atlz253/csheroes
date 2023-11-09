@@ -19,7 +19,7 @@ namespace csheroes.src.GameStates
         {
             foreach (Control control in controls)
             {
-                GameWindow.AddControl(control);
+                Game.Window.AddControl(control);
             }
         }
     }

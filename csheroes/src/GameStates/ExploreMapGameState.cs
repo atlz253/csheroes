@@ -31,7 +31,7 @@ namespace csheroes.src.GameStates
             ToolStripSplitButton toolStripSplitButton2 = new System.Windows.Forms.ToolStripSplitButton();
             ToolStripSplitButton toolStripSplitButton3 = new System.Windows.Forms.ToolStripSplitButton();
             ToolStripSplitButton toolStripSplitButton4 = new System.Windows.Forms.ToolStripSplitButton();
-            GameWindow.SuspendLayout();
+            Game.Window.SuspendLayout();
             statusStrip1.SuspendLayout();
             // 
             // statusStrip1
@@ -117,18 +117,18 @@ namespace csheroes.src.GameStates
             // ExploreForm
             // 
             controls.Add(statusStrip1);
-            GameWindow.SetName("Exploring");
-            GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            GameWindow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.Window.SetName("Exploring");
+            Game.Window.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            Game.Window.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
             statusStrip1.ResumeLayout();
-            GameWindow.ResumeLayout();
+            Game.Window.ResumeLayout();
 
-            int mapWidth = GameWindow.Width / Global.CellSize;
-            int mapHeight = (GameWindow.Height - 22) / Global.CellSize;
+            int mapWidth = Game.Window.Width / Global.CellSize;
+            int mapHeight = (Game.Window.Height - 22) / Global.CellSize;
 
             exploreMap = new ExploreMap(mapWidth, mapHeight);
 
-            surface = GameWindow.CreateGraphics();
+            surface = Game.Window.CreateGraphics();
         }
 
         public ExploreMapGameState(string fileName) : this()
@@ -161,12 +161,12 @@ namespace csheroes.src.GameStates
         {
             for (int i = 0; i < exploreMap.Width; i++)
             {
-                g.DrawLine(Global.GridPen, Global.CellSize * i, 0, Global.CellSize * i, GameWindow.Height);
+                g.DrawLine(Global.GridPen, Global.CellSize * i, 0, Global.CellSize * i, Game.Window.Height);
             }
 
             for (int i = 0; i < exploreMap.Height; i++)
             {
-                g.DrawLine(Global.GridPen, 0, Global.CellSize * i, GameWindow.Width, Global.CellSize * i);
+                g.DrawLine(Global.GridPen, 0, Global.CellSize * i, Game.Window.Width, Global.CellSize * i);
             }
         }
 
@@ -202,7 +202,7 @@ namespace csheroes.src.GameStates
 
         private bool CellIsEmpty(int x, int y)
         {
-            if (x < 0 || x > GameWindow.Width / Global.CellSize - 1 || y < 0 || y > GameWindow.Height / Global.CellSize - 2) // TODO: проверить, что за фигня с -1 и -2
+            if (x < 0 || x > Game.Window.Width / Global.CellSize - 1 || y < 0 || y > Game.Window.Height / Global.CellSize - 2) // TODO: проверить, что за фигня с -1 и -2
             {
                 return false;
             }
@@ -213,7 +213,7 @@ namespace csheroes.src.GameStates
         private bool MoveHero(Point dest)
         {
             Queue<Point> visit = new();
-            bool[,] used = new bool[GameWindow.Width / Global.CellSize, GameWindow.Height / Global.CellSize];
+            bool[,] used = new bool[Game.Window.Width / Global.CellSize, Game.Window.Height / Global.CellSize];
 
             visit.Enqueue(exploreMap.heroCords);
             used[exploreMap.heroCords.Y, exploreMap.heroCords.X] = true;
@@ -239,7 +239,7 @@ namespace csheroes.src.GameStates
 
                         score += exploreMap.hero.Respect;
 
-                        GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+                        Game.Window.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
                         Game.ChangeGameState(new WinState(exploreMap.locationName, score));
                     }
 
@@ -323,9 +323,9 @@ namespace csheroes.src.GameStates
 #if DEBUG
             SolidBrush pen = new(Color.FromArgb(128, 0, 0, 255));
 
-            for (int i = 0; i < GameWindow.Width / Global.CellSize; i++)
+            for (int i = 0; i < Game.Window.Width / Global.CellSize; i++)
             {
-                for (int j = 0; j < GameWindow.Height / Global.CellSize; j++)
+                for (int j = 0; j < Game.Window.Height / Global.CellSize; j++)
                 {
                     if (used[i, j] == true)
                     {
@@ -359,7 +359,7 @@ namespace csheroes.src.GameStates
 
             exploreMap.action[exploreMap.heroCords.Y, exploreMap.heroCords.X] = exploreMap.hero;
 
-            GameWindow.Invalidate();
+            Game.Window.Invalidate();
         }
 
         private void DrawArrow(Arrows direction, int x, int y)
@@ -405,8 +405,8 @@ namespace csheroes.src.GameStates
         {
             BattleState battleState = new(this, exploreMap.hero, enemy, exploreMap.battleMapBackgroundTile);
 
-            GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            GameWindow.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.Window.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            Game.Window.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
 
             battleState.OnStateChange += OnBattleEnd;
 
@@ -417,14 +417,14 @@ namespace csheroes.src.GameStates
         private void OnBattleEnd()
         {
 
-            GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            GameWindow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.Window.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            Game.Window.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
 
             UpdateRespect();
 
             if (exploreMap.hero.Army.Empty)
             {
-                GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+                Game.Window.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
                 Game.ChangeGameState(new DefeatState());
             }
         }
@@ -433,8 +433,8 @@ namespace csheroes.src.GameStates
         {
             CampState campState = new CampState(this, exploreMap.hero);
 
-            GameWindow.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
-            GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            Game.Window.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.Window.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
 
             campState.OnStateChange += AfterCampMenuExit;
 
@@ -445,8 +445,8 @@ namespace csheroes.src.GameStates
         {
             UpdateRespect();
 
-            GameWindow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
-            GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            Game.Window.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.Window.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
         }
 
         public void OpenSaveLoadDialog(object sender, EventArgs e)
@@ -470,7 +470,7 @@ namespace csheroes.src.GameStates
             try
             {
                 SaveFile.RestoreSaveableObjectStateFromFileWithName(exploreMap, fileName);
-                GameWindow.Invalidate();
+                Game.Window.Invalidate();
             }
             catch (FileNotFoundException)
             {
@@ -527,8 +527,8 @@ namespace csheroes.src.GameStates
 
         private void toolStripSplitButton3_ButtonClick(object sender, EventArgs e)
         {
-            GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            GameWindow.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.Window.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            Game.Window.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
             Game.ChangeGameState(new MainMenuState());
         }
 

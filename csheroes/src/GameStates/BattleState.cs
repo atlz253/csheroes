@@ -51,7 +51,7 @@ namespace csheroes.src.GameStates
             Timer timer1 = new System.Windows.Forms.Timer(components);
             ToolStripSplitButton toolStripSplitButton4 = new System.Windows.Forms.ToolStripSplitButton();
             statusStrip1.SuspendLayout();
-            GameWindow.SuspendLayout();
+            Game.Window.SuspendLayout();
 
 #if RELEASE
             toolStripSplitButton1.Visible = false;
@@ -127,12 +127,12 @@ namespace csheroes.src.GameStates
             // BattleForm
             // 
             controls.Add(statusStrip1);
-            GameWindow.SetName("BattleForm");
-            GameWindow.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            GameWindow.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BattleForm_KeyDown);
-            GameWindow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.Window.SetName("BattleForm");
+            Game.Window.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            Game.Window.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BattleForm_KeyDown);
+            Game.Window.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
             statusStrip1.ResumeLayout();
-            GameWindow.ResumeLayout();
+            Game.Window.ResumeLayout();
         }
 
         public BattleState(GameState parent, Hero hero, Army enemy, Rectangle tile): this()
@@ -146,15 +146,15 @@ namespace csheroes.src.GameStates
             background = tile;
             //InitBackground(tile);
 
-            action = new IGameObj[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
+            action = new IGameObj[Game.Window.Width / Global.BattleCellSize, Game.Window.Height / Global.BattleCellSize];
 
             firstArmy = hero.Army;
             LinedArmy(firstArmy, out firstArmyCords, 0);
 
             secondArmy = enemy;
-            LinedArmy(secondArmy, out secondArmyCords, GameWindow.Width / Global.BattleCellSize - 1);
+            LinedArmy(secondArmy, out secondArmyCords, Game.Window.Width / Global.BattleCellSize - 1);
 
-            surface = GameWindow.CreateGraphics();
+            surface = Game.Window.CreateGraphics();
 
             NextTurn(firstArmy.Units, ref firstArmyTurn);
         }
@@ -206,7 +206,7 @@ namespace csheroes.src.GameStates
             g.DrawRectangle(Global.HighlightPen, new Rectangle(tmp.X * Global.BattleCellSize, tmp.Y * Global.BattleCellSize, Global.BattleCellSize, Global.BattleCellSize));
 
             Queue<Point> visit = new();
-            bool[,] used = new bool[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
+            bool[,] used = new bool[Game.Window.Width / Global.BattleCellSize, Game.Window.Height / Global.BattleCellSize];
 
             visit.Enqueue(tmp);
             used[tmp.Y, tmp.X] = true;
@@ -333,14 +333,14 @@ namespace csheroes.src.GameStates
 
         private void DrawGrid(Graphics g)
         {
-            for (int i = 0; i < GameWindow.Width / Global.BattleCellSize; i++)
+            for (int i = 0; i < Game.Window.Width / Global.BattleCellSize; i++)
             {
-                g.DrawLine(Global.GridPen, Global.BattleCellSize * i, 0, Global.BattleCellSize * i, GameWindow.Height);
+                g.DrawLine(Global.GridPen, Global.BattleCellSize * i, 0, Global.BattleCellSize * i, Game.Window.Height);
             }
 
-            for (int i = 0; i < GameWindow.Height / Global.BattleCellSize; i++)
+            for (int i = 0; i < Game.Window.Height / Global.BattleCellSize; i++)
             {
-                g.DrawLine(Global.GridPen, 0, Global.BattleCellSize * i, GameWindow.Width, Global.BattleCellSize * i);
+                g.DrawLine(Global.GridPen, 0, Global.BattleCellSize * i, Game.Window.Width, Global.BattleCellSize * i);
             }
         }
 
@@ -348,9 +348,9 @@ namespace csheroes.src.GameStates
 
         private void DrawAction(Graphics g)
         {
-            for (int i = 0; i < GameWindow.Width / Global.BattleCellSize; i++)
+            for (int i = 0; i < Game.Window.Width / Global.BattleCellSize; i++)
             {
-                for (int j = 0; j < GameWindow.Height / Global.BattleCellSize; j++)
+                for (int j = 0; j < Game.Window.Height / Global.BattleCellSize; j++)
                 {
                     if (action[i, j] != null && action[i, j].ToString() == "Unit")
                     {
@@ -368,7 +368,7 @@ namespace csheroes.src.GameStates
                             FontSize = 8F
                         };
                         controls.Add(hp.Control);
-                        GameWindow.AddControl(hp.Control);
+                        Game.Window.AddControl(hp.Control);
                         hpLabels.Add(hp);
                     }
                 }
@@ -426,7 +426,7 @@ namespace csheroes.src.GameStates
 
         private bool CellIsEmpty(int x, int y)
         {
-            if (x < 0 || x > GameWindow.Width / Global.BattleCellSize - 1 || y < 0 || y > GameWindow.Height / Global.BattleCellSize - 2)
+            if (x < 0 || x > Game.Window.Width / Global.BattleCellSize - 1 || y < 0 || y > Game.Window.Height / Global.BattleCellSize - 2)
             {
                 return false;
             }
@@ -442,7 +442,7 @@ namespace csheroes.src.GameStates
             }
 
             Queue<Point> visit = new();
-            bool[,] used = new bool[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
+            bool[,] used = new bool[Game.Window.Width / Global.BattleCellSize, Game.Window.Height / Global.BattleCellSize];
 
             visit.Enqueue(src);
             used[src.Y, src.X] = true;
@@ -537,9 +537,9 @@ namespace csheroes.src.GameStates
 #if DEBUG
             SolidBrush pen = new(Color.FromArgb(128, 0, 0, 255));
 
-            for (int i = 0; i < GameWindow.Width / Global.BattleCellSize; i++)
+            for (int i = 0; i < Game.Window.Width / Global.BattleCellSize; i++)
             {
-                for (int j = 0; j < GameWindow.Height / Global.BattleCellSize; j++)
+                for (int j = 0; j < Game.Window.Height / Global.BattleCellSize; j++)
                 {
                     if (used[i, j] == true)
                     {
@@ -578,7 +578,7 @@ namespace csheroes.src.GameStates
 
         private bool UnitNearby(Point cords, Unit unit)
         {
-            if (cords.Y < action.GetLength(0) && cords.X != GameWindow.Width / Global.BattleCellSize && action[cords.Y, cords.X] != null &&
+            if (cords.Y < action.GetLength(0) && cords.X != Game.Window.Width / Global.BattleCellSize && action[cords.Y, cords.X] != null &&
                 ((cords.X != 0 && action[cords.Y, cords.X - 1] == unit) ||
                 (action[cords.Y, cords.X + 1] == unit) ||
                 (cords.Y != 0 && action[cords.Y - 1, cords.X] == unit) ||
@@ -625,7 +625,7 @@ namespace csheroes.src.GameStates
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
-            arrow = new Direction[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
+            arrow = new Direction[Game.Window.Width / Global.BattleCellSize, Game.Window.Height / Global.BattleCellSize];
             Point dest = new Point(e.X / Global.BattleCellSize, e.Y / Global.BattleCellSize);
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords;
             Army friendArmy = turn ? firstArmy : secondArmy;
@@ -703,7 +703,7 @@ namespace csheroes.src.GameStates
                     AIMove();
                 }
             }
-            GameWindow.Invalidate();
+            Game.Window.Invalidate();
         }
 
         private double VectorLenght(Point begin, Point end)
@@ -713,7 +713,7 @@ namespace csheroes.src.GameStates
 
         private void AIMove()
         {
-            arrow = new Direction[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
+            arrow = new Direction[Game.Window.Width / Global.BattleCellSize, Game.Window.Height / Global.BattleCellSize];
             Point[] friendCords = turn ? firstArmyCords : secondArmyCords,
                     enemyCords = turn ? secondArmyCords : firstArmyCords;
 
@@ -773,9 +773,9 @@ namespace csheroes.src.GameStates
                 {
                     dest.X = tmp.X + unit.Range;
 
-                    if (dest.X > GameWindow.Width / Global.BattleCellSize - 1)
+                    if (dest.X > Game.Window.Width / Global.BattleCellSize - 1)
                     {
-                        dest.X = GameWindow.Width / Global.BattleCellSize - 1;
+                        dest.X = Game.Window.Width / Global.BattleCellSize - 1;
                     }
                 }
             }
@@ -795,9 +795,9 @@ namespace csheroes.src.GameStates
                 {
                     dest.Y = tmp.Y + unit.Range;
 
-                    if (dest.Y > GameWindow.Height / Global.BattleCellSize - 1)
+                    if (dest.Y > Game.Window.Height / Global.BattleCellSize - 1)
                     {
-                        dest.Y = GameWindow.Height / Global.BattleCellSize - 1;
+                        dest.Y = Game.Window.Height / Global.BattleCellSize - 1;
                     }
                 }
             }
@@ -832,7 +832,7 @@ namespace csheroes.src.GameStates
 
             turn = !turn;
 
-            GameWindow.Invalidate();
+            Game.Window.Invalidate();
         }
 
         private void NextTurn(Unit[] units, ref int index)
@@ -842,7 +842,7 @@ namespace csheroes.src.GameStates
                 foreach (UI.Label label in hpLabels)
                 {
                     controls.Remove(label.Control);
-                    GameWindow.RemoveControl(label.Control);
+                    Game.Window.RemoveControl(label.Control);
                 }
             }
 
@@ -901,9 +901,9 @@ namespace csheroes.src.GameStates
 
         private void EndBattle()
         {
-            GameWindow.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
-            GameWindow.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.BattleForm_KeyDown);
-            GameWindow.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
+            Game.Window.Paint -= new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            Game.Window.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.BattleForm_KeyDown);
+            Game.Window.MouseClick -= new System.Windows.Forms.MouseEventHandler(this.OnMouseClick);
             Game.ChangeGameState(parent);
             StateChange();
             battleEnd = true;
@@ -956,9 +956,9 @@ namespace csheroes.src.GameStates
 
         private void DrawBackground(Graphics g)
         {
-            for (int i = 0; i < GameWindow.Width / Global.BattleCellSize; i++)
+            for (int i = 0; i < Game.Window.Width / Global.BattleCellSize; i++)
             {
-                for (int j = 0; j < GameWindow.Height / Global.BattleCellSize; j++)
+                for (int j = 0; j < Game.Window.Height / Global.BattleCellSize; j++)
                 {
                     g.DrawImage(Global.Texture, new Rectangle(Global.BattleCellSize * j, Global.BattleCellSize * i, Global.BattleCellSize, Global.BattleCellSize), background, GraphicsUnit.Pixel);
                 }
@@ -969,7 +969,7 @@ namespace csheroes.src.GameStates
         {
             cordsArr = new Point[7];
 
-            for (int i = 0; i < GameWindow.Height && i < 7; i++)
+            for (int i = 0; i < Game.Window.Height && i < 7; i++)
             {
                 if (army.Units[i] != null && army.Units[i].Hp != 0)
                 {
@@ -1007,7 +1007,7 @@ namespace csheroes.src.GameStates
                 foreach (UI.Label label in hpLabels)
                 {
                     controls.Remove(label.Control);
-                    GameWindow.RemoveControl(label.Control);
+                    Game.Window.RemoveControl(label.Control);
                 }
             }
 
@@ -1033,7 +1033,7 @@ namespace csheroes.src.GameStates
             hero = new Hero(snapshot.hero);
             firstArmy = hero.Army;
             secondArmy = new Army(snapshot.secondArmy);
-            action = new IGameObj[GameWindow.Width / Global.BattleCellSize, GameWindow.Height / Global.BattleCellSize];
+            action = new IGameObj[Game.Window.Width / Global.BattleCellSize, Game.Window.Height / Global.BattleCellSize];
             arrow = null;
 
             for (int i = 0; i < 7; i++)
@@ -1056,7 +1056,7 @@ namespace csheroes.src.GameStates
             turn = snapshot.turn;
             ai = snapshot.ai;
 
-            GameWindow.Invalidate();
+            Game.Window.Invalidate();
         }
 #endif
     }

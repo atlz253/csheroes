@@ -10,7 +10,7 @@ namespace csheroes.src.GameStates
 
         public NewGameState()
         {
-            GameWindow.SuspendLayout();
+            Game.Window.SuspendLayout();
             // 
             // label1
             // 
@@ -47,8 +47,8 @@ namespace csheroes.src.GameStates
             // 
             // LevelMenu
             // 
-            GameWindow.SetName("LevelMenu");
-            GameWindow.ResumeLayout();
+            Game.Window.SetName("LevelMenu");
+            Game.Window.ResumeLayout();
         }
 
         private void button1_Click(object sender, EventArgs e)

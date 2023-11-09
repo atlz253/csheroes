@@ -11,7 +11,7 @@ namespace csheroes.src.GameStates
         public LoadGameState()
         {
             textBox1 = new System.Windows.Forms.TextBox();
-            GameWindow.SuspendLayout();
+            Game.Window.SuspendLayout();
             // 
             // textBox1
             // 
@@ -48,8 +48,8 @@ namespace csheroes.src.GameStates
             controls.Add(button1.Control);
             controls.Add(label1.Control);
             controls.Add(textBox1);
-            GameWindow.SetName("Load");
-            GameWindow.ResumeLayout();
+            Game.Window.SetName("Load");
+            Game.Window.ResumeLayout();
         }
 
         private void button2_Click(object sender, EventArgs e)

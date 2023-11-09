@@ -7,7 +7,7 @@ namespace csheroes.src.GameStates
     {
         public RecordState()
         {
-            GameWindow.SuspendLayout();
+            Game.Window.SuspendLayout();
             // 
             // label1
             // 
@@ -22,8 +22,8 @@ namespace csheroes.src.GameStates
             // RecordForm
             // 
             controls.Add(label1.Control);
-            GameWindow.SetName("Records");
-            GameWindow.ResumeLayout();
+            Game.Window.SetName("Records");
+            Game.Window.ResumeLayout();
 
             LoadRecords();
         }
@@ -52,7 +52,7 @@ namespace csheroes.src.GameStates
                 }
             }
 
-            GameWindow.Clear();
+            Game.Window.Clear();
             Register();
         }
     }

@@ -8,7 +8,7 @@ namespace csheroes.src.GameStates
     {
         public MainMenuState()
         {
-            GameWindow.SuspendLayout();
+            Game.Window.SuspendLayout();
             // 
             // label1
             // 
@@ -67,13 +67,13 @@ namespace csheroes.src.GameStates
             // 
             // MainMenuForm
             // 
-            GameWindow.SetBackgroundImage(Properties.Resources.Menu);
-            GameWindow.SetName("MainMenuForm");
+            Game.Window.SetBackgroundImage(Properties.Resources.Menu);
+            Game.Window.SetName("MainMenuForm");
         }
 
         private void Exit(object sender, EventArgs e)
         {
-            GameWindow.Close();
+            Game.Window.Close();
         }
 
         private void ChangeGameStateToNewGame(object sender, EventArgs e)

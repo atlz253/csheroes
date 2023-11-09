@@ -8,7 +8,7 @@ namespace csheroes.src.GameStates
     {
         public DefeatState() 
         {
-            GameWindow.SuspendLayout();
+            Game.Window.SuspendLayout();
             // 
             // label1
             // 
@@ -42,9 +42,9 @@ namespace csheroes.src.GameStates
             controls.Add(button1.Control);
             controls.Add(label2.Control);
             controls.Add(label1.Control);
-            GameWindow.SetBackgroundImage(Properties.Resources.defeat);
-            GameWindow.SetName("Defeat");
-            GameWindow.ResumeLayout();
+            Game.Window.SetBackgroundImage(Properties.Resources.defeat);
+            Game.Window.SetName("Defeat");
+            Game.Window.ResumeLayout();
         }
 
         private void button1_Click(object sender, EventArgs e)

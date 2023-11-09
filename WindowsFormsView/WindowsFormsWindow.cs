@@ -2,14 +2,15 @@
 using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Windows.Forms;
+using View;
 
-namespace csheroes.src
+namespace WindowsFormsView
 {
-    internal static class GameWindow
+    internal class WindowsFormsWindow : Window
     {
-        private static readonly Form form;
+        private readonly Form form;
 
-        static GameWindow()
+        public WindowsFormsWindow()
         {
             form = new Form()
             {
@@ -46,82 +47,82 @@ namespace csheroes.src
             aProp.SetValue(c, true, null);
         }
 
-        public static int Width => form.Width;
-        public static int Height => form.Height;
+        public int Width => form.Width;
+        public int Height => form.Height;
 
-        public static void Show()
+        public void Show()
         {
             Application.Run(form); // FIXME: I don't like this moment
         }
 
-        public static void Close()
+        public void Close()
         {
             form.Close();
         }
 
-        public static void AddControl(Control control)
+        public void AddControl(Control control)
         {
             form.Controls.Add(control);
         }
 
-        public static void RemoveControl(Control control) 
+        public void RemoveControl(Control control) 
         { 
             form.Controls.Remove(control);
         }
 
-        public static void SuspendLayout()
+        public void SuspendLayout()
         {
             form.SuspendLayout();
         }
 
-        public static void ResumeLayout()
+        public void ResumeLayout()
         {
             form.ResumeLayout();
         }
 
-        public static void SetBackgroundImage(Bitmap bitmap) // TODO: Move from here?
+        public void SetBackgroundImage(Bitmap bitmap) // TODO: Move from here?
         {
             form.BackgroundImage = bitmap;
         }
 
-        public static void SetName(string name)
+        public void SetName(string name)
         {
             form.Name = name;
             form.Text = name;
         }
 
-        public static void Clear()
+        public void Clear()
         {
             form.Controls.Clear();
         }
 
-        public static event PaintEventHandler Paint;
+        public event PaintEventHandler Paint;
 
-        private static void OnPaint(object sender, PaintEventArgs e)
+        private void OnPaint(object sender, PaintEventArgs e)
         {
             Paint?.Invoke(sender, e);
         }
 
-        public static event MouseEventHandler MouseClick;
+        public event MouseEventHandler MouseClick;
 
-        private static void OnMouseClick(object sender, MouseEventArgs e)
+        private void OnMouseClick(object sender, MouseEventArgs e)
         {
             MouseClick?.Invoke(sender, e);
         }
 
-        public static event KeyEventHandler KeyDown;
+        public event KeyEventHandler KeyDown;
 
-        private static void OnKeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown(object sender, KeyEventArgs e)
         {
             KeyDown?.Invoke(sender, e);
         }
 
-        public static Graphics CreateGraphics()
+        public Graphics CreateGraphics()
         {
             return form.CreateGraphics();
         }
 
-        public static void Invalidate()
+        public void Invalidate()
         {
             form.Invalidate();
         }

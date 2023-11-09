@@ -15,7 +15,7 @@ namespace csheroes.src.GameStates
         public WinState()
         {
             textBox1 = new System.Windows.Forms.TextBox();
-            GameWindow.SuspendLayout();
+            Game.Window.SuspendLayout();
             // 
             // label1
             // 
@@ -56,14 +56,14 @@ namespace csheroes.src.GameStates
             // 
             // WinForm
             // 
-            
-            GameWindow.SetBackgroundImage(Properties.Resources.win);
+
+            Game.Window.SetBackgroundImage(Properties.Resources.win);
             controls.Add(textBox1);
             controls.Add(button1.Control);
             controls.Add(label2.Control);
             controls.Add(label1.Control);
-            GameWindow.SetName("WinForm");
-            GameWindow.ResumeLayout();
+            Game.Window.SetName("WinForm");
+            Game.Window.ResumeLayout();
         }
 
         public WinState(string locationName, int score): this()
