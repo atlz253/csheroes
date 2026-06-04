@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);CS8618;CS8625</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\csheroes\src\Army.cs" Link="Original\Army.cs" />
+    <Compile Include="..\csheroes\src\ExploreMap.cs" Link="Original\ExploreMap.cs" />
+    <Compile Include="..\csheroes\src\Hero.cs" Link="Original\Hero.cs" />
+    <Compile Include="..\csheroes\src\IGameObj.cs" Link="Original\IGameObj.cs" />
+    <Compile Include="..\csheroes\src\ISnapshot.cs" Link="Original\ISnapshot.cs" />
+    <Compile Include="..\csheroes\src\Obstacle.cs" Link="Original\Obstacle.cs" />
+    <Compile Include="..\csheroes\src\Saves\ISaveable.cs" Link="Original\Saves\ISaveable.cs" />
+    <Compile Include="..\csheroes\src\Saves\SaveableObjectRestoreException.cs" Link="Original\Saves\SaveableObjectRestoreException.cs" />
+    <Compile Include="..\csheroes\src\Textures\Tile.cs" Link="Original\Textures\Tile.cs" />
+    <Compile Include="..\csheroes\src\Units\Unit.cs" Link="Original\Units\Unit.cs" />
+    <Compile Include="..\csheroes\src\Units\UnitFactory.cs" Link="Original\Units\UnitFactory.cs" />
+    <Compile Include="..\csheroes\src\Units\UnitTemplateNotFoundException.cs" Link="Original\Units\UnitTemplateNotFoundException.cs" />
+  </ItemGroup>
+</Project>

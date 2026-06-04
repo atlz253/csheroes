@@ -1,0 +1,251 @@
+@page "/"
+@inject HttpClient Http
+@inject IJSRuntime Js
+@implements IAsyncDisposable
+
+<PageTitle>CSHeroes Web</PageTitle>
+
+<section class="game-shell">
+    <div class="game-frame" style="@FrameStyle">
+        <canvas id="@CanvasId" width="802" height="824" style="@CanvasStyle" @onclick="OnCanvasClick"></canvas>
+
+        @if (snapshot.Screen == GameScreen.MainMenu)
+        {
+            <div class="overlay menu">
+                <h1>ГЕРОИ ЗАЧЕТА И СЕССИИ</h1>
+                <button @onclick="ShowNewGame">Новая игра</button>
+                <button @onclick="LoadGame">Загрузить игру</button>
+            </div>
+        }
+        else if (snapshot.Screen == GameScreen.NewGame)
+        {
+            <div class="overlay menu">
+                <h1>Выберите приключение</h1>
+                <button @onclick='@(() => StartMap("FirstMap"))'>Переполох в новом корпусе</button>
+                <button @onclick='@(() => StartMap("SecondMap"))'>Коварные очереди мака</button>
+                <button @onclick='@(() => StartMap("ThirdMap"))'>Великие испытания в старом корпусе</button>
+                <button @onclick="ExitToMenu">Назад</button>
+            </div>
+        }
+        else if (snapshot.Screen == GameScreen.Camp && snapshot.Camp is not null)
+        {
+            <div class="camp-panel">
+                <div class="panel-head">
+                    <strong>Привал</strong>
+                    <span>Влияние: @snapshot.Camp.Respect</span>
+                    <button @onclick="ExitCamp">Вернуться</button>
+                </div>
+                <div class="unit-cards">
+                    @foreach (var unit in snapshot.Camp.Units)
+                    {
+                        <article class="unit-card">
+                            <div class="unit-title">Слот @(unit.Index + 1)</div>
+                            @if (unit.Sprite is null)
+                            {
+                                <button @onclick="@(() => HireUnit(unit.Index))">Нанять 100</button>
+                            }
+                            else
+                            {
+                                <div>HP: @unit.Hp / @unit.MaxHp</div>
+                                <div>DMG: @unit.Damage</div>
+                                <div>RNG: @unit.Range</div>
+                                <button disabled="@(unit.Hp == unit.MaxHp)" @onclick="@(() => HealUnit(unit.Index))">Лечить</button>
+                            }
+                        </article>
+                    }
+                </div>
+            </div>
+        }
+        else if (snapshot.Screen is GameScreen.Win or GameScreen.Defeat)
+        {
+            <div class="overlay menu">
+                <h1>@snapshot.Message</h1>
+                @if (snapshot.Score is not null)
+                {
+                    <p>Счет: @snapshot.Score</p>
+                }
+                <button @onclick="ExitToMenu">В меню</button>
+            </div>
+        }
+
+        @if (snapshot.Screen is GameScreen.Exploring or GameScreen.Battle)
+        {
+            <div class="toolbar">
+                @if (snapshot.Screen == GameScreen.Exploring)
+                {
+                    <span>Влияние: @snapshot.Explore?.Respect</span>
+                    <button @onclick="EnterCamp">Привал</button>
+                    <button @onclick="SaveGame">Сохранить</button>
+                    <button @onclick="LoadGame">Загрузить</button>
+                    <button @onclick="ExitToMenu">В меню</button>
+                }
+                else
+                {
+                    <span>@(snapshot.Battle?.PlayerTurn == true ? "Ваш ход" : "Ход противника")</span>
+                    <button @onclick="WaitTurn">Ждать</button>
+                    <button @onclick="ToggleAi">AI: @(snapshot.Battle?.AiEnabled == true ? "on" : "off")</button>
+                }
+                <input @bind="saveName" maxlength="32" />
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private const string CanvasId = "game-canvas";
+    private readonly GameSession session = new();
+    private IJSObjectReference? module;
+    private GameSnapshot snapshot = new(GameScreen.MainMenu);
+    private string saveName = "autosave";
+    private string FrameStyle => snapshot.Screen == GameScreen.Camp
+        ? "background-image: url('assets/camp.png'); background-size: 802px 824px; background-position: top left; background-repeat: no-repeat;"
+        : "";
+    private string CanvasStyle => snapshot.Screen == GameScreen.Camp ? "display: none;" : "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await Js.InvokeAsync<IJSObjectReference>("import", "./js/canvasRenderer.js");
+            await RenderAsync();
+        }
+    }
+
+    private async Task ShowNewGame()
+    {
+        session.ShowNewGameMenu();
+        await RefreshAsync();
+    }
+
+    private async Task StartMap(string mapName)
+    {
+        var map = await Http.GetByteArrayAsync($"assets/maps/{mapName}");
+        session.StartNewGame(map);
+        await RefreshAsync();
+    }
+
+    private async Task OnCanvasClick(MouseEventArgs args)
+    {
+        if (module is null)
+        {
+            return;
+        }
+
+        var point = await module.InvokeAsync<CanvasPoint>("toCanvasPoint", CanvasId, args.ClientX, args.ClientY);
+        var x = snapshot.Screen == GameScreen.Battle
+            ? (int)(point.X / 50)
+            : (int)(point.X / 32);
+        var y = snapshot.Screen == GameScreen.Battle
+            ? (int)(point.Y / 50)
+            : (int)(point.Y / 32);
+
+        if (snapshot.Screen == GameScreen.Exploring)
+        {
+            session.ClickExploreCell(x, y);
+        }
+        else if (snapshot.Screen == GameScreen.Battle)
+        {
+            session.ClickBattleCell(x, y);
+        }
+
+        await RefreshAsync();
+    }
+
+    private async Task WaitTurn()
+    {
+        session.WaitTurn();
+        await RefreshAsync();
+    }
+
+    private async Task ToggleAi()
+    {
+        session.ToggleAi();
+        await RefreshAsync();
+    }
+
+    private async Task EnterCamp()
+    {
+        session.EnterCamp();
+        await RefreshAsync();
+    }
+
+    private async Task ExitCamp()
+    {
+        session.ExitCamp();
+        await RefreshAsync();
+    }
+
+    private async Task HireUnit(int index)
+    {
+        session.HireUnit(index);
+        await RefreshAsync();
+    }
+
+    private async Task HealUnit(int index)
+    {
+        session.HealUnit(index);
+        await RefreshAsync();
+    }
+
+    private async Task SaveGame()
+    {
+        var bytes = session.Save();
+        if (bytes.Length > 0 && module is not null)
+        {
+            await module.InvokeVoidAsync("saveGame", saveName, Convert.ToBase64String(bytes));
+        }
+    }
+
+    private async Task LoadGame()
+    {
+        if (module is null)
+        {
+            return;
+        }
+
+        var payload = await module.InvokeAsync<string?>("loadGame", saveName);
+        if (!string.IsNullOrWhiteSpace(payload))
+        {
+            session.Load(Convert.FromBase64String(payload));
+            await RefreshAsync();
+        }
+    }
+
+    private async Task ExitToMenu()
+    {
+        session.ExitToMenu();
+        await RefreshAsync();
+    }
+
+    private async Task RefreshAsync()
+    {
+        snapshot = session.Snapshot;
+        await RenderAsync();
+        StateHasChanged();
+    }
+
+    private async Task RenderAsync()
+    {
+        if (module is null)
+        {
+            return;
+        }
+
+        snapshot = session.Snapshot;
+        await module.InvokeVoidAsync("render", CanvasId, snapshot);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module is not null)
+        {
+            await module.DisposeAsync();
+        }
+    }
+
+    private sealed class CanvasPoint
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+}
