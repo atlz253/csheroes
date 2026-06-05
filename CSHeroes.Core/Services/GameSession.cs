@@ -4,6 +4,7 @@ using OriginalExploreMap = csheroes.src.ExploreMap;
 using OriginalHero = csheroes.src.Hero;
 using OriginalIGameObj = csheroes.src.IGameObj;
 using OriginalObstacle = csheroes.src.Obstacle;
+using OriginalAttackType = csheroes.src.Units.AttackType;
 using OriginalUnit = csheroes.src.Units.Unit;
 
 namespace CSHeroes.Core.Services;
@@ -184,6 +185,28 @@ public sealed class GameSession
             exploreMap.hero.Respect -= cost;
             unit.Hp = unit.MaxHp;
         }
+    }
+
+    public void UpgradeUnit(int index, CampUpgradeOption option)
+    {
+        if (screen != GameScreen.Camp || exploreMap is null || index < 0 || index >= 7)
+        {
+            return;
+        }
+
+        var unit = exploreMap.hero.Army.Units[index];
+        if (unit is null || unit.Exp < unit.NextLevel)
+        {
+            return;
+        }
+
+        if (unit.Range == 5)
+        {
+            UpgradeAttackType(unit, option);
+            return;
+        }
+
+        UpgradeStats(unit, option);
     }
 
     private static OriginalExploreMap CreateExploreMap()
@@ -379,6 +402,79 @@ public sealed class GameSession
 
     private int MapColumns => GameConstants.CanvasWidth / GameConstants.CellSize;
 
+    private void UpgradeStats(OriginalUnit unit, CampUpgradeOption option)
+    {
+        if (exploreMap is null)
+        {
+            return;
+        }
+
+        var upgradeCost = unit.Level * 100;
+        if (exploreMap.hero.Respect < upgradeCost)
+        {
+            return;
+        }
+
+        switch (option)
+        {
+            case CampUpgradeOption.Hp:
+                unit.MaxHp += 3;
+                unit.Hp += 3;
+                break;
+            case CampUpgradeOption.Damage:
+                unit.Damage += 1;
+                break;
+            case CampUpgradeOption.Range:
+                unit.Range += 1;
+                break;
+            default:
+                return;
+        }
+
+        CompleteUpgrade(unit, upgradeCost);
+    }
+
+    private void UpgradeAttackType(OriginalUnit unit, CampUpgradeOption option)
+    {
+        if (exploreMap is null)
+        {
+            return;
+        }
+
+        const int upgradeCost = 500;
+        if (exploreMap.hero.Respect < upgradeCost)
+        {
+            return;
+        }
+
+        switch (option)
+        {
+            case CampUpgradeOption.MeleeAttack:
+                unit.Attack = OriginalAttackType.MELEE;
+                break;
+            case CampUpgradeOption.RangedAttack:
+                unit.Attack = OriginalAttackType.RANGE;
+                break;
+            default:
+                return;
+        }
+
+        unit.Range += 1;
+        CompleteUpgrade(unit, upgradeCost);
+    }
+
+    private void CompleteUpgrade(OriginalUnit unit, int upgradeCost)
+    {
+        if (exploreMap is null)
+        {
+            return;
+        }
+
+        unit.Level += 1;
+        unit.NextLevel *= 2;
+        exploreMap.hero.Respect -= upgradeCost;
+    }
+
     private CampSnapshot? BuildCampSnapshot()
     {
         if (exploreMap is null)
@@ -391,8 +487,20 @@ public sealed class GameSession
         {
             var unit = exploreMap.hero.Army.Units[i];
             units.Add(unit is null
-                ? new CampUnitSnapshot(i, null, 0, 0, 0, 0, 0, 0)
-                : new CampUnitSnapshot(i, ToSpriteRect(unit.Tile.Area), unit.Hp, unit.MaxHp, unit.Damage, unit.Range, unit.Exp, unit.NextLevel));
+                ? new CampUnitSnapshot(i, null, 0, 0, 0, 0, 0, 0, 0, false, 0, CampUpgradeMode.None)
+                : new CampUnitSnapshot(
+                    i,
+                    ToSpriteRect(unit.Tile.Area),
+                    unit.Hp,
+                    unit.MaxHp,
+                    unit.Damage,
+                    unit.Range,
+                    unit.Exp,
+                    unit.NextLevel,
+                    unit.Level,
+                    unit.Exp >= unit.NextLevel,
+                    unit.Range == 5 ? 500 : unit.Level * 100,
+                    unit.Exp < unit.NextLevel ? CampUpgradeMode.None : unit.Range == 5 ? CampUpgradeMode.AttackType : CampUpgradeMode.Stats));
         }
 
         return new CampSnapshot(exploreMap.hero.Respect, units);

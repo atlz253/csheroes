@@ -49,6 +49,25 @@
                                 <div>HP: @unit.Hp / @unit.MaxHp</div>
                                 <div>DMG: @unit.Damage</div>
                                 <div>RNG: @unit.Range</div>
+                                <div>LVL: @unit.Level</div>
+                                <div>EXP: @unit.Exp / @unit.NextLevel</div>
+                                @if (unit.CanUpgrade)
+                                {
+                                    <div class="upgrade-group">
+                                        <div class="upgrade-cost">Улучшить: @unit.UpgradeCost</div>
+                                        @if (unit.UpgradeMode == CampUpgradeMode.AttackType)
+                                        {
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.MeleeAttack))">Ближний</button>
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.RangedAttack))">Дальний</button>
+                                        }
+                                        else if (unit.UpgradeMode == CampUpgradeMode.Stats)
+                                        {
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.Hp))">HP</button>
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.Damage))">DMG</button>
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.Range))">RNG</button>
+                                        }
+                                    </div>
+                                }
                                 <button disabled="@(unit.Hp == unit.MaxHp)" @onclick="@(() => HealUnit(unit.Index))">Лечить</button>
                             }
                         </article>
@@ -185,6 +204,17 @@
     {
         session.HealUnit(index);
         await RefreshAsync();
+    }
+
+    private async Task UpgradeUnit(int index, CampUpgradeOption option)
+    {
+        session.UpgradeUnit(index, option);
+        await RefreshAsync();
+    }
+
+    private bool CanAffordUpgrade(CampUnitSnapshot unit)
+    {
+        return snapshot.Camp?.Respect >= unit.UpgradeCost;
     }
 
     private async Task SaveGame()

@@ -21,6 +21,22 @@ public enum SceneObjectKind
     Obstacle
 }
 
+public enum CampUpgradeOption
+{
+    Hp,
+    Damage,
+    Range,
+    MeleeAttack,
+    RangedAttack
+}
+
+public enum CampUpgradeMode
+{
+    None,
+    Stats,
+    AttackType
+}
+
 public sealed record SceneObjectSnapshot(SceneObjectKind Kind, int X, int Y, SpriteRect Sprite, int? Hp = null);
 
 public sealed record HighlightSnapshot(int X, int Y, string Kind);
@@ -44,7 +60,19 @@ public sealed record BattleSnapshot(
     bool PlayerTurn,
     bool AiEnabled);
 
-public sealed record CampUnitSnapshot(int Index, SpriteRect? Sprite, int Hp, int MaxHp, int Damage, int Range, int Exp, int NextLevel);
+public sealed record CampUnitSnapshot(
+    int Index,
+    SpriteRect? Sprite,
+    int Hp,
+    int MaxHp,
+    int Damage,
+    int Range,
+    int Exp,
+    int NextLevel,
+    int Level,
+    bool CanUpgrade,
+    int UpgradeCost,
+    CampUpgradeMode UpgradeMode);
 
 public sealed record CampSnapshot(int Respect, IReadOnlyList<CampUnitSnapshot> Units);
 

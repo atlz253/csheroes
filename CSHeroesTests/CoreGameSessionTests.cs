@@ -114,9 +114,108 @@ public class CoreGameSessionTests
         Assert.AreEqual(before.Y, after.Y);
     }
 
+    [TestMethod]
+    public void CampHpUpgradeShouldConsumeRespectAndIncreaseHealth()
+    {
+        var session = StartCampSession(CreateCampUpgradeMap(respect: 500, level: 2, exp: 2, nextLevel: 2));
+
+        session.UpgradeUnit(0, CampUpgradeOption.Hp);
+
+        var unit = GetCampUnit(session);
+        Assert.AreEqual(300, session.Snapshot.Camp!.Respect);
+        Assert.AreEqual(13, unit.Hp);
+        Assert.AreEqual(13, unit.MaxHp);
+        Assert.AreEqual(3, unit.Level);
+        Assert.AreEqual(4, unit.NextLevel);
+    }
+
+    [TestMethod]
+    public void CampDamageUpgradeShouldIncreaseDamage()
+    {
+        var session = StartCampSession(CreateCampUpgradeMap(respect: 100, level: 1, exp: 1, nextLevel: 1));
+
+        session.UpgradeUnit(0, CampUpgradeOption.Damage);
+
+        var unit = GetCampUnit(session);
+        Assert.AreEqual(0, session.Snapshot.Camp!.Respect);
+        Assert.AreEqual(2, unit.Damage);
+        Assert.AreEqual(2, unit.Level);
+        Assert.AreEqual(2, unit.NextLevel);
+    }
+
+    [TestMethod]
+    public void CampRangeUpgradeShouldIncreaseRange()
+    {
+        var session = StartCampSession(CreateCampUpgradeMap(respect: 100, level: 1, exp: 1, nextLevel: 1));
+
+        session.UpgradeUnit(0, CampUpgradeOption.Range);
+
+        var unit = GetCampUnit(session);
+        Assert.AreEqual(0, session.Snapshot.Camp!.Respect);
+        Assert.AreEqual(4, unit.Range);
+        Assert.AreEqual(2, unit.Level);
+        Assert.AreEqual(2, unit.NextLevel);
+    }
+
+    [TestMethod]
+    public void CampUpgradeShouldBeRejectedWhenExperienceIsTooLow()
+    {
+        var session = StartCampSession(CreateCampUpgradeMap(respect: 500, level: 1, exp: 0, nextLevel: 1));
+
+        session.UpgradeUnit(0, CampUpgradeOption.Hp);
+
+        var unit = GetCampUnit(session);
+        Assert.AreEqual(500, session.Snapshot.Camp!.Respect);
+        Assert.AreEqual(10, unit.Hp);
+        Assert.AreEqual(10, unit.MaxHp);
+        Assert.AreEqual(1, unit.Level);
+        Assert.AreEqual(1, unit.NextLevel);
+    }
+
+    [TestMethod]
+    public void CampUpgradeShouldBeRejectedWhenRespectIsTooLow()
+    {
+        var session = StartCampSession(CreateCampUpgradeMap(respect: 99, level: 1, exp: 1, nextLevel: 1));
+
+        session.UpgradeUnit(0, CampUpgradeOption.Damage);
+
+        var unit = GetCampUnit(session);
+        Assert.AreEqual(99, session.Snapshot.Camp!.Respect);
+        Assert.AreEqual(1, unit.Damage);
+        Assert.AreEqual(1, unit.Level);
+        Assert.AreEqual(1, unit.NextLevel);
+    }
+
+    [TestMethod]
+    public void CampRangeFiveUpgradeShouldConsumeRespectAndChooseAttackType()
+    {
+        var session = StartCampSession(CreateCampUpgradeMap(respect: 500, level: 2, exp: 2, nextLevel: 2, range: 5));
+
+        session.UpgradeUnit(0, CampUpgradeOption.RangedAttack);
+
+        var unit = GetCampUnit(session);
+        Assert.AreEqual(0, session.Snapshot.Camp!.Respect);
+        Assert.AreEqual(6, unit.Range);
+        Assert.AreEqual(3, unit.Level);
+        Assert.AreEqual(4, unit.NextLevel);
+    }
+
     private static SceneObjectSnapshot GetHero(GameSession session)
     {
         return session.Snapshot.Explore!.Objects.Single(obj => obj.Kind == SceneObjectKind.Hero);
+    }
+
+    private static CampUnitSnapshot GetCampUnit(GameSession session)
+    {
+        return session.Snapshot.Camp!.Units[0];
+    }
+
+    private static GameSession StartCampSession(byte[] map)
+    {
+        var session = new GameSession();
+        session.StartNewGame(map);
+        session.EnterCamp();
+        return session;
     }
 
     private static byte[] CreateBlockedRoomMap()
@@ -208,18 +307,96 @@ public class CoreGameSessionTests
         }
     }
 
-    private static void WriteUnit(BinaryWriter writer)
+    private static byte[] CreateCampUpgradeMap(
+        int respect,
+        int level,
+        int exp,
+        int nextLevel,
+        int hp = 10,
+        int maxHp = 10,
+        int range = 3,
+        int damage = 1)
+    {
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+
+        writer.Write("Camp upgrades");
+
+        for (var y = 0; y < 25; y++)
+        {
+            for (var x = 0; x < 26; x++)
+            {
+                writer.Write(0);
+                writer.Write(0);
+            }
+        }
+
+        writer.Write(0);
+        writer.Write(0);
+        writer.Write(24);
+        writer.Write(24);
+
+        for (var y = 0; y < 25; y++)
+        {
+            for (var x = 0; x < 26; x++)
+            {
+                if (x == 1 && y == 1)
+                {
+                    WriteHero(writer, respect, hp, maxHp, exp, range, damage, level, nextLevel);
+                }
+                else
+                {
+                    writer.Write("NullObj");
+                }
+            }
+        }
+
+        writer.Flush();
+        return stream.ToArray();
+    }
+
+    private static void WriteHero(
+        BinaryWriter writer,
+        int respect,
+        int hp,
+        int maxHp,
+        int exp,
+        int range,
+        int damage,
+        int level,
+        int nextLevel)
+    {
+        writer.Write("Hero");
+        writer.Write(respect);
+        writer.Write("Army");
+        writer.Write(false);
+        WriteUnit(writer, hp, maxHp, exp, range, damage, level, nextLevel);
+        for (var i = 1; i < 7; i++)
+        {
+            writer.Write("NoUnit");
+        }
+    }
+
+    private static void WriteUnit(
+        BinaryWriter writer,
+        int hp = 10,
+        int maxHp = 10,
+        int exp = 0,
+        int range = 3,
+        int damage = 1,
+        int level = 1,
+        int nextLevel = 1)
     {
         writer.Write("Unit");
         writer.Write(256);
         writer.Write(0);
         writer.Write("MELEE");
-        writer.Write(10);
-        writer.Write(10);
-        writer.Write(0);
-        writer.Write(3);
-        writer.Write(1);
-        writer.Write(1);
-        writer.Write(1);
+        writer.Write(hp);
+        writer.Write(maxHp);
+        writer.Write(exp);
+        writer.Write(range);
+        writer.Write(damage);
+        writer.Write(level);
+        writer.Write(nextLevel);
     }
 }
