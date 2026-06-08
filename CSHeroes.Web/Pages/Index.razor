@@ -94,14 +94,8 @@
                 {
                     <span>Влияние: @snapshot.Explore?.Respect</span>
                     <button @onclick="EnterCamp">Привал</button>
-                    <button @onclick="SaveGame">Сохранить</button>
-                    <button @onclick="OpenLoadDialog">Загрузить</button>
+                    <button @onclick="OpenSaveDialog">Сохранить</button>
                     <button @onclick="ExitToMenu">В меню</button>
-                    <input @bind="saveName"
-                           @bind:event="oninput"
-                           maxlength="32"
-                           aria-label="Название сохранения"
-                           placeholder="Название сохранения" />
                 }
                 else
                 {
@@ -120,9 +114,9 @@
                       role="dialog"
                       aria-modal="true"
                       aria-labelledby="load-dialog-title"
-                      @onsubmit="LoadGame"
+                      @onsubmit="SubmitSaveDialog"
                       @onsubmit:preventDefault>
-                    <h2 id="load-dialog-title">Загрузить игру</h2>
+                    <h2 id="load-dialog-title">@(dialogAllowsSaving ? "Сохранение и загрузка" : "Загрузить игру")</h2>
                     <label for="load-save-name">Название сохранения</label>
                     <input id="load-save-name"
                            @bind="loadSaveName"
@@ -137,7 +131,17 @@
                     }
                     <div class="dialog-actions">
                         <button type="button" @onclick="CloseLoadDialog">Отмена</button>
-                        <button type="submit" disabled="@string.IsNullOrWhiteSpace(loadSaveName)">Загрузить</button>
+                        @if (dialogAllowsSaving)
+                        {
+                            <button type="button"
+                                    disabled="@string.IsNullOrWhiteSpace(loadSaveName)"
+                                    @onclick="LoadGame">Загрузить</button>
+                            <button type="submit" disabled="@string.IsNullOrWhiteSpace(loadSaveName)">Сохранить</button>
+                        }
+                        else
+                        {
+                            <button type="submit" disabled="@string.IsNullOrWhiteSpace(loadSaveName)">Загрузить</button>
+                        }
                     </div>
                 </form>
             </div>
@@ -155,6 +159,7 @@
     private string loadSaveName = "autosave";
     private string? loadError;
     private bool showLoadDialog;
+    private bool dialogAllowsSaving;
     private string FrameStyle => snapshot.Screen == GameScreen.Camp
         ? "background-image: url('assets/camp.png'); background-size: 802px 824px; background-position: top left; background-repeat: no-repeat;"
         : "";
@@ -261,16 +266,19 @@
         return snapshot.Camp?.Respect >= unit.UpgradeCost;
     }
 
-    private async Task SaveGame()
+    private void OpenSaveDialog()
     {
-        var bytes = session.Save();
-        if (bytes.Length > 0 && module is not null)
-        {
-            await module.InvokeVoidAsync("saveGame", saveName, Convert.ToBase64String(bytes));
-        }
+        dialogAllowsSaving = true;
+        OpenSaveDialogCore();
     }
 
     private void OpenLoadDialog()
+    {
+        dialogAllowsSaving = false;
+        OpenSaveDialogCore();
+    }
+
+    private void OpenSaveDialogCore()
     {
         loadSaveName = saveName;
         loadError = null;
@@ -286,6 +294,45 @@
     private void ClearLoadError()
     {
         loadError = null;
+    }
+
+    private async Task SubmitSaveDialog()
+    {
+        if (dialogAllowsSaving)
+        {
+            await SaveGame();
+        }
+        else
+        {
+            await LoadGame();
+        }
+    }
+
+    private async Task SaveGame()
+    {
+        if (module is null)
+        {
+            loadError = "Сохранение пока недоступно.";
+            return;
+        }
+
+        var normalizedName = loadSaveName.Trim();
+        if (string.IsNullOrWhiteSpace(normalizedName))
+        {
+            loadError = "Введите название сохранения.";
+            return;
+        }
+
+        var bytes = session.Save();
+        if (bytes.Length == 0)
+        {
+            loadError = "Не удалось создать сохранение.";
+            return;
+        }
+
+        await module.InvokeVoidAsync("saveGame", normalizedName, Convert.ToBase64String(bytes));
+        saveName = normalizedName;
+        showLoadDialog = false;
     }
 
     private async Task LoadGame()
