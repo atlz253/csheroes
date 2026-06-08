@@ -200,6 +200,51 @@ public class CoreGameSessionTests
         Assert.AreEqual(4, unit.NextLevel);
     }
 
+    [TestMethod]
+    public void RangedUnitShouldAttackEnemyOutsideMovementRange()
+    {
+        var session = new GameSession();
+        session.StartNewGame(CreateBattleMap(heroAttackType: "RANGE", heroRange: 1, heroDamage: 3, enemyHp: 10));
+        session.ClickExploreCell(2, 1);
+        session.ToggleAi();
+
+        var enemy = session.Snapshot.Battle!.Objects.Single(obj => obj.X > 0);
+        Assert.IsTrue(session.Snapshot.Battle.Highlights.Any(
+            highlight => highlight.X == enemy.X && highlight.Y == enemy.Y && highlight.Kind == "enemy"));
+
+        session.ClickBattleCell(enemy.X, enemy.Y);
+
+        var damagedEnemy = session.Snapshot.Battle!.Objects.Single(obj => obj.X > 0);
+        Assert.AreEqual(7, damagedEnemy.Hp);
+    }
+
+    [TestMethod]
+    public void UnitUpgradedToRangedShouldAttackEnemyOutsideMovementRange()
+    {
+        var session = new GameSession();
+        session.StartNewGame(CreateBattleMap(
+            heroAttackType: "MELEE",
+            heroRange: 5,
+            heroDamage: 3,
+            enemyHp: 10,
+            heroRespect: 500,
+            heroExp: 1));
+        session.EnterCamp();
+        session.UpgradeUnit(0, CampUpgradeOption.RangedAttack);
+        session.ExitCamp();
+        session.ClickExploreCell(2, 1);
+        session.ToggleAi();
+
+        var enemy = session.Snapshot.Battle!.Objects.Single(obj => obj.X > 0);
+        Assert.IsTrue(session.Snapshot.Battle.Highlights.Any(
+            highlight => highlight.X == enemy.X && highlight.Y == enemy.Y && highlight.Kind == "enemy"));
+
+        session.ClickBattleCell(enemy.X, enemy.Y);
+
+        var damagedEnemy = session.Snapshot.Battle!.Objects.Single(obj => obj.X > 0);
+        Assert.AreEqual(7, damagedEnemy.Hp);
+    }
+
     private static SceneObjectSnapshot GetHero(GameSession session)
     {
         return session.Snapshot.Explore!.Objects.Single(obj => obj.Kind == SceneObjectKind.Hero);
@@ -355,6 +400,77 @@ public class CoreGameSessionTests
         return stream.ToArray();
     }
 
+    private static byte[] CreateBattleMap(
+        string heroAttackType,
+        int heroRange,
+        int heroDamage,
+        int enemyHp,
+        int heroRespect = 0,
+        int heroExp = 0)
+    {
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+
+        writer.Write("Ranged battle");
+
+        for (var y = 0; y < 25; y++)
+        {
+            for (var x = 0; x < 26; x++)
+            {
+                writer.Write(0);
+                writer.Write(0);
+            }
+        }
+
+        writer.Write(0);
+        writer.Write(0);
+        writer.Write(24);
+        writer.Write(24);
+
+        for (var y = 0; y < 25; y++)
+        {
+            for (var x = 0; x < 26; x++)
+            {
+                if (x == 1 && y == 1)
+                {
+                    writer.Write("Hero");
+                    writer.Write(heroRespect);
+                    writer.Write("Army");
+                    writer.Write(false);
+                    WriteUnit(
+                        writer,
+                        exp: heroExp,
+                        range: heroRange,
+                        damage: heroDamage,
+                        attackType: heroAttackType);
+                    WriteEmptyUnitSlots(writer);
+                }
+                else if (x == 2 && y == 1)
+                {
+                    writer.Write("Army");
+                    writer.Write(true);
+                    WriteUnit(writer, hp: enemyHp, maxHp: enemyHp);
+                    WriteEmptyUnitSlots(writer);
+                }
+                else
+                {
+                    writer.Write("NullObj");
+                }
+            }
+        }
+
+        writer.Flush();
+        return stream.ToArray();
+    }
+
+    private static void WriteEmptyUnitSlots(BinaryWriter writer)
+    {
+        for (var i = 1; i < 7; i++)
+        {
+            writer.Write("NoUnit");
+        }
+    }
+
     private static void WriteHero(
         BinaryWriter writer,
         int respect,
@@ -385,12 +501,13 @@ public class CoreGameSessionTests
         int range = 3,
         int damage = 1,
         int level = 1,
-        int nextLevel = 1)
+        int nextLevel = 1,
+        string attackType = "MELEE")
     {
         writer.Write("Unit");
         writer.Write(256);
         writer.Write(0);
-        writer.Write("MELEE");
+        writer.Write(attackType);
         writer.Write(hp);
         writer.Write(maxHp);
         writer.Write(exp);

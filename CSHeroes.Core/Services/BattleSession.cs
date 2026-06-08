@@ -119,8 +119,7 @@ internal sealed class BattleSession
 
             var enemyPoint = enemyCords[i];
             var canAttack = unit.Attack == OriginalAttackType.RANGE
-                ? IsCellInRange(src, enemyPoint, unit.Range)
-                : Neighbors(enemyPoint).Any(reachableSet.Contains);
+                || Neighbors(enemyPoint).Any(reachableSet.Contains);
 
             if (canAttack)
             {
@@ -270,12 +269,17 @@ internal sealed class BattleSession
 
     private bool IsReadyAttack(OriginalUnit unit, GridPoint dest)
     {
+        if (unit.Attack == OriginalAttackType.RANGE)
+        {
+            return true;
+        }
+
         if (!IsCellInRange(CurrentUnitPoint(), dest, unit.Range))
         {
             return false;
         }
 
-        return unit.Attack == OriginalAttackType.RANGE || IsAdjacent(CurrentUnitPoint(), dest);
+        return IsAdjacent(CurrentUnitPoint(), dest);
     }
 
     private GridPoint CurrentUnitPoint()
