@@ -1,0 +1,413 @@
+@page "/"
+@inject HttpClient Http
+@inject IJSRuntime Js
+@implements IAsyncDisposable
+
+<PageTitle>CSHeroes Web</PageTitle>
+
+<section class="game-shell">
+    <div class="game-frame" style="@FrameStyle">
+        <canvas id="@CanvasId" width="802" height="824" style="@CanvasStyle" @onclick="OnCanvasClick"></canvas>
+
+        @if (snapshot.Screen == GameScreen.MainMenu)
+        {
+            <div class="overlay menu">
+                <h1>ГЕРОИ ЗАЧЕТА И СЕССИИ</h1>
+                <button @onclick="ShowNewGame">Новая игра</button>
+                <button @onclick="OpenLoadDialog">Загрузить игру</button>
+            </div>
+        }
+        else if (snapshot.Screen == GameScreen.NewGame)
+        {
+            <div class="overlay menu">
+                <h1>Выберите приключение</h1>
+                <button @onclick='@(() => StartMap("FirstMap"))'>Переполох в новом корпусе</button>
+                <button @onclick='@(() => StartMap("SecondMap"))'>Коварные очереди мака</button>
+                <button @onclick='@(() => StartMap("ThirdMap"))'>Великие испытания в старом корпусе</button>
+                <button @onclick="ExitToMenu">Назад</button>
+            </div>
+        }
+        else if (snapshot.Screen == GameScreen.Camp && snapshot.Camp is not null)
+        {
+            <div class="camp-panel">
+                <div class="panel-head">
+                    <strong>Привал</strong>
+                    <span>Влияние: @snapshot.Camp.Respect</span>
+                    <button @onclick="ExitCamp">Вернуться</button>
+                </div>
+                <div class="unit-cards">
+                    @foreach (var unit in snapshot.Camp.Units)
+                    {
+                        <article class="unit-card">
+                            <div class="unit-title">Слот @(unit.Index + 1)</div>
+                            @if (unit.Sprite is null)
+                            {
+                                <button @onclick="@(() => HireUnit(unit.Index))">Нанять 100</button>
+                            }
+                            else
+                            {
+                                <div>HP: @unit.Hp / @unit.MaxHp</div>
+                                <div>DMG: @unit.Damage</div>
+                                <div>RNG: @unit.Range</div>
+                                <div>LVL: @unit.Level</div>
+                                <div>EXP: @unit.Exp / @unit.NextLevel</div>
+                                @if (unit.CanUpgrade)
+                                {
+                                    <div class="upgrade-group">
+                                        <div class="upgrade-cost">Улучшить: @unit.UpgradeCost</div>
+                                        @if (unit.UpgradeMode == CampUpgradeMode.AttackType)
+                                        {
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.MeleeAttack))">Ближний</button>
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.RangedAttack))">Дальний</button>
+                                        }
+                                        else if (unit.UpgradeMode == CampUpgradeMode.Stats)
+                                        {
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.Hp))">HP</button>
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.Damage))">DMG</button>
+                                            <button disabled="@(!CanAffordUpgrade(unit))" @onclick="@(() => UpgradeUnit(unit.Index, CampUpgradeOption.Range))">RNG</button>
+                                        }
+                                    </div>
+                                }
+                                <button disabled="@(unit.Hp == unit.MaxHp)" @onclick="@(() => HealUnit(unit.Index))">Лечить</button>
+                            }
+                        </article>
+                    }
+                </div>
+            </div>
+        }
+        else if (snapshot.Screen is GameScreen.Win or GameScreen.Defeat)
+        {
+            <div class="overlay menu">
+                <h1>@snapshot.Message</h1>
+                @if (snapshot.Score is not null)
+                {
+                    <p>Счет: @snapshot.Score</p>
+                }
+                <button @onclick="ExitToMenu">В меню</button>
+            </div>
+        }
+
+        @if (snapshot.Screen is GameScreen.Exploring or GameScreen.Battle)
+        {
+            <div class="toolbar">
+                @if (snapshot.Screen == GameScreen.Exploring)
+                {
+                    <span>Влияние: @snapshot.Explore?.Respect</span>
+                    <button @onclick="EnterCamp">Привал</button>
+                    <button @onclick="OpenSaveDialog">Сохранить</button>
+                    <button @onclick="ExitToMenu">В меню</button>
+                }
+                else
+                {
+                    <span>@(snapshot.Battle?.PlayerTurn == true ? "Ваш ход" : "Ход противника")</span>
+                    <button @onclick="WaitTurn">Ждать (W)</button>
+                }
+            </div>
+        }
+
+        @if (showLoadDialog)
+        {
+            <div class="dialog-backdrop"
+                 style="position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; background: rgba(0, 0, 0, .62);">
+                <form class="load-dialog"
+                      style="width: min(360px, calc(100% - 48px)); display: grid; gap: 12px; padding: 24px; box-sizing: border-box; background: #eeeeea; color: #1f2328;"
+                      role="dialog"
+                      aria-modal="true"
+                      aria-labelledby="load-dialog-title"
+                      @onsubmit="SubmitSaveDialog"
+                      @onsubmit:preventDefault>
+                    <h2 id="load-dialog-title">@(dialogAllowsSaving ? "Сохранение и загрузка" : "Загрузить игру")</h2>
+                    <label for="load-save-name">Название сохранения</label>
+                    <input id="load-save-name"
+                           @bind="loadSaveName"
+                           @bind:event="oninput"
+                           @bind:after="ClearLoadError"
+                           maxlength="32"
+                           autofocus
+                           autocomplete="off" />
+                    @if (!string.IsNullOrWhiteSpace(loadError))
+                    {
+                        <div class="dialog-error" role="alert">@loadError</div>
+                    }
+                    <div class="dialog-actions">
+                        <button type="button" @onclick="CloseLoadDialog">Отмена</button>
+                        @if (dialogAllowsSaving)
+                        {
+                            <button type="button"
+                                    disabled="@string.IsNullOrWhiteSpace(loadSaveName)"
+                                    @onclick="LoadGame">Загрузить</button>
+                            <button type="submit" disabled="@string.IsNullOrWhiteSpace(loadSaveName)">Сохранить</button>
+                        }
+                        else
+                        {
+                            <button type="submit" disabled="@string.IsNullOrWhiteSpace(loadSaveName)">Загрузить</button>
+                        }
+                    </div>
+                </form>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private const string CanvasId = "game-canvas";
+    private readonly GameSession session = new();
+    private IJSObjectReference? module;
+    private DotNetObjectReference<Index>? dotNetReference;
+    private GameSnapshot snapshot = new(GameScreen.MainMenu);
+    private string saveName = "autosave";
+    private string loadSaveName = "autosave";
+    private string? loadError;
+    private bool showLoadDialog;
+    private bool dialogAllowsSaving;
+    private string FrameStyle => snapshot.Screen == GameScreen.Camp
+        ? "background-image: url('assets/camp.png'); background-size: 802px 824px; background-position: top left; background-repeat: no-repeat;"
+        : "";
+    private string CanvasStyle => snapshot.Screen == GameScreen.Camp ? "display: none;" : "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await Js.InvokeAsync<IJSObjectReference>("import", "./js/canvasRenderer.js");
+            dotNetReference = DotNetObjectReference.Create(this);
+            await module.InvokeVoidAsync("registerBattleHotkeys", dotNetReference);
+            await RenderAsync();
+        }
+    }
+
+    private async Task ShowNewGame()
+    {
+        session.ShowNewGameMenu();
+        await RefreshAsync();
+    }
+
+    private async Task StartMap(string mapName)
+    {
+        var map = await Http.GetByteArrayAsync($"assets/maps/{mapName}");
+        session.StartNewGame(map);
+        await RefreshAsync();
+    }
+
+    private async Task OnCanvasClick(MouseEventArgs args)
+    {
+        if (module is null)
+        {
+            return;
+        }
+
+        var point = await module.InvokeAsync<CanvasPoint>("toCanvasPoint", CanvasId, args.ClientX, args.ClientY);
+        var x = snapshot.Screen == GameScreen.Battle
+            ? (int)(point.X / 50)
+            : (int)(point.X / 32);
+        var y = snapshot.Screen == GameScreen.Battle
+            ? (int)(point.Y / 50)
+            : (int)(point.Y / 32);
+
+        if (snapshot.Screen == GameScreen.Exploring)
+        {
+            session.ClickExploreCell(x, y);
+        }
+        else if (snapshot.Screen == GameScreen.Battle)
+        {
+            session.ClickBattleCell(x, y);
+        }
+
+        await RefreshAsync();
+    }
+
+    private async Task WaitTurn()
+    {
+        session.WaitTurn();
+        await RefreshAsync();
+    }
+
+    [JSInvokable]
+    public async Task HandleBattleWaitHotkey()
+    {
+        if (snapshot.Screen == GameScreen.Battle)
+        {
+            await WaitTurn();
+        }
+    }
+
+    private async Task EnterCamp()
+    {
+        session.EnterCamp();
+        await RefreshAsync();
+    }
+
+    private async Task ExitCamp()
+    {
+        session.ExitCamp();
+        await RefreshAsync();
+    }
+
+    private async Task HireUnit(int index)
+    {
+        session.HireUnit(index);
+        await RefreshAsync();
+    }
+
+    private async Task HealUnit(int index)
+    {
+        session.HealUnit(index);
+        await RefreshAsync();
+    }
+
+    private async Task UpgradeUnit(int index, CampUpgradeOption option)
+    {
+        session.UpgradeUnit(index, option);
+        await RefreshAsync();
+    }
+
+    private bool CanAffordUpgrade(CampUnitSnapshot unit)
+    {
+        return snapshot.Camp?.Respect >= unit.UpgradeCost;
+    }
+
+    private void OpenSaveDialog()
+    {
+        dialogAllowsSaving = true;
+        OpenSaveDialogCore();
+    }
+
+    private void OpenLoadDialog()
+    {
+        dialogAllowsSaving = false;
+        OpenSaveDialogCore();
+    }
+
+    private void OpenSaveDialogCore()
+    {
+        loadSaveName = saveName;
+        loadError = null;
+        showLoadDialog = true;
+    }
+
+    private void CloseLoadDialog()
+    {
+        loadError = null;
+        showLoadDialog = false;
+    }
+
+    private void ClearLoadError()
+    {
+        loadError = null;
+    }
+
+    private async Task SubmitSaveDialog()
+    {
+        if (dialogAllowsSaving)
+        {
+            await SaveGame();
+        }
+        else
+        {
+            await LoadGame();
+        }
+    }
+
+    private async Task SaveGame()
+    {
+        if (module is null)
+        {
+            loadError = "Сохранение пока недоступно.";
+            return;
+        }
+
+        var normalizedName = loadSaveName.Trim();
+        if (string.IsNullOrWhiteSpace(normalizedName))
+        {
+            loadError = "Введите название сохранения.";
+            return;
+        }
+
+        var bytes = session.Save();
+        if (bytes.Length == 0)
+        {
+            loadError = "Не удалось создать сохранение.";
+            return;
+        }
+
+        await module.InvokeVoidAsync("saveGame", normalizedName, Convert.ToBase64String(bytes));
+        saveName = normalizedName;
+        showLoadDialog = false;
+    }
+
+    private async Task LoadGame()
+    {
+        if (module is null)
+        {
+            loadError = "Загрузка пока недоступна.";
+            return;
+        }
+
+        var normalizedName = loadSaveName.Trim();
+        if (string.IsNullOrWhiteSpace(normalizedName))
+        {
+            loadError = "Введите название сохранения.";
+            return;
+        }
+
+        var payload = await module.InvokeAsync<string?>("loadGame", normalizedName);
+        if (string.IsNullOrWhiteSpace(payload))
+        {
+            loadError = $"Сохранение «{normalizedName}» не найдено.";
+            return;
+        }
+
+        try
+        {
+            session.Load(Convert.FromBase64String(payload));
+            saveName = normalizedName;
+            showLoadDialog = false;
+            await RefreshAsync();
+        }
+        catch (FormatException)
+        {
+            loadError = "Сохранение повреждено и не может быть загружено.";
+        }
+    }
+
+    private async Task ExitToMenu()
+    {
+        session.ExitToMenu();
+        await RefreshAsync();
+    }
+
+    private async Task RefreshAsync()
+    {
+        snapshot = session.Snapshot;
+        await RenderAsync();
+        StateHasChanged();
+    }
+
+    private async Task RenderAsync()
+    {
+        if (module is null)
+        {
+            return;
+        }
+
+        snapshot = session.Snapshot;
+        await module.InvokeVoidAsync("render", CanvasId, snapshot);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module is not null)
+        {
+            await module.InvokeVoidAsync("unregisterBattleHotkeys");
+            await module.DisposeAsync();
+        }
+
+        dotNetReference?.Dispose();
+    }
+
+    private sealed class CanvasPoint
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+}

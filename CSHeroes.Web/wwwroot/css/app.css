@@ -1,0 +1,231 @@
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #111;
+  color: #f6f4ef;
+  font-family: "Segoe UI", Arial, sans-serif;
+  overflow: hidden;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 1px solid #565f68;
+  background: #f3f1ea;
+  color: #1f2328;
+  min-height: 32px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: .45;
+}
+
+input {
+  width: 120px;
+  min-height: 28px;
+  border: 1px solid #565f68;
+  padding: 0 8px;
+}
+
+.game-shell {
+  width: 802px;
+  height: 824px;
+}
+
+.game-frame {
+  position: relative;
+  width: 802px;
+  height: 824px;
+  background: #111;
+}
+
+canvas {
+  width: 802px;
+  height: 824px;
+  display: block;
+  image-rendering: pixelated;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 16px;
+  background: rgba(0, 0, 0, .18);
+}
+
+.menu h1 {
+  margin: 0 0 20px;
+  font-size: 32px;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 4px #000;
+}
+
+.menu button {
+  width: min(330px, 80%);
+}
+
+.toolbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 4px 8px;
+  box-sizing: border-box;
+  background: #595959;
+  color: #fff;
+}
+
+.toolbar span {
+  margin-right: auto;
+}
+
+.toolbar button {
+  min-height: 24px;
+  padding: 0 8px;
+}
+
+.dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .62);
+}
+
+.load-dialog {
+  width: min(360px, calc(100% - 48px));
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  box-sizing: border-box;
+  border: 1px solid #8d8d86;
+  background: #eeeeea;
+  color: #1f2328;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .45);
+}
+
+.load-dialog h2 {
+  margin: 0 0 4px;
+  text-align: center;
+}
+
+.load-dialog input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dialog-error {
+  padding: 8px 10px;
+  border: 1px solid #a64040;
+  background: #f7dddd;
+  color: #7b1f1f;
+  font-size: 14px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.camp-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 12px;
+  background: rgba(38, 38, 38, .92);
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.panel-head button {
+  margin-left: auto;
+}
+
+.unit-cards {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.unit-card {
+  min-height: 178px;
+  padding: 8px;
+  box-sizing: border-box;
+  background: #eeeeea;
+  color: #1f2328;
+  border: 1px solid #9a9a92;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.unit-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.unit-card button {
+  width: 100%;
+  min-height: 26px;
+  margin-top: 6px;
+  padding: 2px 6px;
+  white-space: normal;
+}
+
+.upgrade-group {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.upgrade-cost {
+  grid-column: 1 / -1;
+  font-weight: 600;
+}
+
+.upgrade-group button {
+  margin-top: 0;
+}
+
+@media (max-width: 720px) {
+  body {
+    overflow: auto;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .unit-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 380px;
+    overflow: auto;
+  }
+}

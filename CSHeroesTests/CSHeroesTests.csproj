@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\csheroes\csheroes.csproj" />
+    <ProjectReference Include="..\CSHeroes.Core\CSHeroes.Core.csproj" Aliases="CoreLib" />
   </ItemGroup>
 
 </Project>
