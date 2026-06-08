@@ -97,14 +97,13 @@
                     <button @onclick="SaveGame">Сохранить</button>
                     <button @onclick="LoadGame">Загрузить</button>
                     <button @onclick="ExitToMenu">В меню</button>
+                    <input @bind="saveName" maxlength="32" />
                 }
                 else
                 {
                     <span>@(snapshot.Battle?.PlayerTurn == true ? "Ваш ход" : "Ход противника")</span>
-                    <button @onclick="WaitTurn">Ждать</button>
-                    <button @onclick="ToggleAi">AI: @(snapshot.Battle?.AiEnabled == true ? "on" : "off")</button>
+                    <button @onclick="WaitTurn">Ждать (W)</button>
                 }
-                <input @bind="saveName" maxlength="32" />
             </div>
         }
     </div>
@@ -114,6 +113,7 @@
     private const string CanvasId = "game-canvas";
     private readonly GameSession session = new();
     private IJSObjectReference? module;
+    private DotNetObjectReference<Index>? dotNetReference;
     private GameSnapshot snapshot = new(GameScreen.MainMenu);
     private string saveName = "autosave";
     private string FrameStyle => snapshot.Screen == GameScreen.Camp
@@ -126,6 +126,8 @@
         if (firstRender)
         {
             module = await Js.InvokeAsync<IJSObjectReference>("import", "./js/canvasRenderer.js");
+            dotNetReference = DotNetObjectReference.Create(this);
+            await module.InvokeVoidAsync("registerBattleHotkeys", dotNetReference);
             await RenderAsync();
         }
     }
@@ -176,10 +178,13 @@
         await RefreshAsync();
     }
 
-    private async Task ToggleAi()
+    [JSInvokable]
+    public async Task HandleBattleWaitHotkey()
     {
-        session.ToggleAi();
-        await RefreshAsync();
+        if (snapshot.Screen == GameScreen.Battle)
+        {
+            await WaitTurn();
+        }
     }
 
     private async Task EnterCamp()
@@ -269,8 +274,11 @@
     {
         if (module is not null)
         {
+            await module.InvokeVoidAsync("unregisterBattleHotkeys");
             await module.DisposeAsync();
         }
+
+        dotNetReference?.Dispose();
     }
 
     private sealed class CanvasPoint

@@ -7,6 +7,7 @@ const backgrounds = {
   win: loadImage("assets/win.png"),
   defeat: loadImage("assets/defeat.png")
 };
+let battleHotkeyHandler;
 
 function loadImage(src) {
   const image = new Image();
@@ -154,6 +155,33 @@ export function saveGame(name, payload) {
 
 export function loadGame(name) {
   return localStorage.getItem(`csheroes:${name || "autosave"}`);
+}
+
+export function registerBattleHotkeys(dotNetReference) {
+  unregisterBattleHotkeys();
+
+  battleHotkeyHandler = event => {
+    const target = event.target;
+    const isEditing = target instanceof HTMLInputElement
+      || target instanceof HTMLTextAreaElement
+      || target instanceof HTMLSelectElement
+      || target?.isContentEditable;
+
+    if (event.code !== "KeyW" || event.repeat || isEditing || event.ctrlKey || event.altKey || event.metaKey) {
+      return;
+    }
+
+    dotNetReference.invokeMethodAsync("HandleBattleWaitHotkey");
+  };
+
+  window.addEventListener("keydown", battleHotkeyHandler);
+}
+
+export function unregisterBattleHotkeys() {
+  if (battleHotkeyHandler) {
+    window.removeEventListener("keydown", battleHotkeyHandler);
+    battleHotkeyHandler = undefined;
+  }
 }
 
 export function toCanvasPoint(canvasId, clientX, clientY) {
