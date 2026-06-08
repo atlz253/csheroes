@@ -100,6 +100,52 @@ canvas {
   padding: 0 8px;
 }
 
+.dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .62);
+}
+
+.load-dialog {
+  width: min(360px, calc(100% - 48px));
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  box-sizing: border-box;
+  border: 1px solid #8d8d86;
+  background: #eeeeea;
+  color: #1f2328;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .45);
+}
+
+.load-dialog h2 {
+  margin: 0 0 4px;
+  text-align: center;
+}
+
+.load-dialog input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dialog-error {
+  padding: 8px 10px;
+  border: 1px solid #a64040;
+  background: #f7dddd;
+  color: #7b1f1f;
+  font-size: 14px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
 .camp-panel {
   position: absolute;
   left: 0;

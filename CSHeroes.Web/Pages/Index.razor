@@ -14,7 +14,7 @@
             <div class="overlay menu">
                 <h1>ГЕРОИ ЗАЧЕТА И СЕССИИ</h1>
                 <button @onclick="ShowNewGame">Новая игра</button>
-                <button @onclick="LoadGame">Загрузить игру</button>
+                <button @onclick="OpenLoadDialog">Загрузить игру</button>
             </div>
         }
         else if (snapshot.Screen == GameScreen.NewGame)
@@ -95,15 +95,51 @@
                     <span>Влияние: @snapshot.Explore?.Respect</span>
                     <button @onclick="EnterCamp">Привал</button>
                     <button @onclick="SaveGame">Сохранить</button>
-                    <button @onclick="LoadGame">Загрузить</button>
+                    <button @onclick="OpenLoadDialog">Загрузить</button>
                     <button @onclick="ExitToMenu">В меню</button>
-                    <input @bind="saveName" maxlength="32" />
+                    <input @bind="saveName"
+                           @bind:event="oninput"
+                           maxlength="32"
+                           aria-label="Название сохранения"
+                           placeholder="Название сохранения" />
                 }
                 else
                 {
                     <span>@(snapshot.Battle?.PlayerTurn == true ? "Ваш ход" : "Ход противника")</span>
                     <button @onclick="WaitTurn">Ждать (W)</button>
                 }
+            </div>
+        }
+
+        @if (showLoadDialog)
+        {
+            <div class="dialog-backdrop"
+                 style="position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; background: rgba(0, 0, 0, .62);">
+                <form class="load-dialog"
+                      style="width: min(360px, calc(100% - 48px)); display: grid; gap: 12px; padding: 24px; box-sizing: border-box; background: #eeeeea; color: #1f2328;"
+                      role="dialog"
+                      aria-modal="true"
+                      aria-labelledby="load-dialog-title"
+                      @onsubmit="LoadGame"
+                      @onsubmit:preventDefault>
+                    <h2 id="load-dialog-title">Загрузить игру</h2>
+                    <label for="load-save-name">Название сохранения</label>
+                    <input id="load-save-name"
+                           @bind="loadSaveName"
+                           @bind:event="oninput"
+                           @bind:after="ClearLoadError"
+                           maxlength="32"
+                           autofocus
+                           autocomplete="off" />
+                    @if (!string.IsNullOrWhiteSpace(loadError))
+                    {
+                        <div class="dialog-error" role="alert">@loadError</div>
+                    }
+                    <div class="dialog-actions">
+                        <button type="button" @onclick="CloseLoadDialog">Отмена</button>
+                        <button type="submit" disabled="@string.IsNullOrWhiteSpace(loadSaveName)">Загрузить</button>
+                    </div>
+                </form>
             </div>
         }
     </div>
@@ -116,6 +152,9 @@
     private DotNetObjectReference<Index>? dotNetReference;
     private GameSnapshot snapshot = new(GameScreen.MainMenu);
     private string saveName = "autosave";
+    private string loadSaveName = "autosave";
+    private string? loadError;
+    private bool showLoadDialog;
     private string FrameStyle => snapshot.Screen == GameScreen.Camp
         ? "background-image: url('assets/camp.png'); background-size: 802px 824px; background-position: top left; background-repeat: no-repeat;"
         : "";
@@ -231,18 +270,56 @@
         }
     }
 
+    private void OpenLoadDialog()
+    {
+        loadSaveName = saveName;
+        loadError = null;
+        showLoadDialog = true;
+    }
+
+    private void CloseLoadDialog()
+    {
+        loadError = null;
+        showLoadDialog = false;
+    }
+
+    private void ClearLoadError()
+    {
+        loadError = null;
+    }
+
     private async Task LoadGame()
     {
         if (module is null)
         {
+            loadError = "Загрузка пока недоступна.";
             return;
         }
 
-        var payload = await module.InvokeAsync<string?>("loadGame", saveName);
-        if (!string.IsNullOrWhiteSpace(payload))
+        var normalizedName = loadSaveName.Trim();
+        if (string.IsNullOrWhiteSpace(normalizedName))
+        {
+            loadError = "Введите название сохранения.";
+            return;
+        }
+
+        var payload = await module.InvokeAsync<string?>("loadGame", normalizedName);
+        if (string.IsNullOrWhiteSpace(payload))
+        {
+            loadError = $"Сохранение «{normalizedName}» не найдено.";
+            return;
+        }
+
+        try
         {
             session.Load(Convert.FromBase64String(payload));
+            saveName = normalizedName;
+            showLoadDialog = false;
             await RefreshAsync();
+        }
+        catch (FormatException)
+        {
+            loadError = "Сохранение повреждено и не может быть загружено.";
         }
     }
 
